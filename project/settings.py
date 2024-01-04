@@ -141,15 +141,31 @@ USE_TZ = True
 # MEDIA_URL  = '/media/'
 # MEDIA_ROOT= BASE_DIR / 'media/image'
 
+# STATIC_URL = '/static/'
+
+# MEDIA_URL = '/media/'
+
+# STATIC_ROOT = BASE_DIR / 'staic'
+
+# MEDIA_ROOT = BASE_DIR / 'media/images'
+
+# STATICFILES_DIRS = [BASE_DIR / 'project/static']
+
+
+# Static files (CSS, JavaScript, Images)
+# https://docs.djangoproject.com/en/4.2/howto/static-files/
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATIC_URL = '/static/'
+# Extra places for collectstatic to find static files.
+# STATICFILES_DIRS = [
+#     os.path.join(BASE_DIR, 'project/static'),
+# ]
+STATICFILES_DIRS=[(os.path.join(BASE_DIR,'app/static'))]
+
+# and tap python manage.py collectstatic
 
 MEDIA_URL = '/media/'
-
-STATIC_ROOT = BASE_DIR / 'staic'
-
-MEDIA_ROOT = BASE_DIR / 'media/images'
-
-STATICFILES_DIRS = [BASE_DIR / 'project/static']
+MEDIA_ROOT = BASE_DIR / 'media'
 
 ## --------- add this code to project\urls --------------
 # from django.contrib import admin

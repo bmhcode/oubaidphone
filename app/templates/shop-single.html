@@ -137,8 +137,8 @@
                             {% endif %}
 
                             {% if product.discount_price and product.discount_price < product.price %}
-                                <p class="h3 py-2 "><del>{{ product.price }} Da</del></p>
-                                <p class="h3 py-2 list-inline-item">{{ product.discount_price }} Da</p>
+                                <p class="h3 py-2 text-muted"><del>{{ product.price }} Da</del></p>
+                                <p class="h3 py-2">{{ product.discount_price }} Da</p>
                             {% else  %}
                                 <p class="h3 py-2">{{ product.price }} Da</p>
                             {% endif %}

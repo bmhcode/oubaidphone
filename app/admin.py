@@ -2,7 +2,7 @@ from django.contrib import admin
 from .models import Store, Brand, Category, Product, ProductImages,  ProductsRelated
 
 class StoreAdmin(admin.ModelAdmin):
-    list_display = ['name','description','address', 'logo', 'id']    
+    list_display = ['name','about_us','address', 'logo', 'id']    
 admin.site.register(Store,StoreAdmin)
 
 class CategoryAdmin(admin.ModelAdmin):

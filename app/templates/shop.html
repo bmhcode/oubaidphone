@@ -115,7 +115,7 @@
                                     </li>
                                 </ul> {% endcomment %}
                                 {% if product.discount_price and product.discount_price < product.price %}
-                                    <span class="mr-1"><del>{{ product.price }} Da</del></span>
+                                    <span class="mr-1 text-muted"><del>{{ product.price }} Da</del></span>
                                     <span>{{ product.discount_price }} Da</span>
                                 {% else  %}
                                     <p class="text-center mb-0">{{ product.price }}</p>

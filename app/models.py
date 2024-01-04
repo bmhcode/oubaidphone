@@ -9,8 +9,8 @@ import django.utils.timezone
 
 
 class Store(models.Model):
-    name        = models.CharField('name of store', max_length=255, blank=True, null=False, default="Store name")
-    description = models.TextField(null=True, blank=True, default="description")
+    name    = models.CharField('name of store', max_length=255, blank=True, null=False, default="Store name")
+    about_us = models.TextField(null=True, blank=True, default="About Us")
     address = models.CharField(max_length=255, blank=True, null=True, default="Store adress")
     phone  = models.CharField('Contact Phone',max_length=255, blank=True, null=True, default="Store phone")
     email  = models.EmailField('Email Address', max_length=255, default="yourmail@gmail.com")

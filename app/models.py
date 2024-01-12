@@ -99,9 +99,9 @@ class Brand(models.Model):
         return url
 
 class Category(models.Model):
-    name   = models.CharField(max_length=100, verbose_name=_("Category")) #,default='name of the category', help_text='name of catygory')
+    name   = models.CharField(max_length=100, verbose_name=_('Category')) #,default='name of the category', help_text='name of catygory')
     slug   = models.SlugField(blank=True,null=True)
-    image  = models.ImageField(blank=True, default='', upload_to="categories/",  verbose_name=_("Image"))
+    image  = models.ImageField(upload_to='categories/')#,default='media/placeholder.png')
     show   = models.BooleanField(default=True)
 
     def __str__(self):

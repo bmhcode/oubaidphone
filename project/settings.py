@@ -17,7 +17,7 @@ import dj_database_url
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-env=environ.Env()
+env = environ.Env()
 
 environ.Env.read_env()
 
@@ -28,23 +28,24 @@ environ.Env.read_env()
 SECRET_KEY = 'django-insecure-5b)2xi-%m%0i=6ddd_6ugdz2ufzn_18u(&g&(8v@k7gs$n14_j'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False 
+DEBUG = True
 # DEBUG = os.environ.get("ALLOWED_HOSTS").split("")
 
-ALLOWED_HOSTS = ['127.0.0.1','oubaidphone.onrender.com'] # or ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['127.0.0.1','oubaidphone.onrender.com'] 
 
 # Application definition
 
 INSTALLED_APPS = [
-    
-    'app',
-    
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'app',
+    
+    # 'whitenoise',
 ]
 
 MIDDLEWARE = [
@@ -55,6 +56,10 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+    # "django.middleware.security.SecurityMiddleware",
+    # "whitenoise.middleware.WhiteNoiseMiddleware",
+
 ]
 
 ROOT_URLCONF = 'project.urls'
@@ -88,10 +93,10 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-'''
+
 
 # Rener PostgreSQL database (Live)
-
+'''
 DATABASES = {
     'default': dj_database_url.parse(env('DATABASE_URL'))
 }
@@ -166,6 +171,9 @@ STATICFILES_DIRS = [
 # MEDIA_ROOT = BASE_DIR / 'media'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
+
+# STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+# STATICFILES_STORAGE = "whitenoise.storage.CompressedStaticFilesStorage"
 
 ## --------- add this code to project\urls --------------
 # from django.contrib import admin

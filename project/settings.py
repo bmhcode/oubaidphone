@@ -28,8 +28,8 @@ environ.Env.read_env()
 SECRET_KEY = 'django-insecure-5b)2xi-%m%0i=6ddd_6ugdz2ufzn_18u(&g&(8v@k7gs$n14_j'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-# DEBUG = True #os.environ.get("ALLOWED_HOSTS").split("")
-DEBUG = os.environ.get("ALLOWED_HOSTS").split("")
+DEBUG = False 
+# DEBUG = os.environ.get("ALLOWED_HOSTS").split("")
 
 ALLOWED_HOSTS = ['127.0.0.1','oubaidphone.onrender.com'] # or ALLOWED_HOSTS = ['*']
 

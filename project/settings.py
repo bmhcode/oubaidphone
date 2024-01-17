@@ -28,7 +28,7 @@ environ.Env.read_env()
 SECRET_KEY = 'django-insecure-5b)2xi-%m%0i=6ddd_6ugdz2ufzn_18u(&g&(8v@k7gs$n14_j'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True # False for deployement
+DEBUG = False # False for deployement
 # DEBUG = os.environ.get("ALLOWED_HOSTS").split("")
 
 ALLOWED_HOSTS = ['127.0.0.1','oubaidphone.onrender.com'] 
@@ -50,7 +50,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware', # pip install whitenoise 
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -80,10 +80,8 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'project.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
-
 
 # DATABASES = {
 #     'default': {
@@ -91,7 +89,6 @@ WSGI_APPLICATION = 'project.wsgi.application'
 #         'NAME': BASE_DIR / 'db.sqlite3',
 #     }
 # }
-
 
 # Rener PostgreSQL database (Live)
 '''

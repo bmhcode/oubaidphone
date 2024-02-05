@@ -11,14 +11,13 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 from pathlib import Path
 import os
-import environ
-import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-env = environ.Env()
+import environ
 
+env = environ.Env()
 environ.Env.read_env()
 
 # Quick-start development settings - unsuitable for production
@@ -26,15 +25,17 @@ environ.Env.read_env()
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-5b)2xi-%m%0i=6ddd_6ugdz2ufzn_18u(&g&(8v@k7gs$n14_j'
+# add SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY','django-insecure-5b)2xi-%m%0i=6ddd_6ugdz2ufzn_18u(&g&(8v@k7gs$n14_j')
+
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True # False for deployement
-# DEBUG = os.environ.get("ALLOWED_HOSTS").split("")
+# add DEBUG = os.environ.get('DJANGO_DEBUG', '') != 'False'
+# DEBUG = os.environ.get('DEBUG', 'False').lower() == 'true'
 
 ALLOWED_HOSTS = ['127.0.0.1','oubaidphone.onrender.com'] 
 
 # Application definition
-
 INSTALLED_APPS = [
 
     'django.contrib.admin',
@@ -82,6 +83,7 @@ WSGI_APPLICATION = 'project.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
+
 '''
 DATABASES = {
     'default': {
@@ -89,23 +91,26 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-
+'''
+import dj_database_url
 # Rener PostgreSQL database (Live)
 
 DATABASES = {
-    'default': dj_database_url.parse(env('DATABASE_URL'))
-}
-'''
-
-if not DEBUG:
-    DATABASES = {'default': dj_database_url.parse(os.environ.get('DATABASE_URL'))}
-else:
-    DATABASES = {
         'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
+            'ENGINE': 'django.db.backends.postgressql',
+            'NAME': 'oubaidphoneDatabase',
+            'USER': 'oubaidphonedatabase_user',
+            'PASSWORD': 'qsF4EBwwBroK0eqJA0GtbHhxTHgOdYNO',
+            'HOST' : 'dpg-cm5kph21hbls73akb7q0-a',
+            'PORT' : '5432',
         }}
 
+'''
+DATABASES = {
+    'default': dj_database_url.parse(env('DATABASE_URL'))
+}
+
+'''
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
@@ -125,7 +130,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
 
@@ -136,7 +140,6 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
@@ -161,17 +164,12 @@ USE_TZ = True
 
 # STATICFILES_DIRS = [BASE_DIR / 'project/static']
 
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/4.2/howto/static-files/
-
 STATIC_ROOT = os.path.join(BASE_DIR, 'static') # or 'staticfiles/'
 STATIC_URL = '/static/'
 # Extra places for collectstatic to find static files.
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'project/static')
-]
-# and tap python manage.py collectstatic
+] # and tap python manage.py collectstatic
 
 # MEDIA_ROOT = BASE_DIR / 'media'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
@@ -203,3 +201,12 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# add 
+'''
+if 'DATABASE_URL' in os.environ:
+    DATABASES['default'] = dj_database_url.config(
+        conn_max_age=500,
+        conn_health_checks=True,
+    )
+'''

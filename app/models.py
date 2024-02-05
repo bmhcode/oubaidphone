@@ -99,7 +99,7 @@ class Brand(models.Model):
         return url
 
 class Category(models.Model):
-    name   = models.CharField(max_length=100, verbose_name=_('Category')) #,default='name of the category', help_text='name of catygory')
+    name   = models.CharField(max_length=100, verbose_name=_("Category")) #,default='name of the category', help_text='name of catygory')
     slug   = models.SlugField(blank=True,null=True)
     image  = models.ImageField(upload_to='categories/')#,default='media/placeholder.png')
     show   = models.BooleanField(default=True)
@@ -129,20 +129,20 @@ class Category(models.Model):
         return url
 
 class Product(models.Model):
-    category = models.ForeignKey('Category', related_name='products', on_delete=models.CASCADE, blank=True,null=True)
+    # category = models.ForeignKey('Category', related_name='products', on_delete=models.CASCADE, blank=True,null=True)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE)
     name = models.CharField(max_length=128, verbose_name =_('Name of product'))
     slug = models.SlugField(blank=True,null=True)
     description = models.TextField(null=True,blank=True, verbose_name =_('informations about product')) #description = RichTextField(blank=True, null=True)
     price = models.DecimalField(max_digits=12, decimal_places=2)
     discount_price = models.DecimalField('discount', max_digits=12, decimal_places=2, default=0, blank=True,null=True)
-
     image   = models.ImageField(default='', upload_to='product/', blank=True, verbose_name=_('Image'))
     created = models.DateTimeField(auto_now_add=True, verbose_name=_('Created at'))
     updated = models.DateTimeField(auto_now=True, verbose_name=_('Updated at'))
     show    = models.BooleanField(default=False)
     new     = models.BooleanField(default=False)
-    featured_product  = models.BooleanField(default=False)
-    
+    featured_product = models.BooleanField(default=False)
+
     def __str__(self):
         return  f"{self.name}" # ({self.description[0:50]})"
     
@@ -202,6 +202,3 @@ class ProductsRelated(models.Model):
     def get_RelatedProducts(self):
         return self.PRelated.all() 
     
-    # def alternativesProduct(self):
-    #     return 
-

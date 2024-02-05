@@ -17,23 +17,16 @@
                 <ul class="list-group"> 
 
                     <li class="list-group-item">
-                        <a class="nav-link" href="{% url 'shop' %}"> Tous </a>
+                        <a class="nav-link" href="{% url 'shop' %}">
+                             Tous <span>{{ categories.count }}</span> 
+                        </a>
                     </li>
                     {% for category in categories %}
                         <li class="list-group-item">
-                            <a class="nav-link"  
-                                href="{% url 'shop' %}?category={{category.name}}">
-                                {{ category.name|capfirst  }}
+                            <a class="nav-link" href="{% url 'shop' %}?category={{category.name}}">
+                                {{ category.name|capfirst }} <span>332{{ category.products_set.all.count }}</span>
                             </a>
-                           
                         </li>
-
-                       {% comment %} <li class="list-group-item d-flex justify-content-between align-items-center">
-                            <a class="nav-link"  
-                                href="{% url 'shop' %}?category={{category.name}}"> {{ category.name|capfirst  }}
-                            </a>
-                                <span class="badge bg-primary rounded-pill">{{ products_count}}</span>
-                        </li>   {% endcomment %}
                     {% endfor %}
 
                 </ul>

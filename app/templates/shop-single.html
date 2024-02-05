@@ -152,7 +152,8 @@
                                 </li> 
                             </ul> {% endcomment %}
 
-                            <h6>Description:</h6>
+
+                            <hr>
                             <p>{{ product.description }}</p>
 
                                 <div class="row pb-3">
@@ -173,16 +174,20 @@
     <section class="py-5">
         <div class="container">
             <div class="row text-left p-2 pb-3">
-                <h4>Related Products</h4>
+                <h4>Related Products (Articles similaires)</h4>
             </div>
 
             <!--Start Carousel Wrapper-->
             <div id="carousel-related-product">
-                {% for product in RelatedProducts %}
+               
+                <p>{{related_products}}</p>
+
+
+                {% for prod in related_products %}
                     <div class="p-2 pb-3">
                     <div class="product-wap card rounded-0">
                         <div class="card rounded-0">
-                            <img class="card-img rounded-0 img-fluid" src="{{ product.image }}">
+                            <img class="card-img rounded-0 img-fluid" src="{{ prod.product.imageURL }}">
                             <div class="card-img-overlay rounded-0 product-overlay d-flex align-items-center justify-content-center">
                                 <ul class="list-unstyled">
                                     <li><a class="btn btn-success text-white" href="shop-single.html"><i class="far fa-heart"></i></a></li>
@@ -192,7 +197,7 @@
                             </div>
                         </div>
                         <div class="card-body">
-                            <a href="shop-single.html" class="h3 text-decoration-none">{{ product.name }}</a>
+                            <a href="shop-single.html" class="h3 text-decoration-none">{{ prod.product.name }}</a>
                             <ul class="w-100 list-unstyled d-flex justify-content-between mb-0">
                                 <li>{{ product.description }}</li>
                                 <li class="pt-2">

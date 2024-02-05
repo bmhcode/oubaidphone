@@ -94,12 +94,12 @@ DATABASES = {
 '''
 import dj_database_url
 # Rener PostgreSQL database (Live)
-DATABASE_URL = "postgresql://postgres:-3CfBD3G62D4cg3def*5*AE1gcfDD5Bd@monorail.proxy.rlwy.net:25039/railway"
-DATABASES = {
-    'default': dj_database_url.config(default=DATABASE_URL,conn_max_age=1800),
-}
+# DATABASE_URL = "postgresql://postgres:-3CfBD3G62D4cg3def*5*AE1gcfDD5Bd@monorail.proxy.rlwy.net:25039/railway"
+# DATABASES = {
+#     'default': dj_database_url.config(default=DATABASE_URL,conn_max_age=1800),
+# }
 
-'''
+
 DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgressql',
@@ -109,7 +109,7 @@ DATABASES = {
             'HOST' : 'dpg-cm5kph21hbls73akb7q0-a',
             'PORT' : '5432',
         }}
-'''
+
 
 '''
 DATABASES = {

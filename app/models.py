@@ -4,31 +4,32 @@ from django.contrib.auth.models import User
 from django.urls import reverse
 from datetime import datetime, date
 from django.utils.text import slugify
+from django.utils.html import mark_safe
 # from ckeditor.fields import RichTextField
 import django.utils.timezone
 
-
+def user_directory_path(instance,filename):
+    return 'user_{0}/{1}'.format(instance.user.id, filename)
+    
 class Store(models.Model):
     name    = models.CharField('name of store', max_length=255, blank=True, null=False, default="Store name")
     about_us = models.TextField(null=True, blank=True, default="About Us")
     address = models.CharField(max_length=255, blank=True, null=True, default="Store adress")
     phone  = models.CharField('Contact Phone',max_length=255, blank=True, null=True, default="Store phone")
     email  = models.EmailField('Email Address', max_length=255, default="yourmail@gmail.com")
-    logo   = models.ImageField(blank=True, default='', upload_to="store/")
+    logo   = models.ImageField(blank=True, default='', upload_to="store")
     
-    image1 = models.ImageField(blank=True, default='image1', upload_to="store/")
+    image1 = models.ImageField(blank=True, default='image1', upload_to="store")
     title1 = models.CharField(max_length=50, blank=True, null=True, default="title1")
     subtitle1 = models.CharField(max_length=50, blank=True, null=True, default="subtitle1")
     description1 = models.TextField(null=True, blank=True, default="description1")
 
-
-    image2 = models.ImageField(blank=True,default='image2', upload_to="store/")
+    image2 = models.ImageField(blank=True,default='image2', upload_to="store")
     title2 = models.CharField(max_length=50, blank=True, null=True, default="title2")
     subtitle2 = models.CharField(max_length=50, blank=True, null=True, default="subtitle2")
     description2 = models.TextField(null=True, blank=True, default="description2")
 
-    
-    image3 = models.ImageField(blank=True, default='image3', upload_to="store/")
+    image3 = models.ImageField(blank=True, default='image3', upload_to="store")
     title3 = models.CharField(max_length=50, blank=True, null=True, default="title3")
     subtitle3 = models.CharField(max_length=50, blank=True, null=True, default="subtitle3")
     description3 = models.TextField(null=True, blank=True, default="description3")
@@ -101,7 +102,7 @@ class Brand(models.Model):
 class Category(models.Model):
     name   = models.CharField(max_length=100, verbose_name=_("Category")) #,default='name of the category', help_text='name of catygory')
     slug   = models.SlugField(blank=True,null=True)
-    image  = models.ImageField(upload_to='categories/')#,default='media/placeholder.png')
+    image  = models.ImageField(upload_to='category',default='category.jpg')
     show   = models.BooleanField(default=True)
 
     def __str__(self):
@@ -127,16 +128,19 @@ class Category(models.Model):
         except:
             url = ''
         return url
+    
+    def category_image(self):
+        return mark_safe('<img src="%s" width="50" height="50" />' % (self.image.url))
 
 class Product(models.Model):
-    # category = models.ForeignKey('Category', related_name='products', on_delete=models.CASCADE, blank=True,null=True)
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     name = models.CharField(max_length=128, verbose_name =_('Name of product'))
     slug = models.SlugField(blank=True,null=True)
-    description = models.TextField(null=True,blank=True, verbose_name =_('informations about product')) #description = RichTextField(blank=True, null=True)
+    description = models.TextField(null=True,blank=True, default='This is the product', verbose_name =_('informations about product')) #description = RichTextField(blank=True, null=True)
     price = models.DecimalField(max_digits=12, decimal_places=2)
-    discount_price = models.DecimalField('discount', max_digits=12, decimal_places=2, default=0, blank=True,null=True)
-    image   = models.ImageField(default='', upload_to='product/', blank=True, verbose_name=_('Image'))
+    old_price = models.DecimalField('discount', max_digits=12, decimal_places=2, default=0, blank=True,null=True)
+    image   = models.ImageField(upload_to=user_directory_path, default='product.jpg') #upload_to='product',
     created = models.DateTimeField(auto_now_add=True, verbose_name=_('Created at'))
     updated = models.DateTimeField(auto_now=True, verbose_name=_('Updated at'))
     show    = models.BooleanField(default=False)
@@ -169,36 +173,19 @@ class Product(models.Model):
             url = ''
         return url
     
-class ProductImages(models.Model):
-    product     = models.ForeignKey(Product, on_delete=models.CASCADE, verbose_name=_("Product"))
-    image       = models.ImageField(default='', upload_to='product/', blank=True, verbose_name=_("Image")) #/%y/%m/%d')
-    description = models.CharField(max_length=128, blank=True, null=True, verbose_name=_("Description"))
+    def product_image(self):
+        return mark_safe('<img src="%s" width="50" height="50" />' % (self.image.url))
+        # return mark_safe('<img src="/media/%s" width="50" height="50" />' % (self.image))
 
-    def __str__(self):
-        return str(self.product.name)
+    def get_precentage(self):
+        new_price = (self.price / self.old_price) * 100
+        return new_price
     
+class ProductImages(models.Model):
+    product     = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True, verbose_name=_("Product"))
+    image       = models.ImageField(upload_to='product-images', default='product.jpg') #/%y/%m/%d')
+    description = models.CharField(max_length=64, blank=True, null=True, verbose_name=_("Description"))
+
     class Meta:
-        verbose_name = _("Product images") 
-    
-    @property
-    def imageURL(self):
-        try:
-            url = self.image.url
-        except:
-            url = ''
-        return url   
-          
-class ProductsRelated(models.Model):
-    PRELProduct = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='main_product', verbose_name=_("Product"))
-    PRelated = models.ManyToManyField(Product, related_name='Related_products', verbose_name=_("Related products"))
-        
-    class Meta:
-        verbose_name =('Related Product')
-        verbose_name_plural= ('Related Products')
-        
-    def __str__(self):
-        return str(self.PRELProduct)
-    
-    def get_RelatedProducts(self):
-        return self.PRelated.all() 
-    
+        verbose_name_plural = _("Product Images") 
+      

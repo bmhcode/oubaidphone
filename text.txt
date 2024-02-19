@@ -19,3 +19,13 @@
                                 
 
  </p>
+
+
+ obtenir un secret_ky
+(env) D:\Django\1. Projects for making\oubaidphone Zay>python
+Python 3.11.0 (main, Oct 24 2022, 18:26:48) [MSC v.1933 64 bit (AMD64)] on win32
+Type "help", "copyright", "credits" or "license" for more information.
+>>> import secrets
+>>> secrets.token_hex()
+'2ed672570e64a61b613331304a326e3806fbb6a6b330ac60b0c6e167a17ede34'
+>>>

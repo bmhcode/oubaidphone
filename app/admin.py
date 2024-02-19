@@ -1,24 +1,21 @@
 from django.contrib import admin
-from .models import Store, Brand, Category, Product, ProductImages,  ProductsRelated
+from .models import Store, Brand, Category, Product, ProductImages
 
 class StoreAdmin(admin.ModelAdmin):
     list_display = ['name','about_us','address', 'logo', 'id']    
-admin.site.register(Store,StoreAdmin)
 
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ['name','image','show']    
-admin.site.register(Category,CategoryAdmin)
-
 
 class BrandAdmin(admin.ModelAdmin):
     list_display = ['name','image','start', 'end','show']    
-admin.site.register(Brand,BrandAdmin)
-
 
 class ProductAdmin(admin.ModelAdmin):
     list_display = ['name','category', 'price','image', 'show', 'new', 'featured_product']    
-admin.site.register(Product,ProductAdmin)
 
+admin.site.register(Store,StoreAdmin)
+admin.site.register(Category,CategoryAdmin)
+admin.site.register(Brand,BrandAdmin)
+admin.site.register(Product,ProductAdmin)
 admin.site.register(ProductImages)
-admin.site.register(ProductsRelated)
 

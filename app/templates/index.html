@@ -149,7 +149,7 @@ https://templatemo.com/tm-559-zay-shop
                                     </span>
                                 {% endif %}
                                 
-                                <a href="{% url 'shop-single' product.id %}">
+                                <a href="{% url 'product-detail' product.id %}">
                                     <img src="{{ product.imageURL }}" class="card-img-top p-2" style="min-height: 200px; max-height: 200px;" alt="...">
                                 </a>
                                 <div class="card-body"> 
@@ -168,7 +168,7 @@ https://templatemo.com/tm-559-zay-shop
                                             <li class="mr-1">{{ product.price }} Da</li>
                                         {% endif %}
                                     </ul>
-                                        <a href="{% url 'shop-single' product.id %}" class="h2 text-decoration-none text-dark">
+                                        <a href="{% url 'product-detail' product.id %}" class="h2 text-decoration-none text-dark">
                                             <h5 class="card-title"> {{ product.name }}  
                                                 {% if product.featured_product %}    
                                                 <small style="color:green ;">(FP)</small>
@@ -206,15 +206,15 @@ https://templatemo.com/tm-559-zay-shop
                                     New
                                     <span class="visually-hidden">unread messages</span>
                                 </span>
-                                <a href="{% url 'shop-single' product.id %}">
+                                <a href="{% url 'product-detail' product.id %}">
                                     <img src="{{ product.imageURL }}" class="card-img-top p-2" style="min-height: 200px; max-height: 200px;" alt="...">
                                 </a>
                                 <div class="card-body"> 
                                     <ul class="list-unstyled d-flex justify-content-between">
                                         <li class=" text-right">{{ product.price }} Da</li>
                                     </ul>
-                                    <a href="{% url 'shop-single' product.id %}" class="h4 text-decoration-none text-dark">
-                                        <a href="{% url 'shop-single' product.id %}" class="h4 text-decoration-none text-dark">
+                                    <a href="{% url 'product-detail' product.id %}" class="h4 text-decoration-none text-dark">
+                                        <a href="{% url 'product-detail' product.id %}" class="h4 text-decoration-none text-dark">
                                             <h5 class="card-title "> {{ product.name }}  
                                                 {% if product.featured_product %}    
                                                 <small style="color:green ;">(FP)</small>

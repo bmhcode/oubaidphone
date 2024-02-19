@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect , reverse
 from django.core.paginator import Paginator
-from .models import  Store, Brand, Category, Product, ProductImages, ProductsRelated
+from .models import  Store, Brand, Category, Product, ProductImages
 # Create your views here.
 
 def index(request):
@@ -42,19 +42,20 @@ def shop(request):
     return render(request, 'shop.html', context)
 
 
-def shop_single(request,id): 
+def product_detail(request,id): 
     store = Store.objects.get(id=1)
+    
     categories = Category.objects.all()   
-    product = get_object_or_404(Product, id=id)
+    product = Product.objects.get(id=id) #  product = get_object_or_404(Product, id=pid)
     productImages = ProductImages.objects.filter(product_id=id)
     
-    related_products = ProductsRelated.objects.filter(PRELProduct=product.id)
-
+    related_products = Product.objects.filter(category=product.category).exclude(id=id)[:4]
     context = {'store' : store, 'categories' : categories,
-               'product' : product, 'productImages' : productImages,
-               'related_products' : related_products }
+                'product' : product,
+                'productImages' : productImages,
+                'related_products' : related_products }
     
-    return render(request,'shop-single.html',context)
+    return render(request,'product_detail.html',context)
 
 def about(request):
     store = Store.objects.get(id=1)

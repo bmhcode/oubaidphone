@@ -71,14 +71,14 @@
                                 <img class="card-img rounded-0 img-fluid" style="min-height: 300px; max-height: 300px;" src="{{ product.imageURL }}">
                                 <div class="card-img-overlay rounded-0 product-overlay d-flex align-items-center justify-content-center">
                                     <ul class="list-unstyled">
-                                        {% comment %} <li><a class="btn btn-success text-white"      href="{% url 'shop-single' product.id %}"><i class="far fa-heart"></i></a></li> {% endcomment %}
-                                        <li><a class="btn btn-success text-white mt-2" href="{% url 'shop-single' product.id %}"><i class="far fa-eye"></i></a></li>
-                                        {% comment %} <li><a class="btn btn-success text-white mt-2" href="{% url 'shop-single' product.slug %}"><i class="fas fa-cart-plus"></i></a></li> {% endcomment %}
+                                        {% comment %} <li><a class="btn btn-success text-white" href="{% url 'product-detail' prod.id %}"><i class="far fa-heart"></i></a></li> {% endcomment %}
+                                        <li><a class="btn btn-success text-white mt-2" href="{% url 'product-detail' product.id %}"><i class="far fa-eye"></i></a></li>
+                                        {% comment %} <li><a class="btn btn-success text-white mt-2" href="{% url 'product-detail' product.slug %}"><i class="fas fa-cart-plus"></i></a></li> {% endcomment %}
                                     </ul>
                                 </div>
                             </div>
                             <div class="card-body">
-                                <a href="{% url 'shop-single' product.id %}" class="h3 text-decoration-none text-dark">
+                                <a class="h3 text-decoration-none text-dark" href="{% url 'product-detail' product.id %}" >
                                     <h5 class="card-title "> {{ product.name }}  
                                         {% if product.featured_product %}    
                                         <small style="color:green ;">(FP)</small>

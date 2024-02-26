@@ -75,7 +75,7 @@ class Store(models.Model):
 class Brand(models.Model):
     name  = models.CharField(max_length=128, verbose_name =_('Name of product'))
     slug  = models.SlugField(blank=True,null=True)
-    image = models.ImageField(default='', upload_to='product/', blank=True, verbose_name=_('Image'))
+    image = models.ImageField(upload_to='brand', default='brand.jpg', blank=True, verbose_name=_('Brand'))
     start = models.DateTimeField(verbose_name=_('Start at'))
     end   = models.DateTimeField(verbose_name=_('End at'))
     show  = models.BooleanField(default=False)
@@ -139,8 +139,8 @@ class Product(models.Model):
     slug = models.SlugField(blank=True,null=True)
     description = models.TextField(null=True,blank=True, default='This is the product', verbose_name =_('informations about product')) #description = RichTextField(blank=True, null=True)
     price = models.DecimalField(max_digits=12, decimal_places=2)
-    old_price = models.DecimalField('discount', max_digits=12, decimal_places=2, default=0, blank=True,null=True)
-    image   = models.ImageField(upload_to=user_directory_path, default='product.jpg') #upload_to='product',
+    old_price = models.DecimalField('old price', max_digits=12, decimal_places=2, default=0, blank=True,null=True)
+    image   = models.ImageField(upload_to='product', default='product.jpg') # upload_to=user_directory_path it's for users
     created = models.DateTimeField(auto_now_add=True, verbose_name=_('Created at'))
     updated = models.DateTimeField(auto_now=True, verbose_name=_('Updated at'))
     show    = models.BooleanField(default=False)

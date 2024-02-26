@@ -29,3 +29,32 @@ Type "help", "copyright", "credits" or "license" for more information.
 >>> secrets.token_hex()
 '2ed672570e64a61b613331304a326e3806fbb6a6b330ac60b0c6e167a17ede34'
 >>>
+
+//--------------------
+from django.db import models
+import os
+from PIL import Image
+from datetime import date
+import datetime
+from .validators import validate_file_extension
+import base64
+
+def get_directory_path(instance, filename):
+
+    today = date.today()
+    t = datetime.datetime.now() 
+    day, month, year = today.day, today.month, today.year
+    hour, minutes, seconds = t.hour, t.minute, t.second
+filename = str(day) + str(month) + str(year) + str(hour) + str(minutes) + str(seconds) + '.png'
+    dir = 'media'
+    path = '{0}/{1}'.format(dir, filename)
+    return path
+
+class Image(models.Model):
+    image = models.FileField(upload_to = get_directory_path, null = True , validators=[validate_file_extension])
+    created_date = models.DateTimeField(auto_now = True)
+
+    def __str__(self):
+        return str(self.id)
+
+//--------------------

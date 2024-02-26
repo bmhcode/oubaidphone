@@ -39,7 +39,9 @@ ALLOWED_HOSTS = ['127.0.0.1','.onrender.com']
 
 # Application definition
 INSTALLED_APPS = [
+    
     'jazzmin',  # pip install jazzmin or # pip install django-jazzmin
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -47,8 +49,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'app',
-   
-]
+    ]
 
 MIDDLEWARE = [
     
@@ -86,14 +87,14 @@ WSGI_APPLICATION = 'project.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-
+'''
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-
+'''
 import dj_database_url
 
 '''
@@ -105,13 +106,22 @@ DATABASES = {
             'PASSWORD': 'qsF4EBwwBroK0eqJA0GtbHhxTHgOdYNO',
             'HOST' : 'dpg-cm5kph21hbls73akb7q0-a',
             'PORT' : '5432',
-        }}
+        }
+}
 '''
 '''
 DATABASES = {
     'default': dj_database_url.parse(env('DATABASE_URL'))
 }
 '''
+DATABASES = {
+    'default': dj_database_url.config(
+        default='postgres://oubaidphonedatabase_user:qsF4EBwwBroK0eqJA0GtbHhxTHgOdYNO@dpg-cm5kph21hbls73akb7q0-a.ohio-postgres.render.com/oubaidphonedatabase',
+        conn_max_age=600,
+        conn_health_checks=True,
+    )
+}
+
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
@@ -178,7 +188,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 JAZZMIN_SETTINGS = {
     'site_header' : "BMHcode Shop",
-    'site_brand' : "You order, we deliver",
+    'site_brand' : "Your Wilcome",
     'site_logo' : "img/about-left-image.png",
     'copyright' : "bmhcode-shop.com",
 }  # pip install django-jazzmin

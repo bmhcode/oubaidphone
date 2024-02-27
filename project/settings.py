@@ -35,8 +35,8 @@ SECRET_KEY = os.environ.get('SECRET_KEY','secret_key')
 
 # DEBUG = os.environ.get('DEBUG', True)
 
-DEBUG = False  # for deployement
-
+# DEBUG = False  # False for deployement
+DEBUG_PROPAGATE_EXCEPTIONS = True
 ALLOWED_HOSTS = ['127.0.0.1','.onrender.com'] 
 
 # Application definition

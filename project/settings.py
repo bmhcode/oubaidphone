@@ -35,13 +35,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY','secret_key')
 
 # DEBUG = os.environ.get('DEBUG', True)
 
-# DEBUG = False  # False for deployement
-
-IS_RENDER = "RENDER" in os.environ
-if IS_RENDER:
-    BEBUG = True
-else:
-    DEBUG = False
+DEBUG = (env("DJANGO_DEBUG", default="true").lower() == "true")
     
 ALLOWED_HOSTS = ['127.0.0.1','.onrender.com'] 
 

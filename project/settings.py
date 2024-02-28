@@ -164,18 +164,9 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, 'project/static')] # and tap python m
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-# STATIC_URL = '/static/'
-# MEDIA_URL = '/media/'
-
-# if DEBUG:
-#     STATICFILES_DIRS = [os.path.join(BASE_DIR, 'project/static')] # and tap python manage.py collectstatic
-# else:
-#     STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles') 
-
-# MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-
-
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage' 
+if not DEBUG:
+    STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles') 
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage' 
 
 ## --------- add this code to project\urls --------------
 # from django.contrib import admin

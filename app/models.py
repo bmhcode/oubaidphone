@@ -175,7 +175,6 @@ class Product(models.Model):
     
     def product_image(self):
         return mark_safe('<img src="%s" width="50" height="50" />' % (self.image.url))
-        # return mark_safe('<img src="/media/%s" width="50" height="50" />' % (self.image))
 
     def get_precentage(self):
         new_price = (self.price / self.old_price) * 100

@@ -118,7 +118,7 @@ DATABASES = {
 '''
 DATABASES = {
     'default': dj_database_url.config(
-        default='postgres://oubaidphonedatabase_user:qsF4EBwwBroK0eqJA0GtbHhxTHgOdYNO@dpg-cm5kph21hbls73akb7q0-a.ohio-postgres.render.com/oubaidphonedatabase',
+        default='postgres://oubaiddb_user:TJHk1VgogqNzqNZCPE8NLLXIJq1EfU7p@dpg-coicmn0l5elc73d4t380-a.ohio-postgres.render.com/oubaiddb',
         conn_max_age=600,
         conn_health_checks=True,
     )

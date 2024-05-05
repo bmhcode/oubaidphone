@@ -56,7 +56,8 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware', # pip install whitenoise 
+    'whitenoise.middleware.WhiteNoiseMiddleware', # pip install 'whitenoise[brotli]' $ pip freeze > requirements.txt
+    
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -99,31 +100,12 @@ DATABASES = {
 '''
 import dj_database_url
 
-'''
-DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgressql',
-            'NAME': 'oubaidphoneDatabase',
-            'USER': 'oubaidphonedatabase_user',
-            'PASSWORD': 'qsF4EBwwBroK0eqJA0GtbHhxTHgOdYNO',
-            'HOST' : 'dpg-cm5kph21hbls73akb7q0-a',
-            'PORT' : '5432',
-        }
-}
-'''
-'''
-DATABASES = {
-    'default': dj_database_url.parse(env('DATABASE_URL'))
-}
-'''
 DATABASES = {
     'default': dj_database_url.config(
         default='postgres://oubaiddb_user:TJHk1VgogqNzqNZCPE8NLLXIJq1EfU7p@dpg-coicmn0l5elc73d4t380-a.ohio-postgres.render.com/oubaiddb',
         conn_max_age=600,
-        conn_health_checks=True,
     )
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
@@ -158,26 +140,13 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles') 
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'project/static')] # and tap python manage.py collectstatic
-
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-
 if not DEBUG:
     STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles') 
     STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage' 
-
-## --------- add this code to project\urls --------------
-# from django.contrib import admin
-# from django.urls import path, include
-# ==> from django.conf import settings
-# ==> from django.conf.urls.static import static
-
-# urlpatterns = [
-#     path('admin/', admin.site.urls),
-#     path('', include('app.urls')),
-# ]
+    
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # ==> urlpatterns+= static(settings.STATIC_URL, document_root = settings.STATIC_ROOT)
 # ==> urlpatterns+= static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)
@@ -188,7 +157,6 @@ if not DEBUG:
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
 
 JAZZMIN_SETTINGS = {
     'site_header' : "BMHcode Shop",

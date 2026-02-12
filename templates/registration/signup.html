@@ -1,0 +1,46 @@
+{% extends 'app/base.html' %}
+
+{% block title %} Sign Up - {{ store.name }} {% endblock title %}
+
+{% block body %}
+<!-- Start Content -->
+<div class="container py-5">
+    <div class="row py-5">
+        <form class="col-md-9 m-auto" method="post" role="form">
+            {% csrf_token %}
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <h2>Sign Up</h2>
+                    {% if form.errors %}
+                        <div class="alert alert-danger">
+                            {{ form.errors }}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            {% for field in form %}
+            <div class="mb-3">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.help_text %}
+                <small class="form-text text-muted">{{ field.help_text }}</small>
+                {% endif %}
+            </div>
+            {% endfor %}
+
+            <div class="row">
+                <div class="col text-end mt-2">
+                    <button type="submit" class="btn btn-success btn-lg px-3">Sign Up</button>
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col">
+                    <p>Already have an account? <a href="{% url 'login' %}">Login here</a></p>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<!-- End Content -->
+{% endblock body %}

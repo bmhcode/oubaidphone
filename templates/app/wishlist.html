@@ -1,0 +1,128 @@
+{% extends 'app/base.html' %}
+{% load static %}
+
+{% block title %} Wishlist - {{ store.name }} {% endblock title %}
+
+{% block body %}
+<!-- Start Content -->
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-6 m-auto">
+            <h1 class="h1 text-center">My Wishlist</h1>
+        </div>
+    </div>
+
+    <!-- Start products -->
+    <div class="col-lg-12">
+
+        <div class="row">
+            {% if products %}
+            {% for product in products %}
+            <div class="col-12 col-md-3 mb-4">
+                <div class="product-wap card rounded-0 m-2">
+                    <div class="card rounded-0">
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                            New
+                        </span>
+                        <a href="{{product.get_absolute_url}}">
+                            <img src="{{ product.imageURL }}" class="card-img-top p-2"
+                                style="min-height: 200px; max-height: 200px;" alt="...">
+
+                            <div
+                                class="card-img-overlay rounded-0 product-overlay d-flex align-items-center justify-content-center">
+                                <ul class="list-unstyled">
+                                    <li><a class="btn btn-success text-white"
+                                            href="{% url 'add_to_wishlist' product.id %}"><i
+                                                class="far fa-heart"></i></a></li>
+                                    <li><a class="btn btn-success text-white mt-2"
+                                            href="{{product.get_absolute_url}}"><i class="far fa-eye"></i></a>
+                                    </li>
+                                    <li><a class="btn btn-success text-white mt-2" href="product_detail.html"><i
+                                                class="fas fa-cart-plus"></i></a></li>
+                                </ul>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-unstyled d-flex justify-content-between">
+                            {% comment %} <li>
+                                <i class="text-warning fa fa-star"></i>
+                                <i class="text-warning fa fa-star"></i>
+                                <i class="text-warning fa fa-star"></i>
+                                <i class="text-muted fa fa-star"></i>
+                                <i class="text-muted fa fa-star"></i>
+                            </li> {% endcomment %}
+
+                        </ul>
+                        <a href="{{product.get_absolute_url}}" class="h2 text-decoration-none text-dark">
+                            <h5 class="card-title"> {{product.name}}
+                                {% if product.featured_product %}
+                                <span
+                                    class="position-absolute left-0  start-100 translate-middle badge rounded-pill bg-success">
+                                    Featured
+                                </span> {% endif %}
+                            </h5>
+                        </a>
+                        <p class="card-text">{{product.description|truncatechars:20}}</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            {% if product.old_price and product.old_price > product.price %}
+                            <span class="text-muted">
+                                <del>{{ product.old_price }} Da</del>
+                            </span>
+                            {% else %}
+                            <span></span> <!-- vide pour maintenir l'espacement -->
+                            {% endif %}
+
+                            <span class="fw-bold text-success ms-auto">
+                                {{ product.price }} Da
+                            </span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <a href="{% url 'product' product.slug %}" class="btn btn-succes text-white mt-2">View</a>
+                            <a href="{% url 'remove_from_wishlist' product.id %}"
+                                class="btn btn-danger text-white mt-2">Remove</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            {% else %}
+            <div class="col-12 text-center">
+                <p class="lead">Your Shop list is empty.</p>
+                <a href="{% url 'shop' %}" class="btn btn-success btn-lg">Start Shopping</a>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Pagination -->
+        <div div="row">
+            <nav aria-label="Page navigation example">
+                <ul class="pagination justify-content-center">
+                    {% if productsPages.has_previous %}
+                    <li class="page-item"><a class="page-link" href="?page=1">&laquo</a></li>
+                    <li class="page-item"><a class="page-link" href="?page={{ productsPages.previous_page_number }}">
+                            Previous </a></li>
+                    {% endif %}
+
+                    {% for i in nums %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ forloop.counter }}">{{ forloop.counter }}</a>
+                    </li>
+                    {% endfor %}
+
+                    {% if productsPages.has_next %}
+                    <li class="page-item"><a class="page-link"
+                            href="?page={{ productsPages.next_page_number }}">next</a></li>
+                    <li class="page-item"><a class="page-link"
+                            href="?page={{ productsPages.paginator.num_pages }}">&raquo;</a></li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+
+    </div>
+    <!-- End products -->
+
+</div>
+<!-- End Content -->
+{% endblock body %}

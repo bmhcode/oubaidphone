@@ -1,0 +1,250 @@
+{% extends "app/base.html" %}
+{% load static %}
+
+{% block title %}
+OubaidPhone/shop
+{% endblock title %}
+
+
+{% block body %}
+
+<!-- Start Content -->
+<div class="container py-5">
+    <div class="row">
+        <!-- Start Categories -->
+        <div class="col-lg-3">
+            <h1 class="h2 pb-4">{{ categories.count }} Categories </h1>
+            <ul class="list-group">
+
+                <li class="list-group-item">
+                    <a class="nav-link" href="{% url 'shop' %}">
+                        Tous
+                    </a>
+                </li>
+                {% for cat in categories %}
+                <li class="list-group-item">
+                    <a class="nav-link" href="{% url 'shop' %}?cat_filter={{cat.name}}">
+                        {{ cat.name|capfirst }} <span>{{ cat.category.count }}</span>
+                        {% comment %} {% for item in cat.category.all %}
+                <li> {{item.name}} </li>
+                {% endfor %} {% endcomment %}
+                </a>
+                </li>
+                {% endfor %}
+
+
+            </ul>
+        </div>
+        <!-- End Categories -->
+
+        <!-- Start products -->
+        <div class="col-lg-9">
+            <div class="row">
+                <div class="col-md-6">
+                    <ul class="list-inline shop-top-menu pb-3 pt-1">
+                        <li class="list-inline-item">
+                            <a class="h3 text-dark text-decoration-none mr-3" href="#">{{ lib_category }}</a>
+                        </li>
+                    </ul>
+                </div>
+                {% comment %} <div class="col-md-6 pb-4">
+                    <div class="d-flex">
+                        <select class="form-control">
+                            <option>Featured Produtcs</option>
+                            <option>New Arrivals</option>
+                            <option>Promotional Products</option>
+                        </select>
+                    </div>
+                </div> {% endcomment %}
+            </div>
+
+            <div class="row">
+                {% if products %}
+                {% for product in products %}
+                <div class="col-12 col-md-4 mb-4">
+                    <div class="product-wap card rounded-0 m-2">
+                        <div class="card rounded-0">
+                            {% if product.new_product %}
+                            <span
+                                class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                New
+                            </span>
+                            {% endif %}
+                            <a href="{{product.get_absolute_url}}">
+                                <img src="{{ product.imageURL }}" class="card-img-top p-2"
+                                    style="min-height: 200px; max-height: 200px;" alt="...">
+
+                                <div
+                                    class="card-img-overlay rounded-0 product-overlay d-flex align-items-center justify-content-center">
+                                    <ul class="list-unstyled">
+                                        <li><a class="btn btn-success text-white"
+                                                href="{% url 'add_to_wishlist' product.id %}"><i
+                                                    class="far fa-heart"></i></a></li>
+                                        <li><a class="btn btn-success text-white mt-2"
+                                                href="{{product.get_absolute_url}}"><i class="far fa-eye"></i></a>
+                                        </li>
+                                        <li><a class="btn btn-success text-white mt-2" href="product_detail.html"><i
+                                                    class="fas fa-cart-plus"></i></a></li>
+                                    </ul>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="card-body">
+                            <ul class="list-unstyled d-flex justify-content-between">
+                                {% comment %} <li>
+                                    <i class="text-warning fa fa-star"></i>
+                                    <i class="text-warning fa fa-star"></i>
+                                    <i class="text-warning fa fa-star"></i>
+                                    <i class="text-muted fa fa-star"></i>
+                                    <i class="text-muted fa fa-star"></i>
+                                </li> {% endcomment %}
+
+                            </ul>
+                            <a href="{{product.get_absolute_url}}" class="h2 text-decoration-none text-dark">
+                                <h5 class="card-title">{{product.name}}
+                                    {% if product.featured_product %}
+                                    <span
+                                        class="position-absolute left-0  start-100 translate-middle badge rounded-pill bg-success">
+                                        Featured
+                                    </span>
+                                    {% endif %}
+                                </h5>
+                            </a>
+                            <p class="card-text">{{product.description|truncatechars:20}}</p>
+
+                            <div class="d-flex justify-content-between align-items-center">
+                                {% if product.old_price and product.old_price > product.price %}
+                                <span class="text-muted">
+                                    <del>{{ product.old_price }} Da</del>
+                                </span>
+                                {% else %}
+                                <span></span> <!-- vide pour maintenir l'espacement -->
+                                {% endif %}
+
+                                <span class="fw-bold text-success ms-auto">
+                                    {{ product.price }} Da
+                                </span>
+                            </div>
+
+
+
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+                {% else %}
+                <div class="col-12 text-center">
+                    <p class="lead">Your Shop list is empty.</p>
+                    <a href="{% url 'shop' %}" class="btn btn-success btn-lg">Start Shopping</a>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Pagination -->
+            <div div="row">
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination justify-content-center">
+                        {% if productsPages.has_previous %}
+                        <li class="page-item"><a class="page-link" href="?page=1">&laquo</a></li>
+                        <li class="page-item"><a class="page-link"
+                                href="?page={{ productsPages.previous_page_number }}"> Previous </a></li>
+                        {% endif %}
+
+                        {% for i in nums %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ forloop.counter }}">{{ forloop.counter }}</a>
+                        </li>
+                        {% endfor %}
+
+                        {% if productsPages.has_next %}
+                        <li class="page-item"><a class="page-link"
+                                href="?page={{ productsPages.next_page_number }}">next</a></li>
+                        <li class="page-item"><a class="page-link"
+                                href="?page={{ productsPages.paginator.num_pages }}">&raquo;</a></li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            </div>
+
+        </div>
+        <!-- End products -->
+
+    </div>
+</div>
+<!-- End Content -->
+
+<!-- Start Brands -->
+<section class="bg-light py-5">
+    <div class="container my-4">
+        <div class="row text-center py-3">
+            <div class="col-lg-6 m-auto">
+                <h1 class="h1">Our Brands</h1>
+                <p>
+                    List of brands factury
+                </p>
+            </div>
+            <div class="col-lg-9 m-auto tempaltemo-carousel">
+                <div class="row d-flex flex-row">
+                    <!--Controls-->
+                    <div class="col-1 align-self-center">
+                        <a class="h1" href="#multi-item-example" role="button" data-bs-slide="prev">
+                            <i class="text-light fas fa-chevron-left"></i>
+                        </a>
+                    </div>
+                    <!--End Controls-->
+
+                    <!--Carousel Wrapper-->
+                    <div class="col">
+                        <div class="carousel slide carousel-multi-item pt-2 pt-md-0" id="multi-item-example"
+                            data-bs-ride="carousel">
+                            <!--Slides-->
+                            <div class="carousel-inner product-links-wap" role="listbox">
+
+                                <!--First slide-->
+                                <div class="carousel-item active">
+
+                                    <div class="row">
+                                        {% for brand in brands %}
+                                        <div class="col-3 p-md-5">
+                                            <a href="#"><img class="img-fluid brand-img" src="{{ brand.imageURL }}"></a>
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+
+                                </div>
+                                <!--End First slide-->
+                                <!--2 slide-->
+                                <div class="carousel-item ">
+
+                                    <div class="row">
+                                        {% for brand in brands %}
+                                        <div class="col-3 p-md-5">
+                                            <a href="#"><img class="img-fluid brand-img" src="{{ brand.imageURL }}"></a>
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+
+                                </div>
+                                <!--End 2 slide-->
+
+                            </div>
+                            <!--End Slides-->
+                        </div>
+                    </div>
+                    <!--End Carousel Wrapper-->
+
+                    <!--Controls-->
+                    <div class="col-1 align-self-center">
+                        <a class="h1" href="#multi-item-example" role="button" data-bs-slide="next">
+                            <i class="text-light fas fa-chevron-right"></i>
+                        </a>
+                    </div>
+                    <!--End Controls-->
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!--End Brands-->
+
+{% endblock body %}

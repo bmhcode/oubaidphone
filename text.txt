@@ -1,0 +1,112 @@
+{% if table.queryset|length == 0 %}
+    <p>The table is empty.</p>
+{% else %}
+    <table>
+        <!-- table code here -->
+    </table>
+{% endif %}
+
+ <p>
+    You are permitted to use this Zay CSS template for your commercial websites. 
+</p>
+
+ <p>
+                                    Zay Shop is an eCommerce HTML5 CSS template with latest version of Bootstrap 5 (beta 1). 
+                                    This template is 100% free provided by <a rel="sponsored" class="text-success" href="https://templatemo.com" target="_blank">TemplateMo</a> website. 
+                                    Image credits go to <a rel="sponsored" class="text-success" href="https://stories.freepik.com/" target="_blank">Freepik Stories</a>,
+                                    <a rel="sponsored" class="text-success" href="https://unsplash.com/" target="_blank">Unsplash</a> and
+                                    <a rel="sponsored" class="text-success" href="https://icons8.com/" target="_blank">Icons 8</a>.
+                                
+
+ </p>
+
+
+ obtenir un secret_ky
+(env) D:\Django\1. Projects for making\oubaidphone Zay>python
+Python 3.11.0 (main, Oct 24 2022, 18:26:48) [MSC v.1933 64 bit (AMD64)] on win32
+Type "help", "copyright", "credits" or "license" for more information.
+>>> import secrets
+>>> secrets.token_hex()
+'2ed672570e64a61b613331304a326e3806fbb6a6b330ac60b0c6e167a17ede34'
+>>>
+
+//--------------------
+from django.db import models
+import os
+from PIL import Image
+from datetime import date
+import datetime
+from .validators import validate_file_extension
+import base64
+
+def get_directory_path(instance, filename):
+
+    today = date.today()
+    t = datetime.datetime.now() 
+    day, month, year = today.day, today.month, today.year
+    hour, minutes, seconds = t.hour, t.minute, t.second
+filename = str(day) + str(month) + str(year) + str(hour) + str(minutes) + str(seconds) + '.png'
+    dir = 'media'
+    path = '{0}/{1}'.format(dir, filename)
+    return path
+
+class Image(models.Model):
+    image = models.FileField(upload_to = get_directory_path, null = True , validators=[validate_file_extension])
+    created_date = models.DateTimeField(auto_now = True)
+
+    def __str__(self):
+        return str(self.id)
+
+//--------------------
+
+exact
+iexact
+contains
+icontains
+in
+gt
+gte
+lt
+lte
+startswith
+istartswith
+endswith
+iendswith
+range
+
+date
+year
+iso_year
+month
+day
+week
+week_day
+iso_week_day
+quarter
+time
+hour
+minute
+second
+
+isnull
+regex
+iregex
+
+#---------------------- Use: Migrations Errors
+
+python manage.py migrate --run-syncdb
+As stated in this comment by Benyamin Jafari:
+
+--run-syncdb - Creates tables for apps without migrations.
+
+Also don't forget to specity app path. For example:
+
+python manage.py makemigrations app
+python manage.py migrate app
+
+#----------------------- Add a New filds
+>>> from members.models import Member
+>>> x = Member.objects.all()[0]
+>>> x.phone = 5551234
+>>> x.joined_date = '2022-01-05'
+>>> x.save()

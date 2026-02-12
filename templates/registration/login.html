@@ -1,0 +1,46 @@
+{% extends 'app/base.html' %}
+
+{% block title %} Login - {{ store.name }} {% endblock title %}
+
+{% block body %}
+<!-- Start Content -->
+<div class="container py-5">
+    <div class="row py-5">
+        <form class="col-md-9 m-auto" method="post" role="form">
+            {% csrf_token %}
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <h2>Login</h2>
+                    {% if form.errors %}
+                        <div class="alert alert-danger">
+                            Your username and password didn't match. Please try again.
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="mb-3">
+                <label for="id_username">Username</label>
+                {{ form.username }}
+            </div>
+            
+            <div class="mb-3">
+                <label for="id_password">Password</label>
+                {{ form.password }}
+            </div>
+
+            <div class="row">
+                <div class="col text-end mt-2">
+                    <button type="submit" class="btn btn-success btn-lg px-3">Login</button>
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col">
+                    <p>Don't have an account? <a href="{% url 'signup' %}">Sign up here</a></p>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<!-- End Content -->
+{% endblock body %}

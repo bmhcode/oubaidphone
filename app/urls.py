@@ -37,6 +37,11 @@ urlpatterns = [
     path('brand/add/', views.add_brand, name='add_brand'),
     path('brand/update/<slug:slug>/', views.update_brand, name='update_brand'),
     path('brand/delete/<slug:slug>/', views.delete_brand, name='delete_brand'),
+    
+    # Category CRUD URLs
+    path('category/add/', views.add_category, name='add_category'),
+    path('category/update/<slug:slug>/', views.update_category, name='update_category'),
+    path('category/delete/<slug:slug>/', views.delete_category, name='delete_category'),
 ]
 
 if settings.DEBUG:

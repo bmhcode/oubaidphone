@@ -4,6 +4,7 @@
 {% block title %} {{ title }} - {{ store.name }} {% endblock title %}
 
 {% block body %}
+
 <div class="container py-5">
     <div class="row">
         <div class="col-lg-8 m-auto">
@@ -18,26 +19,100 @@
                         </div>
                         {% endif %}
 
-                        {% for field in form %}
+                        <!-- Category -->
                         <div class="mb-3">
-                            <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                            <label for="{{ form.category.id_for_label }}" class="form-label">
+                                {{ form.category.label}}</label>
+                            <div class="d-flex align-items-center gap-2">
+                                {{ form.category }}
+                                <a href="{% url 'add_category' %}" class="btn btn-sm btn-outline-success text-nowrap">
+                                    + Add Category</a>
+                            </div>
+                            {% if form.category.errors %}
+                            <div class="text-danger small">{{ form.category.errors }}</div>
+                            {% endif %}
+                        </div>
 
-                            {% if field.name == 'image' and product %}
+                        <!-- Name -->
+                        <div class="mb-3">
+                            <label for="{{ form.name.id_for_label }}" class="form-label">{{ form.name.label }}</label>
+                            {{ form.name }}
+                            {% if form.name.errors %}
+                            <div class="text-danger small">{{ form.name.errors }}</div>
+                            {% endif%}
+                        </div>
+
+                        <!-- Description -->
+                        <div class="mb-3">
+                            <label for="{{ form.description.id_for_label }}" class="form-label">
+                                {{form.description.label}}</label>
+                            {{ form.description }}
+                            {% if form.description.errors %}
+                            <div class="text-danger small">{{ form.description.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Price & Old Price side by side -->
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="{{ form.price.id_for_label }}" class="form-label">
+                                    {{form.price.label}}</label>
+                                {{ form.price }}
+                                {% if form.price.errors %}
+                                <div class="text-danger small">{{ form.price.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6">
+                                <label for="{{ form.old_price.id_for_label }}" class="form-label">
+                                    {{form.old_price.label}}</label>
+                                {{ form.old_price }}
+                                {% if form.old_price.errors %}
+                                <div class="text-danger small">{{ form.old_price.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Image -->
+                        <div class="mb-3">
+                            <label for="{{ form.image.id_for_label }}" class="form-label">
+                                {{ form.image.label }}</label>
+                            {% if product %}
                             <div class="mb-2">
                                 <img src="{{ product.imageURL }}" alt="{{ product.name }}" class="img-thumbnail"
                                     style="max-height: 200px;">
                             </div>
                             {% endif %}
-
-                            {{ field }}
-                            {% if field.help_text %}
-                            <small class="form-text text-muted">{{ field.help_text }}</small>
-                            {% endif %}
-                            {% if field.errors %}
-                            <div class="text-danger small">{{ field.errors }}</div>
+                            {{ form.image }}
+                            {% if form.image.errors %}
+                            <div class="text-danger small">{{ form.image.errors }}</div>
                             {% endif %}
                         </div>
-                        {% endfor %}
+
+                        <!-- Checkboxes: is_active, new_product, featured_product on one line -->
+                        <div class="row mb-3">
+                            <div class="col-auto">
+                                <div class="form-check">
+                                    {{ form.is_active }}
+                                    <label for="{{ form.is_active.id_for_label }}" class="form-check-label">
+                                        {{ form.is_active.label }}
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-auto">
+                                <div class="form-check">
+                                    {{ form.new_product }}
+                                    <label for="{{ form.new_product.id_for_label }}" class="form-check-label">
+                                        {{ form.new_product.label }}</label>
+                                </div>
+                            </div>
+                            <div class="col-auto">
+                                <div class="form-check">
+                                    {{ form.featured_product }}
+                                    <label for="{{ form.featured_product.id_for_label }}" class="form-check-label">
+                                        {{ form.featured_product.label }}</label>
+                                </div>
+                            </div>
+                        </div>
 
                         <div class="d-grid gap-2">
                             <button type="submit" class="btn btn-success btn-lg">Save Product</button>
@@ -49,4 +124,5 @@
         </div>
     </div>
 </div>
+
 {% endblock body %}

@@ -8,109 +8,7 @@ from .forms import ProductForm, BrandForm, CategoryForm
 from django.contrib import messages
 from django.contrib.auth.decorators import user_passes_test
 
-
-def _get_store():
-    """
-    Retrieves the first Store object from the database.
-    If no store exists, it creates a default one.
-    """
-    store = Store.objects.first()
-    if not store:
-        store = Store.objects.create(name="My Store", about_us="Welcome to our store!")
-    return store
-
-def get_context():
-    return {
-        'store': _get_store(),
-        'categories': Category.objects.filter(is_active=True),
-        'products': Product.objects.filter(is_active=True),
-        'brands': Brand.objects.filter(is_active=True),
-
-    }
-
-def index(request):
-    context = get_context()
-    return render(request, 'app/index.html', context)
-
-def shop(request):
-    context = get_context()
-    products = context['products']
-    # Filter products
-    cat_filter = request.GET.get('cat_filter')
-    if cat_filter:
-        products = products.filter(category__name=cat_filter)
-
-    # Set up Pagination
-    paginator = Paginator(products, 9)
-    page_number = request.GET.get('page')
-    product_pages = paginator.get_page(page_number)
-    
-    nums = "a" * product_pages.paginator.num_pages
-    context.update({
-        'products': products,
-        'product_pages': product_pages,
-        'nums': nums,
-    })
-    return render(request, 'app/shop.html', context)
-
-def product_detail(request, slug): 
-    store = _get_store()
-    categories = Category.objects.filter(is_active=True)   
-    product = get_object_or_404(Product, slug=slug)
-    
-    # Get related products based on category
-    related_products = Product.objects.filter(category=product.category, is_active=True).exclude(slug=slug)[:4]
-    
-    context = {
-        'store': store, 
-        'categories': categories,
-        'product': product,
-        'related_products': related_products 
-    }
-    return render(request, 'app/product_detail.html', context)
-
-def about(request):
-    store      = _get_store()
-    categories = Category.objects.filter(is_active=True)
-    brands     = Brand.objects.filter(is_active=True)   # Show the brands
-             
-    context = {
-        'store': store,
-        'categories': categories,
-        'brands': brands, 
-    }
-    return render(request, 'app/about.html', context)
-
-def contact(request):
-    store = _get_store()
-    categories = Category.objects.filter(is_active=True)   
-        
-    context = {
-        'store': store,
-        'categories': categories
-    }
-    return render(request, 'app/contact.html', context)
-
-def signup(request):
-
-    store = _get_store()
-    categories = Category.objects.filter(is_active=True)
-    
-    if request.method == 'POST':
-        form = UserCreationForm(request.POST)
-        if form.is_valid():
-            user = form.save()
-            login(request, user)
-            return redirect('index')
-    else:
-        form = UserCreationForm()
-    
-    context = {
-        'store': store,
-        'categories': categories,
-        'form': form
-    }
-    return render(request, 'registration/signup.html', context)
+# ... existing code ...
 
 @login_required
 def add_product(request):
@@ -168,6 +66,7 @@ def delete_product(request, slug):
     
     context = {'product': product, 'store': store}
     return render(request, 'app/product_confirm_delete.html', context)
+
 
 @login_required
 @user_passes_test(lambda u: u.is_superuser)
@@ -264,6 +163,118 @@ def delete_category(request, slug):
     
     context = {'category': category, 'store': store}
     return render(request, 'app/category_confirm_delete.html', context)
+
+def _get_store():
+    """
+    Retrieves the first Store object from the database.
+    If no store exists, it creates a default one.
+    """
+    store = Store.objects.first()
+    if not store:
+        store = Store.objects.create(name="My Store", about_us="Welcome to our store!")
+    return store
+
+def index(request):
+    store = _get_store()
+    categories = Category.objects.filter(is_active=True)
+    products = Product.objects.filter(is_active=True)
+    context = {
+        'store': store,
+        'categories': categories,
+        'products': products,
+        }
+    return render(request, 'app/index.html', context)
+
+def shop(request):
+    store = _get_store()
+    categories = Category.objects.filter(is_active=True)
+    # Filter products
+    cat_filter = request.GET.get('cat_filter')
+    products = Product.objects.filter(is_active=True)
+    if cat_filter:
+        products = products.filter(category__name=cat_filter)
+        
+    brands = Brand.objects.filter(is_active=True)
+    # Set up Pagination
+    paginator = Paginator(products, 9)
+    page_number = request.GET.get('page')
+    product_pages = paginator.get_page(page_number)
+    
+    # Generate range for pagination (using a range object is cleaner than string multiplication)
+    # However, to maintain template compatibility if it iterates over a string:
+    nums = "a" * product_pages.paginator.num_pages
+    
+    context = {
+        'store': store,
+        'brands': brands,
+        'categories': categories,
+        'products': products,
+        'product_pages': product_pages,
+        'nums': nums,
+    }
+            
+    return render(request, 'app/shop.html', context)
+
+def product_detail(request, slug): 
+    store = _get_store()
+    categories = Category.objects.filter(is_active=True)   
+    product = get_object_or_404(Product, slug=slug)
+    
+    # Optional: Get related products based on category
+    related_products = Product.objects.filter(category=product.category, is_active=True).exclude(slug=slug)[:4]
+    
+    context = {
+        'store': store, 
+        'categories': categories,
+        'product': product,
+        'related_products': related_products 
+    }
+    return render(request, 'app/product_detail.html', context)
+
+def about(request):
+    store      = _get_store()
+    categories = Category.objects.filter(is_active=True)
+    brands     = Brand.objects.filter(is_active=True)   # Show the brands
+             
+    context = {
+        'store': store,
+        'categories': categories,
+        'brands': brands, 
+    }
+    return render(request, 'app/about.html', context)
+
+def contact(request):
+    store = _get_store()
+    categories = Category.objects.filter(is_active=True)   
+        
+    context = {
+        'store': store,
+        'categories': categories
+    }
+    return render(request, 'app/contact.html', context)
+
+def signup(request):
+
+    store = _get_store()
+    categories = Category.objects.filter(is_active=True)
+    
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            return redirect('index')
+    else:
+        form = UserCreationForm()
+    
+    context = {
+        'store': store,
+        'categories': categories,
+        'form': form
+    }
+    return render(request, 'registration/signup.html', context)
+
+    # ... existing code ...
 
 @login_required
 def wishlist_list(request):

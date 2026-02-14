@@ -14,6 +14,11 @@ OubaidPhone/shop
         <!-- Start Categories -->
         <div class="col-lg-3">
             <h1 class="h2 pb-4">{{ categories.count }} Categories </h1>
+            {% if request.user.is_superuser %}
+            <div class="mb-3">
+                <a href="{% url 'add_category' %}" class="btn btn-success btn-sm w-100">Add Category</a>
+            </div>
+            {% endif %}
             <ul class="list-group">
 
                 <li class="list-group-item">
@@ -22,13 +27,21 @@ OubaidPhone/shop
                     </a>
                 </li>
                 {% for cat in categories %}
-                <li class="list-group-item">
+                <li class="list-group-item d-flex justify-content-between align-items-center">
                     <a class="nav-link" href="{% url 'shop' %}?cat_filter={{cat.name}}">
                         {{ cat.name|capfirst }} <span>{{ cat.category.count }}</span>
                         {% comment %} {% for item in cat.category.all %}
                 <li> {{item.name}} </li>
                 {% endfor %} {% endcomment %}
                 </a>
+                {% if request.user.is_superuser %}
+                <span>
+                    <a href="{% url 'update_category' cat.slug %}" class="btn btn-sm btn-warning py-0 px-1"
+                        title="Edit"><i class="fas fa-edit"></i></a>
+                    <a href="{% url 'delete_category' cat.slug %}" class="btn btn-sm btn-danger py-0 px-1"
+                        title="Delete"><i class="fas fa-trash"></i></a>
+                </span>
+                {% endif %}
                 </li>
                 {% endfor %}
 
@@ -47,7 +60,7 @@ OubaidPhone/shop
                         </li>
                     </ul>
                 </div>
-                {% comment %} <div class="col-md-6 pb-4">
+                <!-- <div class="col-md-6 pb-4">
                     <div class="d-flex">
                         <select class="form-control">
                             <option>Featured Produtcs</option>
@@ -55,7 +68,7 @@ OubaidPhone/shop
                             <option>Promotional Products</option>
                         </select>
                     </div>
-                </div> {% endcomment %}
+                </div> -->
             </div>
 
             <div class="row">
@@ -83,8 +96,9 @@ OubaidPhone/shop
                                         <li><a class="btn btn-success text-white mt-2"
                                                 href="{{product.get_absolute_url}}"><i class="far fa-eye"></i></a>
                                         </li>
-                                        <li><a class="btn btn-success text-white mt-2" href="product_detail.html"><i
-                                                    class="fas fa-cart-plus"></i></a></li>
+                                        <!-- <li><a class="btn btn-success text-white mt-2" 
+                                                href="product_detail.html"><i
+                                                    class="fas fa-cart-plus"></i></a></li> -->
                                     </ul>
                                 </div>
                             </a>
@@ -168,83 +182,78 @@ OubaidPhone/shop
 
         </div>
         <!-- End products -->
+        <!-- Start Brands -->
+        <section class="bg-light py-5">
+            <div class="container my-4">
+                <div class="row text-center py-3">
+                    <div class="col-lg-6 m-auto">
+                        <h1 class="h1">Our Brands</h1>
+                        <p>List of brands factury</p>
+                    </div>
+                    <div class="col-lg-9 m-auto tempaltemo-carousel">
+                        <div class="row d-flex flex-row">
+                            <!--Controls-->
+                            <div class="col-1 align-self-center">
+                                <a class="h1" href="#multi-item-example" role="button" data-bs-slide="prev">
+                                    <i class="text-light fas fa-chevron-left"></i>
+                                </a>
+                            </div>
+                            <!--End Controls-->
 
+                            <!--Carousel Wrapper-->
+                            <div class="col">
+                                <div class="carousel slide carousel-multi-item pt-2 pt-md-0" id="multi-item-example"
+                                    data-bs-ride="carousel">
+                                    <!--Slides-->
+                                    <div class="carousel-inner product-links-wap" role="listbox">
+                                        <!--First slide-->
+                                        <div class="carousel-item active">
+                                            <div class="row">
+                                                {% for brand in brands %}
+                                                <div class="col-3 p-md-5">
+                                                    <a href="#"><img class="img-fluid brand-img"
+                                                            src="{{ brand.imageURL }}"></a>
+                                                </div>
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                        <!--End First slide-->
+                                        <!--2 slide-->
+                                        <div class="carousel-item ">
+                                            <div class="row">
+                                                {% for brand in brands %}
+                                                <div class="col-3 p-md-5">
+                                                    <a href="#"><img class="img-fluid brand-img"
+                                                            src="{{ brand.imageURL }}"></a>
+                                                </div>
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                        <!--End 2 slide-->
+                                    </div>
+                                    <!--End Slides-->
+                                </div>
+                            </div>
+                            <!--End Carousel Wrapper-->
+
+                            <!--Controls-->
+                            <div class="col-1 align-self-center">
+                                <a class="h1" href="#multi-item-example" role="button" data-bs-slide="next">
+                                    <i class="text-light fas fa-chevron-right"></i>
+                                </a>
+                            </div>
+                            <!--End Controls-->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!--End Brands-->
     </div>
 </div>
 <!-- End Content -->
 
-<!-- Start Brands -->
-<section class="bg-light py-5">
-    <div class="container my-4">
-        <div class="row text-center py-3">
-            <div class="col-lg-6 m-auto">
-                <h1 class="h1">Our Brands</h1>
-                <p>
-                    List of brands factury
-                </p>
-            </div>
-            <div class="col-lg-9 m-auto tempaltemo-carousel">
-                <div class="row d-flex flex-row">
-                    <!--Controls-->
-                    <div class="col-1 align-self-center">
-                        <a class="h1" href="#multi-item-example" role="button" data-bs-slide="prev">
-                            <i class="text-light fas fa-chevron-left"></i>
-                        </a>
-                    </div>
-                    <!--End Controls-->
 
-                    <!--Carousel Wrapper-->
-                    <div class="col">
-                        <div class="carousel slide carousel-multi-item pt-2 pt-md-0" id="multi-item-example"
-                            data-bs-ride="carousel">
-                            <!--Slides-->
-                            <div class="carousel-inner product-links-wap" role="listbox">
 
-                                <!--First slide-->
-                                <div class="carousel-item active">
-
-                                    <div class="row">
-                                        {% for brand in brands %}
-                                        <div class="col-3 p-md-5">
-                                            <a href="#"><img class="img-fluid brand-img" src="{{ brand.imageURL }}"></a>
-                                        </div>
-                                        {% endfor %}
-                                    </div>
-
-                                </div>
-                                <!--End First slide-->
-                                <!--2 slide-->
-                                <div class="carousel-item ">
-
-                                    <div class="row">
-                                        {% for brand in brands %}
-                                        <div class="col-3 p-md-5">
-                                            <a href="#"><img class="img-fluid brand-img" src="{{ brand.imageURL }}"></a>
-                                        </div>
-                                        {% endfor %}
-                                    </div>
-
-                                </div>
-                                <!--End 2 slide-->
-
-                            </div>
-                            <!--End Slides-->
-                        </div>
-                    </div>
-                    <!--End Carousel Wrapper-->
-
-                    <!--Controls-->
-                    <div class="col-1 align-self-center">
-                        <a class="h1" href="#multi-item-example" role="button" data-bs-slide="next">
-                            <i class="text-light fas fa-chevron-right"></i>
-                        </a>
-                    </div>
-                    <!--End Controls-->
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-<!--End Brands-->
 
 {% endblock body %}

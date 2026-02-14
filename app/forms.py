@@ -1,5 +1,5 @@
 from django import forms
-from .models import Product, Brand
+from .models import Product, Brand, Category
 
 class ProductForm(forms.ModelForm):
     class Meta:
@@ -34,3 +34,13 @@ class BrandForm(forms.ModelForm):
         # Set input formats for datetime fields
         self.fields['start'].input_formats = ['%Y-%m-%dT%H:%M']
         self.fields['end'].input_formats = ['%Y-%m-%dT%H:%M']
+
+class CategoryForm(forms.ModelForm):
+    class Meta:
+        model = Category
+        fields = ['name', 'image', 'is_active']
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control'}),
+            'image': forms.ClearableFileInput(attrs={'class': 'form-control'}),
+            'is_active': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+        }

@@ -4,9 +4,7 @@
 
 <head>
     <title>
-        {% block title %}
-
-        {% endblock title %}
+        {% block title %} {% endblock title %}
     </title>
 
     <meta charset="utf-8">
@@ -143,9 +141,7 @@ https://templatemo.com/tm-559-zay-shop
     <footer class="bg-dark" id="tempaltemo_footer">
         <div class="container">
             <div class="row">
-
                 <div class="col-md-4 pt-5">
-
                     <ul class="list-unstyled text-light footer-link-list">
                         <a class="text-decoration-none" href="{% url 'index' %}">
                             <h2 class="h2 text-success border-bottom pb-3 border-light logo">{{store.name}}</h2>
@@ -158,11 +154,12 @@ https://templatemo.com/tm-559-zay-shop
                     </ul>
                 </div>
                 <div class="col-md-4 pt-5">
-                    <h2 class="h2 text-light border-bottom pb-3 border-light">Products</h2>
+                    <h2 class="h2 text-light border-bottom pb-3 border-light">categories of products</h2>
                     <ul class="list-unstyled text-light footer-link-list">
-                        {% for category in categories %}
-                        <li><a class="text-decoration-none" href="{% url 'shop' %}?category={{category.name}}">
-                                {{category.name}} </a></li>
+                        {% for category in categories|slice:":5" %}
+                        <li><a class="text-decoration-none" href="{% url 'shop' %}?cat_filter={{category.name}}">
+                                {{category.name}} </a>
+                        </li>
                         {% endfor %}
                     </ul>
                 </div>
@@ -172,15 +169,11 @@ https://templatemo.com/tm-559-zay-shop
                         <li><a class="text-decoration-none" href="{% url 'index' %}">Home</a></li>
                         <li><a class="text-decoration-none" href="{% url 'shop' %}">Shop</a></li>
                         <li><a class="text-decoration-none" href="{% url 'about' %}">About Us</a></li>
-                        {% comment %}
                         <li><a class="text-decoration-none" href="#">FAQs</a></li>
                         <li><a class="text-decoration-none" href="#">Contact</a></li>
-                        {% endcomment %}
                     </ul>
                 </div>
-
             </div>
-
             <div class="row text-light mb-4">
                 <div class="col-12 mb-3">
                     <div class="w-100 my-3 border-top border-light"></div>
@@ -205,14 +198,14 @@ https://templatemo.com/tm-559-zay-shop
                         </li>
                     </ul>
                 </div>
-                {% comment %} <div class="col-auto">
+                <div class="col-auto">
                     <label class="sr-only" for="subscribeEmail">Email address</label>
                     <div class="input-group mb-2">
                         <input type="text" class="form-control bg-dark border-light" id="subscribeEmail"
                             placeholder="Email address">
                         <div class="input-group-text btn-success text-light">Subscribe</div>
                     </div>
-                </div> {% endcomment %}
+                </div>
             </div>
         </div>
 

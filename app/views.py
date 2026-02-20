@@ -3,8 +3,8 @@ from django.core.paginator import Paginator
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
-from .models import Store, Brand, Category, Product, Wishlist
-from .forms import ProductForm, BrandForm, CategoryForm
+from .models import Store, Brand, Category, Product, Wishlist, ProductImages
+from .forms import ProductForm, BrandForm, CategoryForm, ProductImageForm, StoreForm
 from django.contrib import messages
 from django.contrib.auth.decorators import user_passes_test
 
@@ -19,22 +19,72 @@ def _get_store():
         store = Store.objects.create(name="My Store", about_us="Welcome to our store!")
     return store
 
+@login_required
+@user_passes_test(lambda u: u.is_superuser)
+def update_store(request):
+    store = _get_store()
+    if request.method == 'POST':
+        form = StoreForm(request.POST, request.FILES, instance=store)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Store updated successfully!')
+            return redirect('update_store')
+    else:
+        form = StoreForm(instance=store)
+    context = {'form': form, 'store': store, 'title': 'Store Settings'}
+    return render(request, 'app/store_form.html', context)
+
+@login_required
+@user_passes_test(lambda u: u.is_superuser)
+def delete_store(request):
+    store = _get_store()
+    if request.method == 'POST':
+        store.delete()
+        messages.success(request, 'Store deleted successfully!')
+        return redirect('index')
+    context = {'store': store}
+    return render(request, 'app/store_confirm_delete.html', context)
+
 def get_context():
     return {
         'store': _get_store(),
         'categories': Category.objects.filter(is_active=True),
         'products': Product.objects.filter(is_active=True),
-        'brands': Brand.objects.filter(is_active=True),
-
+        'brands': Brand.objects.filter(),
     }
 
 def index(request):
-    context = get_context()
+    store = _get_store()
+    categories = Category.objects.filter(is_active=True)
+    
+    # Show active products OR products owned by the current user
+    if request.user.is_authenticated:
+        from django.db.models import Q
+        products = Product.objects.filter(Q(is_active=True) | Q(user=request.user))
+    else:
+        products = Product.objects.filter(is_active=True)
+        
+    brands = Brand.objects.filter(is_active=True)
+    
+    context = {
+        'store': store,
+        'categories': categories,
+        'products': products,
+        'brands': brands,
+    }
     return render(request, 'app/index.html', context)
 
 def shop(request):
-    context = get_context()
-    products = context['products']
+    store = _get_store()
+    categories = Category.objects.filter(is_active=True)
+    
+    # Show active products OR products owned by the current user
+    if request.user.is_authenticated:
+        from django.db.models import Q
+        products = Product.objects.filter(Q(is_active=True) | Q(user=request.user))
+    else:
+        products = Product.objects.filter(is_active=True)
+
     # Filter products
     cat_filter = request.GET.get('cat_filter')
     if cat_filter:
@@ -46,12 +96,18 @@ def shop(request):
     product_pages = paginator.get_page(page_number)
     
     nums = "a" * product_pages.paginator.num_pages
-    context.update({
+    context = {
+        'store': store,
+        'categories': categories,
         'products': products,
         'product_pages': product_pages,
         'nums': nums,
-    })
+    }
     return render(request, 'app/shop.html', context)
+
+def brands(request):
+    context = get_context()
+    return render(request, 'app/brands.html', context)
 
 def product_detail(request, slug): 
     store = _get_store()
@@ -144,7 +200,8 @@ def update_product(request, slug):
         if form.is_valid():
             form.save()
             messages.success(request, 'Product updated successfully!')
-            return redirect('product', slug=product.slug)
+            # return redirect('product', slug=product.slug)
+            return redirect('myproducts')
     else:
         form = ProductForm(instance=product)
     
@@ -170,6 +227,55 @@ def delete_product(request, slug):
     return render(request, 'app/product_confirm_delete.html', context)
 
 @login_required
+def manage_product_images(request, slug):
+    store = _get_store()
+    product = get_object_or_404(Product, slug=slug)
+
+    if product.user != request.user and not request.user.is_superuser:
+        messages.error(request, 'You are not authorized to manage this product\'s images.')
+        return redirect('product', slug=slug)
+
+    images = product.product.all()
+    form = ProductImageForm()
+    context = {'product': product, 'store': store, 'images': images, 'form': form}
+    return render(request, 'app/product_images.html', context)
+
+@login_required
+def add_product_image(request, slug):
+    product = get_object_or_404(Product, slug=slug)
+
+    if product.user != request.user and not request.user.is_superuser:
+        messages.error(request, 'Not authorized.')
+        return redirect('product', slug=slug)
+
+    if request.method == 'POST':
+        form = ProductImageForm(request.POST, request.FILES)
+        if form.is_valid():
+            img = form.save(commit=False)
+            img.product = product
+            img.save()
+            messages.success(request, 'Image added successfully!')
+        else:
+            messages.error(request, 'Failed to upload image. Please try again.')
+
+    return redirect('manage_product_images', slug=slug)
+
+@login_required
+def delete_product_image(request, image_id):
+    image = get_object_or_404(ProductImages, id=image_id)
+    product = image.product
+
+    if product.user != request.user and not request.user.is_superuser:
+        messages.error(request, 'Not authorized.')
+        return redirect('product', slug=product.slug)
+
+    if request.method == 'POST':
+        image.delete()
+        messages.success(request, 'Image deleted.')
+
+    return redirect('manage_product_images', slug=product.slug)
+
+
 @user_passes_test(lambda u: u.is_superuser)
 def add_brand(request):
     store = _get_store()
@@ -178,7 +284,7 @@ def add_brand(request):
         if form.is_valid():
             form.save()
             messages.success(request, 'Brand added successfully!')
-            return redirect('about')
+            return redirect('brands')
     else:
         form = BrandForm()
     
@@ -196,7 +302,7 @@ def update_brand(request, slug):
         if form.is_valid():
             form.save()
             messages.success(request, 'Brand updated successfully!')
-            return redirect('about')
+            return redirect('brands')
     else:
         form = BrandForm(instance=brand)
     
@@ -212,7 +318,7 @@ def delete_brand(request, slug):
     if request.method == 'POST':
         brand.delete()
         messages.success(request, 'Brand deleted successfully!')
-        return redirect('about')
+        return redirect('brands')
     
     context = {'brand': brand, 'store': store}
     return render(request, 'app/brand_confirm_delete.html', context)
@@ -292,3 +398,16 @@ def remove_from_wishlist(request, product_id):
     wishlist, created = Wishlist.objects.get_or_create(user=request.user)
     wishlist.products.remove(product)
     return redirect('wishlist')
+
+@login_required
+def myproducts(request):
+    store = _get_store()
+    categories = Category.objects.filter(is_active=True)
+    products = Product.objects.filter(user=request.user)
+    
+    context = {
+        'store': store,
+        'categories': categories,
+        'products': products,
+    }
+    return render(request, 'app/myproducts.html', context)

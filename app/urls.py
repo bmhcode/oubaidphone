@@ -32,8 +32,17 @@ urlpatterns = [
     path('product/add/', views.add_product, name='add_product'),
     path('product/update/<slug:slug>/', views.update_product, name='update_product'),
     path('product/delete/<slug:slug>/', views.delete_product, name='delete_product'),
+    path('myproducts/', views.myproducts, name='myproducts'),
+    path('myproducts/update/<slug:slug>/', views.update_product, name='update_product'),
+    path('myproducts/delete/<slug:slug>/', views.delete_product, name='delete_product'),
+  
+    # Product Images URLs
+    path('product/<slug:slug>/images/', views.manage_product_images, name='manage_product_images'),
+    path('product/<slug:slug>/images/add/', views.add_product_image, name='add_product_image'),
+    path('product/images/delete/<int:image_id>/', views.delete_product_image, name='delete_product_image'),
     
     # Brand CRUD URLs
+    path('brands/', views.brands, name='brands'),
     path('brand/add/', views.add_brand, name='add_brand'),
     path('brand/update/<slug:slug>/', views.update_brand, name='update_brand'),
     path('brand/delete/<slug:slug>/', views.delete_brand, name='delete_brand'),
@@ -42,6 +51,10 @@ urlpatterns = [
     path('category/add/', views.add_category, name='add_category'),
     path('category/update/<slug:slug>/', views.update_category, name='update_category'),
     path('category/delete/<slug:slug>/', views.delete_category, name='delete_category'),
+    
+    # Store CRUD URLs
+    path('store/settings/', views.update_store, name='update_store'),
+    path('store/delete/', views.delete_store, name='delete_store'),
 ]
 
 if settings.DEBUG:

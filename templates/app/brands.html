@@ -1,0 +1,46 @@
+{% extends "app/base.html" %}
+{% load static %}
+
+{% block title %}
+OubaidPhone/about
+{% endblock title %}
+
+
+{% block body %}
+
+<!-- Start Brands -->
+<section class="bg-light py-5">
+    <div class="container my-4">
+        <div class="row text-center py-3">
+            <div class="col-lg-6 m-auto">
+                <h1 class="h1 list-inline-item">Our Brands</h1>
+                <p class="list-inline-item">{{brands.count}} brands</p>
+            </div>
+
+            <div class="row d-flex flex-row">
+
+                {% if request.user.is_superuser %}
+                <div class="col-12 text-center mb-3">
+                    <a href="{% url 'add_brand' %}" class="btn btn-success">Add Brand</a>
+                </div>
+                {% endif %}
+                <div class="row">
+                    {% for brand in brands %}
+                    <div class="col-3 p-md-5">
+                        <a href="#"><img class="img-fluid brand-img" src="{{brand.imageURL}}"></a>
+                        {% if request.user.is_superuser %}
+                        <div class="text-center mt-2">
+                            <a href="{% url 'update_brand' brand.slug %}" class="btn btn-sm btn-warning">Edit</a>
+                            <a href="{% url 'delete_brand' brand.slug %}" class="btn btn-sm btn-danger">Delete</a>
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!--End Brands-->
+
+{% endblock body %}

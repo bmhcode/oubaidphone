@@ -13,7 +13,7 @@ OubaidPhone/about
         <div class="row align-items-center py-5">
             <div class="col-md-8 text-white">
                 <h1>About Us</h1>
-                <p> {{store.about_us}} </p>
+                <p> {{store.about_us|safe}} </p>
             </div>
             <div class="col-md-4">
                 <img src="{% static 'app/img/about-hero.svg' %}" alt="About Hero">
@@ -66,6 +66,7 @@ OubaidPhone/about
 </section>
 <!-- End Section -->
 
+
 <!-- Start Brands -->
 <section class="bg-light py-5">
     <div class="container my-4">
@@ -73,36 +74,16 @@ OubaidPhone/about
             <div class="col-lg-6 m-auto">
                 <h1 class="h1">Our Brands</h1>
             </div>
-
-            <div class="row d-flex flex-row">
-
-                {% if request.user.is_superuser %}
-                <div class="col-12 text-center mb-3">
-                    <a href="{% url 'add_brand' %}" class="btn btn-success">Add Brand</a>
-                </div>
-                {% endif %}
-
-
-                <div class="row">
-
+            <div class="col-12">
+                <div class="d-flex justify-content-center align-items-center flex-wrap gap-4">
                     {% for brand in brands %}
-                    <div class="col-3 p-md-5">
-                        <a href="#"><img class="img-fluid brand-img" src="{{brand.imageURL}}"></a>
-                        {% if request.user.is_superuser %}
-                        <div class="text-center mt-2">
-                            <a href="{% url 'update_brand' brand.slug %}" class="btn btn-sm btn-warning">Edit</a>
-                            <a href="{% url 'delete_brand' brand.slug %}" class="btn btn-sm btn-danger">Delete</a>
-                        </div>
-                        {% endif %}
+                    <div class="text-center px-3">
+                        <a href="#"><img class="img-fluid brand-img" src="{{ brand.imageURL }}"
+                                style="max-height: 80px;"></a>
                     </div>
                     {% endfor %}
-
                 </div>
-
             </div>
-
-
-
         </div>
     </div>
 </section>

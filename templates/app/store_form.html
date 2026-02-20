@@ -1,0 +1,174 @@
+{% extends "app/base.html" %}
+{% load static %}
+
+{% block title %}{{ title }}{% endblock title %}
+
+{% block body %}
+<section class="bg-light py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-10 m-auto">
+
+                <h2 class="mb-4">{{ title }}</h2>
+
+                {% if messages %}
+                {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+                {% endfor %}
+                {% endif %}
+
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+
+                    <!-- General Info -->
+                    <div class="card shadow-sm mb-4">
+                        <div class="card-header bg-success text-white fw-bold">
+                            <i class="fas fa-store me-1"></i> General Information
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Store Name</label>
+                                {{ form.name }}
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">About Us</label>
+                                {{ form.about_us }}
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-semibold">Address</label>
+                                    {{ form.address }}
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label class="form-label fw-semibold">Phone</label>
+                                    {{ form.phone }}
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label class="form-label fw-semibold">Email</label>
+                                    {{ form.email }}
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Logo</label>
+                                {{ form.logo }}
+                                {% if store.logoURL %}
+                                <img src="{{ store.logoURL }}" alt="Current Logo" class="img-thumbnail mt-2"
+                                    style="max-height: 80px;">
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Slider 1 -->
+                    <div class="card shadow-sm mb-4">
+                        <div class="card-header bg-primary text-white fw-bold">
+                            <i class="fas fa-image me-1"></i> Slider 1
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Image</label>
+                                {{ form.image1 }}
+                                {% if store.imageURL_1 %}
+                                <img src="{{ store.imageURL_1 }}" alt="Slider 1" class="img-thumbnail mt-2"
+                                    style="max-height: 100px;">
+                                {% endif %}
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-semibold">Title</label>
+                                    {{ form.title1 }}
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-semibold">Subtitle</label>
+                                    {{ form.subtitle1 }}
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Description</label>
+                                {{ form.description1 }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Slider 2 -->
+                    <div class="card shadow-sm mb-4">
+                        <div class="card-header bg-primary text-white fw-bold">
+                            <i class="fas fa-image me-1"></i> Slider 2
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Image</label>
+                                {{ form.image2 }}
+                                {% if store.imageURL_2 %}
+                                <img src="{{ store.imageURL_2 }}" alt="Slider 2" class="img-thumbnail mt-2"
+                                    style="max-height: 100px;">
+                                {% endif %}
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-semibold">Title</label>
+                                    {{ form.title2 }}
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-semibold">Subtitle</label>
+                                    {{ form.subtitle2 }}
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Description</label>
+                                {{ form.description2 }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Slider 3 -->
+                    <div class="card shadow-sm mb-4">
+                        <div class="card-header bg-primary text-white fw-bold">
+                            <i class="fas fa-image me-1"></i> Slider 3
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Image</label>
+                                {{ form.image3 }}
+                                {% if store.imageURL_3 %}
+                                <img src="{{ store.imageURL_3 }}" alt="Slider 3" class="img-thumbnail mt-2"
+                                    style="max-height: 100px;">
+                                {% endif %}
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-semibold">Title</label>
+                                    {{ form.title3 }}
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-semibold">Subtitle</label>
+                                    {{ form.subtitle3 }}
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Description</label>
+                                {{ form.description3 }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Buttons -->
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-success btn-lg">
+                            <i class="fas fa-save me-1"></i> Save Changes
+                        </button>
+                        <a href="{% url 'index' %}" class="btn btn-outline-secondary btn-lg">Cancel</a>
+                        <a href="{% url 'delete_store' %}" class="btn btn-danger btn-lg ms-auto">
+                            <i class="fas fa-trash me-1"></i> Delete Store
+                        </a>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock body %}

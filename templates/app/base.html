@@ -90,8 +90,21 @@ https://templatemo.com/tm-559-zay-shop
                         </li>
                         {% if user.is_superuser %}
                         <li class="nav-item">
+                            <a class="nav-link" href="{% url 'brands' %}">Brands</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'update_store' %}"><i
+                                    class="fas fa-cog text-dark mr-3"></i>Store Settings</a>
+                        </li>
+                        {% endif %}
+                        {% if user.is_authenticated %}
+                        <li class="nav-item">
                             <a class="nav-link" href="{% url 'add_product' %}"><i
                                     class="fa fa-fw fa-plus text-dark mr-3"></i>Add Product</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'myproducts' %}"><i
+                                    class="fa fa-fw fa-list text-dark mr-3"></i>My Products</a>
                         </li>
                         {% endif %}
                     </ul>

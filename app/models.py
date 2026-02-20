@@ -5,7 +5,7 @@ from django.urls import reverse
 from datetime import datetime, date
 from django.utils.text import slugify
 from django.utils.html import mark_safe
-# from ckeditor.fields import RichTextField
+from ckeditor.fields import RichTextField
 import django.utils.timezone
 
 def user_directory_path(instance,filename):
@@ -13,7 +13,7 @@ def user_directory_path(instance,filename):
     
 class Store(models.Model):
     name    = models.CharField('name of store', max_length=255, blank=True, null=False, default="Store name")
-    about_us = models.TextField(null=True, blank=True, default="About Us")
+    about_us = RichTextField(null=True, blank=True, default="About Us")
     address = models.CharField(max_length=255, blank=True, null=True, default="Store adress")
     phone  = models.CharField('Contact Phone',max_length=255, blank=True, null=True, default="Store phone")
     email  = models.EmailField('Email Address', max_length=255, default="yourmail@gmail.com")
@@ -73,7 +73,7 @@ class Store(models.Model):
         return url
 
 class Brand(models.Model):
-    name  = models.CharField(max_length=128, verbose_name =_('Name of brand'))
+    name  = models.CharField(max_length=128, unique=True, verbose_name =_('Name of brand'))
     slug  = models.SlugField(blank=True,null=True)
     image = models.ImageField(upload_to='brand', default='brand.jpg', blank=True, verbose_name=_('brand'))
     start = models.DateTimeField(verbose_name=_('Start at'))
@@ -137,7 +137,6 @@ class Product(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='category')
     name = models.CharField(max_length=128, verbose_name =_('Name of product'))
     slug = models.SlugField(blank=True,null=True)
-    # description = models.TextField(null=True,blank=True, default='This is the product', verbose_name =_('informations about product')) #description = RichTextField(blank=True, null=True)
     description = models.TextField(null=True,blank=True, verbose_name =_('informations about product')) #description = RichTextField(blank=True, null=True)
     price = models.DecimalField(max_digits=12, decimal_places=2)
     old_price = models.DecimalField(max_digits=12, decimal_places=2, default=0.00, blank=True,null=True, verbose_name =_('old price'))

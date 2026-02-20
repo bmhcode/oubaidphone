@@ -201,6 +201,17 @@ https://templatemo.com/tm-559-zay-shop
                             {% endif %}
                         </div>
 
+                        {% if request.user == product.user or request.user.is_superuser %}
+                        <div class="mt-2 text-center border-top pt-2">
+                            <a href="{% url 'update_product' product.slug %}"
+                                class="btn btn-sm btn-warning py-0 px-1"><i class="fas fa-edit"></i></a>
+                            <a href="{% url 'delete_product' product.slug %}" class="btn btn-sm btn-danger py-0 px-1"><i
+                                    class="fas fa-trash"></i></a>
+                            <a href="{% url 'manage_product_images' product.slug %}"
+                                class="btn btn-sm btn-primary py-0 px-1"><i class="fas fa-images"></i></a>
+                        </div>
+                        {% endif %}
+
                     </div>
                 </div>
             </div>
@@ -244,21 +255,21 @@ https://templatemo.com/tm-559-zay-shop
                                                     class="far fa-heart"></i></a></li>
                                         <li><a class="btn btn-success text-white mt-2"
                                                 href="{{product.get_absolute_url}}"><i class="far fa-eye"></i></a></li>
-                                        <li><a class="btn btn-success text-white mt-2" href="product_detail.html"><i
-                                                    class="fas fa-cart-plus"></i></a></li>
+                                        <!-- <li><a class="btn btn-success text-white mt-2" href="product_detail.html"><i
+                                                    class="fas fa-cart-plus"></i></a></li> -->
                                     </ul>
                                 </div>
                             </a>
                     </div>
                     <div class="card-body">
                         <ul class="list-unstyled d-flex justify-content-between">
-                            {% comment %} <li>
+                            <!-- <li>
                                 <i class="text-warning fa fa-star"></i>
                                 <i class="text-warning fa fa-star"></i>
                                 <i class="text-warning fa fa-star"></i>
                                 <i class="text-muted fa fa-star"></i>
                                 <i class="text-muted fa fa-star"></i>
-                            </li> {% endcomment %}
+                            </li>  -->
                             {% if product.old_price and product.old_price > product.price %}
                             <span class="text-muted text-right"><del>{{ product.old_price }} Da</del></span>
                             <span>{{ product.price }} Da</span>
@@ -278,6 +289,16 @@ https://templatemo.com/tm-559-zay-shop
                             </h5>
                         </a>
                         <p class="card-text">{{product.description|truncatechars:20}}</p>
+                        {% if request.user == product.user or request.user.is_superuser %}
+                        <div class="mt-2 text-center border-top pt-2">
+                            <a href="{% url 'update_product' product.slug %}"
+                                class="btn btn-sm btn-warning py-0 px-1"><i class="fas fa-edit"></i></a>
+                            <a href="{% url 'delete_product' product.slug %}" class="btn btn-sm btn-danger py-0 px-1"><i
+                                    class="fas fa-trash"></i></a>
+                            <a href="{% url 'manage_product_images' product.slug %}"
+                                class="btn btn-sm btn-primary py-0 px-1"><i class="fas fa-images"></i></a>
+                        </div>
+                        {% endif %}
                         {% comment %} <p class="text-muted">Reviews (24)</p> {% endcomment %}
                     </div>
                 </div>
@@ -320,8 +341,8 @@ https://templatemo.com/tm-559-zay-shop
                                                     class="far fa-heart"></i></a></li>
                                         <li><a class="btn btn-success text-white mt-2"
                                                 href="{{product.get_absolute_url}}"><i class="far fa-eye"></i></a></li>
-                                        <li><a class="btn btn-success text-white mt-2" href="product_detail.html"><i
-                                                    class="fas fa-cart-plus"></i></a></li>
+                                        <!-- <li><a class="btn btn-success text-white mt-2" href="product_detail.html"><i
+                                                    class="fas fa-cart-plus"></i></a></li> -->
                                     </ul>
                                 </div>
                             </a>
@@ -350,6 +371,16 @@ https://templatemo.com/tm-559-zay-shop
                             </h5>
                         </a>
                         <p class="card-text"> {{ product.description|truncatechars:20 }} </p>
+                        {% if request.user == product.user or request.user.is_superuser %}
+                        <div class="mt-2 text-center border-top pt-2">
+                            <a href="{% url 'update_product' product.slug %}"
+                                class="btn btn-sm btn-warning py-0 px-1"><i class="fas fa-edit"></i></a>
+                            <a href="{% url 'delete_product' product.slug %}" class="btn btn-sm btn-danger py-0 px-1"><i
+                                    class="fas fa-trash"></i></a>
+                            <a href="{% url 'manage_product_images' product.slug %}"
+                                class="btn btn-sm btn-primary py-0 px-1"><i class="fas fa-images"></i></a>
+                        </div>
+                        {% endif %}
                         {% comment %} <p class="text-muted">Reviews (24)</p> {% endcomment %}
                     </div>
                 </div>
@@ -369,57 +400,14 @@ https://templatemo.com/tm-559-zay-shop
                 <h1 class="h1">Our Brands</h1>
                 <p>List of brands factury</p>
             </div>
-            <div class="col-lg-9 m-auto tempaltemo-carousel">
-                <div class="row d-flex flex-row">
-                    <!--Controls-->
-                    <div class="col-1 align-self-center">
-                        <a class="h1" href="#multi-item-example" role="button" data-bs-slide="prev">
-                            <i class="text-light fas fa-chevron-left"></i>
-                        </a>
+            <div class="col-12">
+                <div class="d-flex justify-content-center align-items-center flex-wrap gap-4">
+                    {% for brand in brands %}
+                    <div class="text-center px-3">
+                        <a href="#"><img class="img-fluid brand-img" src="{{ brand.imageURL }}"
+                                style="max-height: 80px;"></a>
                     </div>
-                    <!--End Controls-->
-
-                    <!--Carousel Wrapper-->
-                    <div class="col">
-                        <div class="carousel slide carousel-multi-item pt-2 pt-md-0" id="multi-item-example"
-                            data-bs-ride="carousel">
-                            <!--Slides-->
-                            <div class="carousel-inner product-links-wap" role="listbox">
-                                <!--First slide-->
-                                <div class="carousel-item active">
-                                    <div class="row">
-                                        {% for brand in brands %}
-                                        <div class="col-3 p-md-5">
-                                            <a href="#"><img class="img-fluid brand-img" src="{{ brand.imageURL }}"></a>
-                                        </div>
-                                        {% endfor %}
-                                    </div>
-                                </div>
-                                <!--End First slide-->
-                                <!--2 slide-->
-                                <div class="carousel-item ">
-                                    <div class="row">
-                                        {% for brand in brands %}
-                                        <div class="col-3 p-md-5">
-                                            <a href="#"><img class="img-fluid brand-img" src="{{ brand.imageURL }}"></a>
-                                        </div>
-                                        {% endfor %}
-                                    </div>
-                                </div>
-                                <!--End 2 slide-->
-                            </div>
-                            <!--End Slides-->
-                        </div>
-                    </div>
-                    <!--End Carousel Wrapper-->
-
-                    <!--Controls-->
-                    <div class="col-1 align-self-center">
-                        <a class="h1" href="#multi-item-example" role="button" data-bs-slide="next">
-                            <i class="text-light fas fa-chevron-right"></i>
-                        </a>
-                    </div>
-                    <!--End Controls-->
+                    {% endfor %}
                 </div>
             </div>
         </div>

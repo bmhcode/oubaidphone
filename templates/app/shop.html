@@ -1,9 +1,7 @@
 {% extends "app/base.html" %}
 {% load static %}
 
-{% block title %}
-OubaidPhone/shop
-{% endblock title %}
+{% block title %} BMH / shop {% endblock title %}
 
 
 {% block body %}
@@ -30,29 +28,27 @@ OubaidPhone/shop
                 <li class="list-group-item d-flex justify-content-between align-items-center">
                     <a class="nav-link" href="{% url 'shop' %}?cat_filter={{cat.name}}">
                         {{ cat.name|capfirst }} <span>{{ cat.category.count }}</span>
-                        {% comment %} {% for item in cat.category.all %}
-                <li> {{item.name}} </li>
-                {% endfor %} {% endcomment %}
-                </a>
-                {% if request.user.is_superuser %}
-                <span>
-                    <a href="{% url 'update_category' cat.slug %}" class="btn btn-sm btn-warning py-0 px-1"
-                        title="Edit"><i class="fas fa-edit"></i></a>
-                    <a href="{% url 'delete_category' cat.slug %}" class="btn btn-sm btn-danger py-0 px-1"
-                        title="Delete"><i class="fas fa-trash"></i></a>
-                </span>
-                {% endif %}
+                    </a>
+                    {% if request.user.is_superuser %}
+                    <span>
+                        <a href="{% url 'update_category' cat.slug %}" class="btn btn-sm btn-warning py-0 px-1"
+                            title="Edit"><i class="fas fa-edit"></i></a>
+                        <a href="{% url 'delete_category' cat.slug %}" class="btn btn-sm btn-danger py-0 px-1"
+                            title="Delete"><i class="fas fa-trash"></i></a>
+                    </span>
+                    {% endif %}
                 </li>
                 {% endfor %}
-
-
             </ul>
         </div>
         <!-- End Categories -->
 
         <!-- Start products -->
+
         <div class="col-lg-9">
+
             <div class="row">
+                {{ products.count }} Products
                 <div class="col-md-6">
                     <ul class="list-inline shop-top-menu pb-3 pt-1">
                         <li class="list-inline-item">
@@ -97,21 +93,21 @@ OubaidPhone/shop
                                                 href="{{product.get_absolute_url}}"><i class="far fa-eye"></i></a>
                                         </li>
                                         <!-- <li><a class="btn btn-success text-white mt-2" 
-                                                href="product_detail.html"><i
-                                                    class="fas fa-cart-plus"></i></a></li> -->
+                                                                href="product_detail.html"><i
+                                                                    class="fas fa-cart-plus"></i></a></li> -->
                                     </ul>
                                 </div>
                             </a>
                         </div>
                         <div class="card-body">
                             <ul class="list-unstyled d-flex justify-content-between">
-                                {% comment %} <li>
-                                    <i class="text-warning fa fa-star"></i>
-                                    <i class="text-warning fa fa-star"></i>
-                                    <i class="text-warning fa fa-star"></i>
-                                    <i class="text-muted fa fa-star"></i>
-                                    <i class="text-muted fa fa-star"></i>
-                                </li> {% endcomment %}
+                                <!-- <li>
+                                                    <i class="text-warning fa fa-star"></i>
+                                                    <i class="text-warning fa fa-star"></i>
+                                                    <i class="text-warning fa fa-star"></i>
+                                                    <i class="text-muted fa fa-star"></i>
+                                                    <i class="text-muted fa fa-star"></i>
+                                                </li>  -->
 
                             </ul>
                             <a href="{{product.get_absolute_url}}" class="h2 text-decoration-none text-dark">
@@ -132,15 +128,23 @@ OubaidPhone/shop
                                     <del>{{ product.old_price }} Da</del>
                                 </span>
                                 {% else %}
-                                <span></span> <!-- vide pour maintenir l'espacement -->
+                                <span></span>
                                 {% endif %}
-
                                 <span class="fw-bold text-success ms-auto">
                                     {{ product.price }} Da
                                 </span>
                             </div>
 
-
+                            {% if request.user == product.user or request.user.is_superuser %}
+                            <div class="mt-2 text-center border-top pt-2">
+                                <a href="{% url 'update_product' product.slug %}" class="btn btn-sm btn-warning"><i
+                                        class="fas fa-edit"></i></a>
+                                <a href="{% url 'delete_product' product.slug %}" class="btn btn-sm btn-danger"><i
+                                        class="fas fa-trash"></i></a>
+                                <a href="{% url 'manage_product_images' product.slug %}"
+                                    class="btn btn-sm btn-primary"><i class="fas fa-images"></i></a>
+                            </div>
+                            {% endif %}
 
                         </div>
                     </div>
@@ -190,59 +194,14 @@ OubaidPhone/shop
                         <h1 class="h1">Our Brands</h1>
                         <p>List of brands factury</p>
                     </div>
-                    <div class="col-lg-9 m-auto tempaltemo-carousel">
-                        <div class="row d-flex flex-row">
-                            <!--Controls-->
-                            <div class="col-1 align-self-center">
-                                <a class="h1" href="#multi-item-example" role="button" data-bs-slide="prev">
-                                    <i class="text-light fas fa-chevron-left"></i>
-                                </a>
+                    <div class="col-12">
+                        <div class="d-flex justify-content-center align-items-center flex-wrap gap-4">
+                            {% for brand in brands %}
+                            <div class="text-center px-3">
+                                <a href="#"><img class="img-fluid brand-img" src="{{ brand.imageURL }}"
+                                        style="max-height: 80px;"></a>
                             </div>
-                            <!--End Controls-->
-
-                            <!--Carousel Wrapper-->
-                            <div class="col">
-                                <div class="carousel slide carousel-multi-item pt-2 pt-md-0" id="multi-item-example"
-                                    data-bs-ride="carousel">
-                                    <!--Slides-->
-                                    <div class="carousel-inner product-links-wap" role="listbox">
-                                        <!--First slide-->
-                                        <div class="carousel-item active">
-                                            <div class="row">
-                                                {% for brand in brands %}
-                                                <div class="col-3 p-md-5">
-                                                    <a href="#"><img class="img-fluid brand-img"
-                                                            src="{{ brand.imageURL }}"></a>
-                                                </div>
-                                                {% endfor %}
-                                            </div>
-                                        </div>
-                                        <!--End First slide-->
-                                        <!--2 slide-->
-                                        <div class="carousel-item ">
-                                            <div class="row">
-                                                {% for brand in brands %}
-                                                <div class="col-3 p-md-5">
-                                                    <a href="#"><img class="img-fluid brand-img"
-                                                            src="{{ brand.imageURL }}"></a>
-                                                </div>
-                                                {% endfor %}
-                                            </div>
-                                        </div>
-                                        <!--End 2 slide-->
-                                    </div>
-                                    <!--End Slides-->
-                                </div>
-                            </div>
-                            <!--End Carousel Wrapper-->
-
-                            <!--Controls-->
-                            <div class="col-1 align-self-center">
-                                <a class="h1" href="#multi-item-example" role="button" data-bs-slide="next">
-                                    <i class="text-light fas fa-chevron-right"></i>
-                                </a>
-                            </div>
-                            <!--End Controls-->
+                            {% endfor %}
                         </div>
                     </div>
                 </div>

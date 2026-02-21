@@ -11,12 +11,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-vi$p6z*3@e%s+uu!2_787e+kw&_-xohlw=3@dno#-ikd1m73z0')
 SECRET_KEY = os.environ.get('SECRET_KEY')
 
-# DEBUG = False  
+# DEBUG = True  
 DEBUG = os.environ.get('DEBUG', 'False').lower() == 'true' 
 
 # ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '').split(' ')
 ALLOWED_HOSTS = ['*']  
-ALLOWED_HOSTS = ['bmhstore.onrender.com']  # أو اسم الدومين الخاص بك
+# ALLOWED_HOSTS = ['bmhstore.onrender.com']  # أو اسم الدومين الخاص بك
 
 # Application definition
 INSTALLED_APPS = [
@@ -30,8 +30,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'app',
     'ckeditor',
-    'cloudinary',
-    'cloudinary_storage',
 ]
 
 CKEDITOR_CONFIGS = {
@@ -147,17 +145,6 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-
-
-# إعدادات Cloudinary
-CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': os.environ.get('CLOUD_NAME'),
-    'API_KEY': os.environ.get('API_KEY'),
-    'API_SECRET': os.environ.get('API_SECRET'),
-}
-
-# استخدام Cloudinary لتخزين media
-DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field

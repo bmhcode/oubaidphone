@@ -16,10 +16,16 @@ DEBUG = os.environ.get('DEBUG', 'False').lower() == 'true'
 
 # ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '').split(' ')
 ALLOWED_HOSTS = ['*']  
+ALLOWED_HOSTS = ['bmhstore.onrender.com']  # أو اسم الدومين الخاص بك
 
 # Application definition
 INSTALLED_APPS = [
     'jazzmin',
+
+    'cloudinary',
+    'cloudinary_storage',
+
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -134,17 +140,30 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 
+# إعدادات Cloudinary
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': 'dpkflfpqf',
+    'API_KEY': '125846132523489',
+    'API_SECRET': 'Bo4mgcAa6YyaSAVS3SlLTDHllNQ',
+}
+
+# استخدام Cloudinary لتخزين media
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
+
+
+
+
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-# STATICFILES_STORAGE = 'whitenoise.storage.StaticFilesStorage'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 
 # Default primary key field type

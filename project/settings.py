@@ -8,10 +8,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
+# SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-vi$p6z*3@e%s+uu!2_787e+kw&_-xohlw=3@dno#-ikd1m73z0')
 SECRET_KEY = os.environ.get('SECRET_KEY')
 
+# DEBUG = False  
 DEBUG = os.environ.get('DEBUG', 'False').lower() == 'true' 
-ALLOWED_HOSTS = ['*']  
+
+# ALLOWED_HOSTS = ['*']  
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS').split(' ')
 
 # Application definition
 INSTALLED_APPS = [
@@ -75,8 +79,6 @@ WSGI_APPLICATION = 'project.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-
-import dj_database_url
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -84,9 +86,11 @@ DATABASES = {
     }
 }
 
+import dj_database_url
 # إعداد قاعدة البيانات
 database_url = os.environ.get("DATABASE_URL")
 DATABASES["default"] = dj_database_url.parse(database_url)
+
 
 # Login/Logout Redirects
 LOGIN_REDIRECT_URL = 'index'

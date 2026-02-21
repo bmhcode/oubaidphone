@@ -11,12 +11,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-vi$p6z*3@e%s+uu!2_787e+kw&_-xohlw=3@dno#-ikd1m73z0')
 SECRET_KEY = os.environ.get('SECRET_KEY')
 
-# DEBUG = True  
-DEBUG = os.environ.get('DEBUG', 'False').lower() == 'true' 
+DEBUG = False  
+# DEBUG = os.environ.get('DEBUG', 'False').lower() == 'true' 
 
 # ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '').split(' ')
-ALLOWED_HOSTS = ['*']  
-# ALLOWED_HOSTS = ['bmhstore.onrender.com']  # أو اسم الدومين الخاص بك
+# ALLOWED_HOSTS = ['*']  
+ALLOWED_HOSTS = ['bmhstore.onrender.com']  # أو اسم الدومين الخاص بك
 
 # Application definition
 INSTALLED_APPS = [
@@ -58,7 +58,6 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'project.urls'
 
-
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -96,8 +95,6 @@ else:
             "NAME": BASE_DIR / "db.sqlite3",
         }
     }
-
-
 
 # Login/Logout Redirects
 LOGIN_REDIRECT_URL = 'index'
@@ -149,7 +146,6 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
 
 # settings.py
 LOGGING = {

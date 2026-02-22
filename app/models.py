@@ -144,11 +144,11 @@ class Product(models.Model):
     price = models.DecimalField(max_digits=12, decimal_places=2)
     old_price = models.DecimalField(max_digits=12, decimal_places=2, default=0.00, blank=True,null=True, verbose_name =_('old price'))
 
-    # image   = models.ImageField(upload_to='product', default='product.jpg') # upload_to=user_directory_path it's for users
+    image   = models.ImageField(upload_to='product', default='product.jpg') # upload_to=user_directory_path it's for users
 
-    image = CloudinaryField('image')
+    # image = CloudinaryField('image', blank=True, null=True)  # صورة المنتج على Cloudinary
 
-    
+
 
     created = models.DateTimeField(auto_now_add=True, verbose_name=_('Created at'))
     updated = models.DateTimeField(auto_now=True, verbose_name=_('Updated at'))
@@ -182,8 +182,12 @@ class Product(models.Model):
             url = ''
         return url
     
+    # لعرض صورة مصغرة في Admin
     def product_image(self):
-        return mark_safe('<img src="%s" width="50" height="50" />' % (self.image.url))
+        if self.image:
+            return mark_safe('<img src="%s" width="50" height="50"/>' % self.image.url)
+        return "-"  
+    product_image.short_description = 'Image'
 
     # def get_precentage(self):
     #     new_price = (self.price / self.old_price) * 100

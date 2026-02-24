@@ -1,6 +1,6 @@
 from django import forms
 from .models import Product, Brand, Category, ProductImages, Store
-from ckeditor.widgets import CKEditorWidget
+from django_ckeditor_5.widgets import CKEditor5Widget
 
 class ProductForm(forms.ModelForm):
     class Meta:
@@ -66,7 +66,7 @@ class StoreForm(forms.ModelForm):
         ]
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control'}),
-            'about_us': CKEditorWidget(),
+            'about_us': CKEditor5Widget(),
             'address': forms.TextInput(attrs={'class': 'form-control'}),
             'phone': forms.TextInput(attrs={'class': 'form-control'}),
             'email': forms.EmailInput(attrs={'class': 'form-control'}),

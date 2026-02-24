@@ -5,18 +5,22 @@ from django.urls import reverse
 from datetime import datetime, date
 from django.utils.text import slugify
 from django.utils.html import mark_safe
-from ckeditor.fields import RichTextField
+
 import django.utils.timezone
 
+from django_ckeditor_5.fields import CKEditor5Field
 
-from cloudinary.models import CloudinaryField
+
+
+# from cloudinary.models import CloudinaryField
 
 def user_directory_path(instance,filename):
     return 'user_{0}/{1}'.format(instance.user.id, filename)
     
 class Store(models.Model):
     name    = models.CharField('name of store', max_length=255, blank=True, null=False, default="Store name")
-    about_us = RichTextField(null=True, blank=True, default="About Us")
+    # about_us = RichTextField(null=True, blank=True, default="About Us")
+    about_us = CKEditor5Field('Text', config_name='extends')
     address = models.CharField(max_length=255, blank=True, null=True, default="Store adress")
     phone  = models.CharField('Contact Phone',max_length=255, blank=True, null=True, default="Store phone")
     email  = models.EmailField('Email Address', max_length=255, default="yourmail@gmail.com")
@@ -25,17 +29,20 @@ class Store(models.Model):
     image1 = models.ImageField(blank=True, default='image1', upload_to="store")
     title1 = models.CharField(max_length=50, blank=True, null=True, default="title1")
     subtitle1 = models.CharField(max_length=50, blank=True, null=True, default="subtitle1")
-    description1 = models.TextField(null=True, blank=True, default="description1")
+    # description1 = models.TextField(null=True, blank=True, default="description1")
+    description1 = CKEditor5Field('Text', config_name='extends')
 
     image2 = models.ImageField(blank=True,default='image2', upload_to="store")
     title2 = models.CharField(max_length=50, blank=True, null=True, default="title2")
     subtitle2 = models.CharField(max_length=50, blank=True, null=True, default="subtitle2")
-    description2 = models.TextField(null=True, blank=True, default="description2")
+    # description2 = models.TextField(null=True, blank=True, default="description2")    
+    description2 = CKEditor5Field('Text', config_name='extends')
 
     image3 = models.ImageField(blank=True, default='image3', upload_to="store")
     title3 = models.CharField(max_length=50, blank=True, null=True, default="title3")
     subtitle3 = models.CharField(max_length=50, blank=True, null=True, default="subtitle3")
-    description3 = models.TextField(null=True, blank=True, default="description3")
+    # description3 = models.TextField(null=True, blank=True, default="description3")
+    description3 = CKEditor5Field('Text', config_name='extends')
 
 
     # web = models.URLField('Website Adress',null=True, blank=True)
@@ -140,7 +147,8 @@ class Product(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='category')
     name = models.CharField(max_length=128, verbose_name =_('Name of product'))
     slug = models.SlugField(blank=True,null=True)
-    description = models.TextField(null=True,blank=True, verbose_name =_('informations about product')) #description = RichTextField(blank=True, null=True)
+    # description = models.TextField(null=True,blank=True, verbose_name =_('informations about product')) #description = RichTextField(blank=True, null=True)
+    description = CKEditor5Field('Text', config_name='extends')
     price = models.DecimalField(max_digits=12, decimal_places=2)
     old_price = models.DecimalField(max_digits=12, decimal_places=2, default=0.00, blank=True,null=True, verbose_name =_('old price'))
 
@@ -196,7 +204,8 @@ class Product(models.Model):
 class ProductImages(models.Model):
     product     = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True,related_name='product', verbose_name=_("Product"))
     image       = models.ImageField(upload_to='product-images', default='product.jpg') #/%y/%m/%d')
-    description = models.CharField(max_length=64, blank=True, null=True, verbose_name=_("Description"))
+    # description = models.CharField(max_length=64, blank=True, null=True, verbose_name=_("Description"))
+    description = CKEditor5Field('Text', config_name='extends')
     date = models.DateTimeField(auto_now_add=True )
     # expirationTime = models.DateTimeField('expiration time (of ad)', default=timezone.now() + datetime.timedelta(days=30))
 

@@ -1,6 +1,10 @@
 import os
 from pathlib import Path
 
+# from dotenv import load_dotenv
+# SECRET_KEY = os.getenv("SECRET_KEY")
+# DEBUG = os.getenv("DEBUG") == "True"
+# ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS",'').split(",")
 
 # import cloudinary
 # import cloudinary.uploader
@@ -10,14 +14,19 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# load_dotenv(BASE_DIR / ".env")
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
+
+# SECRET_KEY="django-insecure-vi$p6z*3@e%s+uu!2_787e+kw&_-xohlw=3@dno#-ikd1m73z0"
 SECRET_KEY = os.environ.get('SECRET_KEY')
+# DEBUG = True
 DEBUG = os.environ.get('DEBUG', 'False').lower() == 'true' 
-# ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS','').split('')
-ALLOWED_HOSTS = ['*']
+# ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS','').split(',')
 
 # Application definition
 INSTALLED_APPS = [
@@ -28,11 +37,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'app',
-    'ckeditor',
-    # 'cloudinary',
-    # 'cloudinary_storage',
 
+    'app',
+    'django_ckeditor_5',
+   
 ]
 
 CKEDITOR_CONFIGS = {
@@ -134,7 +142,6 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
-
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_DIRS = [
@@ -144,7 +151,7 @@ STATICFILES_DIRS = [
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-# STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 
 

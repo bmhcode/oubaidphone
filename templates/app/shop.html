@@ -46,7 +46,6 @@
         <!-- Start products -->
 
         <div class="col-lg-9">
-
             <div class="row">
                 {{ products.count }} Products
                 <div class="col-md-6">
@@ -92,9 +91,6 @@
                                         <li><a class="btn btn-success text-white mt-2"
                                                 href="{{product.get_absolute_url}}"><i class="far fa-eye"></i></a>
                                         </li>
-                                        <!-- <li><a class="btn btn-success text-white mt-2" 
-                                                                href="product_detail.html"><i
-                                                                    class="fas fa-cart-plus"></i></a></li> -->
                                     </ul>
                                 </div>
                             </a>
@@ -184,30 +180,35 @@
                 </nav>
             </div>
 
-        </div>
-        <!-- End products -->
-        <!-- Start Brands -->
-        <section class="bg-light py-5">
-            <div class="container my-4">
-                <div class="row text-center py-3">
-                    <div class="col-lg-6 m-auto">
-                        <h1 class="h1">Our Brands</h1>
-                        <p>List of brands factury</p>
-                    </div>
-                    <div class="col-12">
-                        <div class="d-flex justify-content-center align-items-center flex-wrap gap-4">
-                            {% for brand in brands %}
-                            <div class="text-center px-3">
-                                <a href="#"><img class="img-fluid brand-img" src="{{ brand.imageURL }}"
-                                        style="max-height: 80px;"></a>
+            <!-- Start Brands -->
+            <div class="row">
+                <section class="bg-light py-5">
+                    <div class="container my-4">
+                        <div class="row text-center py-3">
+                            <div class="col-lg-6 m-auto">
+                                <h1 class="h1">Our Brands</h1>
+                                <p>List of brands factury</p>
                             </div>
-                            {% endfor %}
+                            <div class="col-12">
+                                <div class="d-flex justify-content-center align-items-center flex-wrap gap-4">
+                                    {% for brand in brands %}
+                                    <div class="text-center px-3">
+                                        <a href="#"><img class="img-fluid brand-img" src="{{ brand.imageURL }}"
+                                                style="max-height: 80px;"></a>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
+                </section>
+
             </div>
-        </section>
-        <!--End Brands-->
+            <!--End Brands-->
+
+        </div>
+        <!-- End products -->
+
     </div>
 </div>
 <!-- End Content -->

@@ -71,9 +71,8 @@ OubaidPhone/{{ product.name }}
                                 </div>
                             </div>
                             <!--/.First slide-->
-
                             <!--Second slide-->
-                            {% comment %} <div class="carousel-item">
+                            <!-- <div class="carousel-item">
                                 <div class="row">
                                     <div class="col-4">
                                         <a href="#">
@@ -94,33 +93,8 @@ OubaidPhone/{{ product.name }}
                                         </a>
                                     </div>
                                 </div>
-                            </div> {% endcomment %}
+                            </div>  -->
                             <!--/.Second slide-->
-
-                            <!--Third slide-->
-                            {% comment %} <div class="carousel-item">
-                                <div class="row">
-                                    <div class="col-4">
-                                        <a href="#">
-                                            <img class="card-img img-fluid"
-                                                src="{% static 'img/product_single_07.jpg' %}" alt="Product Image 7">
-                                        </a>
-                                    </div>
-                                    <div class="col-4">
-                                        <a href="#">
-                                            <img class="card-img img-fluid"
-                                                src="{% static 'img/product_single_08.jpg' %}" alt="Product Image 8">
-                                        </a>
-                                    </div>
-                                    <div class="col-4">
-                                        <a href="#">
-                                            <img class="card-img img-fluid"
-                                                src="{% static 'img/product_single_09.jpg' %}" alt="Product Image 9">
-                                        </a>
-                                    </div>
-                                </div>
-                            </div> {% endcomment %}
-                            <!--/.Third slide-->
                         </div>
                         <!--End Slides-->
                     </div>
@@ -139,23 +113,23 @@ OubaidPhone/{{ product.name }}
             <div class="col-lg-7 mt-5">
                 <div class="card">
                     <div class="card-body">
-
                         <h1 class="h2 list-item">{{ product.name }}</h1>
-
                         {% if product.old_price and product.old_price > product.price %}
                         <span class="text-muted text-right"><del>{{ product.old_price }} Da</del></span>
                         <span>{{ product.price }} Da</span>
                         {% else %}
                         <span>{{ product.price }} Da</span>
                         {% endif %}
-                        {% comment %} <ul class="list-inline">
+
+                        <!-- <ul class="list-inline">
                             <li class="list-inline-item">
                                 <h6>Brand</h6>
                             </li>
                             <li class="list-inline-item">
                                 <p class="text-muted"><strong>Easy Wear</strong></p>
                             </li>
-                        </ul> {% endcomment %}
+                        </ul> -->
+
                         <hr>
                         <p>{{ product.description }}</p>
                         <div class="row pb-3">

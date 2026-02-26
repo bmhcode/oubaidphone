@@ -88,50 +88,64 @@ https://templatemo.com/tm-559-zay-shop
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'contact' %}">Contact</a>
                         </li>
-                        {% if user.is_superuser %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'brands' %}">Brands</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'update_store' %}"><i
-                                    class="fas fa-cog text-dark mr-3"></i>Store Settings</a>
-                        </li>
-                        {% endif %}
-                        {% if user.is_authenticated %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'add_product' %}"><i
-                                    class="fa fa-fw fa-plus text-dark mr-3"></i>Add Product</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'myproducts' %}"><i
-                                    class="fa fa-fw fa-list text-dark mr-3"></i>My Products</a>
-                        </li>
-                        {% endif %}
                     </ul>
                 </div>
 
-
                 <div class="navbar align-self-center d-flex">
-
+                    {% if user.is_authenticated %}
                     <a class="nav-icon position-relative text-decoration-none"
                         href="{% if user.is_authenticated %}{% url 'wishlist' %}{% else %}{% url 'login' %}{% endif %}">
                         <i class="fa fa-fw fa-heart text-dark mr-1"></i>
-                        {% if user.is_authenticated %}
                         <span
-                            class="position-absolute top-0 left-100 translate-middle badge rounded-pill bg-light text-dark">{{nbr_wishlist}}</span>
-                        {% endif %}
+                            class="position-absolute top-0 left-100 translate-middle badge rounded-pill bg-light text-dark">
+                            {{nbr_wishlist}}
+                        </span>
                     </a>
+                    {% endif %}
+
+
 
                     {% if user.is_authenticated %}
-                    <form id="logout-form" action="{% url 'logout' %}" method="post" style="display: none;">
-                        {% csrf_token %}
-                    </form>
-                    <a class="nav-icon position-relative text-decoration-none" href="#"
-                        onclick="document.getElementById('logout-form').submit(); return false;">
-                        <i class="fa fa-fw fa-sign-out-alt text-dark mr-3"></i>Logout
-                    </a>
-                    {{user.username}}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                            aria-expanded="false"> {{user.username}}
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'myproducts' %}"><i
+                                        class="fa fa-fw fa-list text-dark mr-3"></i> My Products</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'add_product' %}"><i
+                                        class="fa fa-fw fa-plus text-dark mr-3"></i> Add Product</a>
+                            </li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            {% if user.is_superuser %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'update_store' %}">
+                                    <i class="fas fa-cog text-dark mr-3"></i> Store Settings
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'brands' %}">Brands</a>
+                            </li>
+                            {% endif %}
+                            <li>
+                                <form id="logout-form" action="{% url 'logout' %}" method="post" style="display: none;">
+                                    {% csrf_token %}
+                                </form>
+                                <a class="nav-icon position-relative text-decoration-none" href="#"
+                                    onclick="document.getElementById('logout-form').submit(); return false;">
+                                    <i class="fa fa-fw fa-sign-out-alt text-dark mr-3"></i>Logout
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
                     {% else %}
+
+
                     <a class="nav-icon position-relative text-decoration-none" href="{% url 'login' %}">
                         <i class="fa fa-fw fa-user text-dark mr-3"></i>Login
                     </a>
@@ -139,11 +153,12 @@ https://templatemo.com/tm-559-zay-shop
                         <i class="fa fa-fw fa-user-plus text-dark mr-3"></i>Sign Up
                     </a>
                     {% endif %}
+
                 </div>
             </div>
-
         </div>
     </nav>
+
     <!-- Close Header -->
 
     {% block body %}
@@ -157,13 +172,15 @@ https://templatemo.com/tm-559-zay-shop
                 <div class="col-md-4 pt-5">
                     <ul class="list-unstyled text-light footer-link-list">
                         <a class="text-decoration-none" href="{% url 'index' %}">
-                            <h2 class="h2 text-success border-bottom pb-3 border-light logo">{{store.name}}</h2>
+                            <h2 class="h2 text-success border-bottom pb-3 border-light logo"> {{store.name}}</h2>
                         </a>
-                        <li><i class="fas fa-map-marker-alt fa-fw"></i>{{store.address}}</li>
-                        <li><i class="fa fa-phone fa-fw"></i><a class="text-decoration-none" href="">{{store.phone}}</a>
+                        <li><i class="fas fa-map-marker-alt fa-fw"></i> {{store.address}}</li>
+                        <li><i class="fa fa-phone fa-fw"></i><a class="text-decoration-none" href="">
+                                {{store.phone}}</a>
                         </li>
                         <li><i class="fa fa-envelope fa-fw"></i><a class="text-decoration-none"
-                                href="bmhwin@gmail.com">{{store.email}}</a></li>
+                                href="bmhwin@gmail.com"></a>
+                            {{store.email}}</a></li>
                     </ul>
                 </div>
                 <div class="col-md-4 pt-5">
@@ -182,8 +199,6 @@ https://templatemo.com/tm-559-zay-shop
                         <li><a class="text-decoration-none" href="{% url 'index' %}">Home</a></li>
                         <li><a class="text-decoration-none" href="{% url 'shop' %}">Shop</a></li>
                         <li><a class="text-decoration-none" href="{% url 'about' %}">About Us</a></li>
-                        <li><a class="text-decoration-none" href="#">FAQs</a></li>
-                        <li><a class="text-decoration-none" href="#">Contact</a></li>
                     </ul>
                 </div>
             </div>

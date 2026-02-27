@@ -6,22 +6,60 @@ import cloudinary.uploader
 import cloudinary.api
 
 from dotenv import load_dotenv
+
+load_dotenv()  # لتحميل متغيرات البيئة من .env
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
 
 # SECRET_KEY="django-insecure-vi$p6z*3@e%s+uu!2_787e+kw&_-xohlw=3@dno#-ikd1m73z0"
 # DEBUG = True
 # ALLOWED_HOSTS = ['*']
 
-SECRET_KEY = os.environ.get('SECRET_KEY')
-DEBUG = os.environ.get('DEBUG', 'False').lower() == 'true' 
-ALLOWED_HOSTS = ['*']
+SECRET_KEY = os.getenv('SECRET_KEY')
+DEBUG = os.getenv('DEBUG', 'False').lower() == 'true' 
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "localhost").split(",")
+
+# ----------------------------------
+# إعداد قاعدة البيانات
+# ----------------------------------
+# مثال على PostgreSQL
+import dj_database_url
+
+if os.environ.get("DATABASE_URL"):
+    DATABASES = {
+        'default': dj_database_url.config(
+            default=os.environ.get("DATABASE_URL")
+        )
+    }   
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
+        }
+    }
+
+# ----------------------------------
+# إعداد Cloudinary
+# ----------------------------------
+CLOUDINARY = {
+    'cloud_name': os.getenv("CLOUDINARY_CLOUD_NAME"),
+    'api_key': os.getenv("CLOUDINARY_API_KEY"),
+    'api_secret': os.getenv("CLOUDINARY_API_SECRET")
+}
+
+# تهيئة Cloudinary
+cloudinary.config(
+    cloud_name=CLOUDINARY['cloud_name'],
+    api_key=CLOUDINARY['api_key'],
+    api_secret=CLOUDINARY['api_secret'],
+    secure=True
+)
+# ----------------------------------
+# استخدام Cloudinary لتخزين الوسائط (Media)
+# ----------------------------------
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 
 # Application definition
@@ -38,7 +76,7 @@ INSTALLED_APPS = [
     'django_ckeditor_5',
 
     'cloudinary',
-    # 'cloudinary_storage',
+    'cloudinary_storage',
    
 ]
 
@@ -90,21 +128,6 @@ WSGI_APPLICATION = 'project.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-import dj_database_url
-
-if os.environ.get("DATABASE_URL"):
-    DATABASES = {
-        'default': dj_database_url.config(
-            default=os.environ.get("DATABASE_URL")
-        )
-    }   
-else:
-    DATABASES = {
-        "default": {
-            "ENGINE": "django.db.backends.sqlite3",
-            "NAME": BASE_DIR / "db.sqlite3",
-        }
-    }
 
 # Login/Logout Redirects
 LOGIN_REDIRECT_URL = 'index'
@@ -167,13 +190,7 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 # }
 # DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
-load_dotenv()  # لتحميل متغيرات البيئة من .env
-cloudinary.config(
-    cloud_name = os.environ.get("CLOUDINARY_CLOUD_NAME"),
-    api_key = os.environ.get("CLOUDINARY_API_KEY"),
-    api_secret = os.environ.get("CLOUDINARY_API_SECRET"),
-)
-# ----------------- / cloudinary
+
 
 # settings.py
 LOGGING = {

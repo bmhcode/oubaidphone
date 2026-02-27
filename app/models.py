@@ -5,14 +5,10 @@ from django.urls import reverse
 from datetime import datetime, date
 from django.utils.text import slugify
 from django.utils.html import mark_safe
-
 import django.utils.timezone
-
 from django_ckeditor_5.fields import CKEditor5Field
 
-
-
-# from cloudinary.models import CloudinaryField
+from cloudinary.models import CloudinaryField
 
 def user_directory_path(instance,filename):
     return 'user_{0}/{1}'.format(instance.user.id, filename)
@@ -153,10 +149,7 @@ class Product(models.Model):
     old_price = models.DecimalField(max_digits=12, decimal_places=2, default=0.00, blank=True,null=True, verbose_name =_('old price'))
 
     # image   = models.ImageField(upload_to='product', default='product.jpg') # upload_to=user_directory_path it's for users
-
     image = CloudinaryField('image')  # صورة المنتج على Cloudinary
-
-
 
     created = models.DateTimeField(auto_now_add=True, verbose_name=_('Created at'))
     updated = models.DateTimeField(auto_now=True, verbose_name=_('Updated at'))

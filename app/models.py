@@ -152,9 +152,9 @@ class Product(models.Model):
     price = models.DecimalField(max_digits=12, decimal_places=2)
     old_price = models.DecimalField(max_digits=12, decimal_places=2, default=0.00, blank=True,null=True, verbose_name =_('old price'))
 
-    image   = models.ImageField(upload_to='product', default='product.jpg') # upload_to=user_directory_path it's for users
+    # image   = models.ImageField(upload_to='product', default='product.jpg') # upload_to=user_directory_path it's for users
 
-    # image = CloudinaryField('image', blank=True, null=True)  # صورة المنتج على Cloudinary
+    image = CloudinaryField('image')  # صورة المنتج على Cloudinary
 
 
 

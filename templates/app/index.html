@@ -148,25 +148,26 @@ https://templatemo.com/tm-559-zay-shop
                         <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
                             New
                         </span>
-                        <a href="{{product.get_absolute_url}}"> {% comment %} <a href="{% url 'product' product.id %}">
-                                {% endcomment %}
-                                <img src="{{ product.imageURL }}" class="card-img-top p-2"
-                                    style="min-height: 200px; max-height: 200px;" alt="...">
+                        <a href="{{product.get_absolute_url}}">
+                            <!-- <a href="{% url 'product' product.id %}"> -->
 
-                                <div
-                                    class="card-img-overlay rounded-0 product-overlay d-flex align-items-center justify-content-center">
-                                    <ul class="list-unstyled">
-                                        <li><a class="btn btn-success text-white"
-                                                href="{% url 'add_to_wishlist' product.id %}"><i
-                                                    class="far fa-heart"></i></a></li>
-                                        <li><a class="btn btn-success text-white mt-2"
-                                                href="{{product.get_absolute_url}}"><i class="far fa-eye"></i></a></li>
-                                        <!-- <li><a class="btn btn-success text-white mt-2" 
+                            <img src="{{ product.imageURL }}" class="card-img-top p-2"
+                                style="min-height: 200px; max-height: 200px;" alt="...">
+
+                            <div
+                                class="card-img-overlay rounded-0 product-overlay d-flex align-items-center justify-content-center">
+                                <ul class="list-unstyled">
+                                    <li><a class="btn btn-success text-white"
+                                            href="{% url 'add_to_wishlist' product.id %}"><i
+                                                class="far fa-heart"></i></a></li>
+                                    <li><a class="btn btn-success text-white mt-2"
+                                            href="{{product.get_absolute_url}}"><i class="far fa-eye"></i></a></li>
+                                    <!-- <li><a class="btn btn-success text-white mt-2" 
                                                 href="product_detail.html"><i
                                                 class="fas fa-cart-plus"></i></a></li> -->
-                                    </ul>
-                                </div>
-                            </a>
+                                </ul>
+                            </div>
+                        </a>
                     </div>
                     <div class="card-body">
                         <ul class="list-unstyled d-flex justify-content-between">

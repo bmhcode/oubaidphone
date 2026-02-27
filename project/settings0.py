@@ -41,9 +41,6 @@ INSTALLED_APPS = [
 
     'app',
     'django_ckeditor_5',
-
-    'cloudinary',
-    'cloudinary_storage',
    
 ]
 
@@ -152,33 +149,22 @@ STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
 
-# MEDIA_URL = '/media/'
-# MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-# STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+# CLOUDINARY_STORAGE = {
+#     'CLOUD_NAME': os.environ.get('CLOUD_NAME'),
+#     'API_KEY': os.environ.get('API_KEY'),
+#     'API_SECRET': os.environ.get('API_SECRET'),
+# }
+# DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 
-# # Default primary key field type
-# # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
-# DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-# ----------------- cloudinary
-import cloudinary
-cloudinary.config(
-    secure=True
-)
-CLOUDINARY_STORAGE = {
-    'CLOUDINARY_URL': os.environ.get('CLOUDINARY_URL'),
-}
-DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
-
-cloudinary.config(
-    cloud_name = os.environ.get("CLOUDINARY_CLOUD_NAME"),
-    api_key = os.environ.get("CLOUDINARY_API_KEY"),
-    api_secret = os.environ.get("CLOUDINARY_API_SECRET"),
-)
-
-# ----------------- / cloudinary
+# Default primary key field type
+# https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # settings.py
 LOGGING = {

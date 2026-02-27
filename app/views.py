@@ -105,6 +105,7 @@ def shop(request):
     }
     return render(request, 'app/shop.html', context)
 
+
 def brands(request):
     context = get_context()
     return render(request, 'app/brands.html', context)
@@ -115,7 +116,7 @@ def product_detail(request, slug):
     product = get_object_or_404(Product, slug=slug)
     
     # Get related products based on category
-    related_products = Product.objects.filter(category=product.category, is_active=True).exclude(slug=slug)[:4]
+    related_products = Product.objects.filter(category=product.category, is_active=True).exclude(slug=slug)[:8]
     
     context = {
         'store': store, 

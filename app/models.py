@@ -122,7 +122,9 @@ class Brand(models.Model):
 class Category(models.Model):
     name   = models.CharField(max_length=100, verbose_name=_("Category")) #,default='name of the category', help_text='name of catygory')
     slug   = models.SlugField(blank=True,null=True)
-    image  = models.ImageField(upload_to='category',default='category.jpg')
+    # image  = models.ImageField(upload_to='category',default='category.jpg')
+    image = models.ImageField(storage=MediaCloudinaryStorage(), blank=True, null=True)  # صورة المنتج على Cloudinary
+    
     is_active = models.BooleanField(default=True)
 
     def __str__(self):

@@ -21,21 +21,32 @@ class Store(models.Model):
     address = models.CharField(max_length=255, blank=True, null=True, default="Store adress")
     phone  = models.CharField('Contact Phone',max_length=255, blank=True, null=True, default="Store phone")
     email  = models.EmailField('Email Address', max_length=255, default="yourmail@gmail.com")
-    logo   = models.ImageField(blank=True, default='', upload_to="store")
+    # logo   = models.ImageField(blank=True, default='', upload_to="store")
+    logo   = models.ImageField(storage=MediaCloudinaryStorage(), blank=True, null=True)  # صورة المنتج على Cloudinary
+
     
-    image1 = models.ImageField(blank=True, default='image1', upload_to="store")
+    # image1 = models.ImageField(blank=True, default='image1', upload_to="store")
+    image1 = models.ImageField(storage=MediaCloudinaryStorage(), blank=True, null=True)  # صورة المنتج على Cloudinary
+
+
     title1 = models.CharField(max_length=50, blank=True, null=True, default="title1")
     subtitle1 = models.CharField(max_length=50, blank=True, null=True, default="subtitle1")
     # description1 = models.TextField(null=True, blank=True, default="description1")
     description1 = CKEditor5Field('Text', config_name='extends')
 
-    image2 = models.ImageField(blank=True,default='image2', upload_to="store")
+    # image2 = models.ImageField(blank=True,default='image2', upload_to="store")
+    image2 = models.ImageField(storage=MediaCloudinaryStorage(), blank=True, null=True)  # صورة المنتج على Cloudinary
+
+
     title2 = models.CharField(max_length=50, blank=True, null=True, default="title2")
     subtitle2 = models.CharField(max_length=50, blank=True, null=True, default="subtitle2")
     # description2 = models.TextField(null=True, blank=True, default="description2")    
     description2 = CKEditor5Field('Text', config_name='extends')
 
-    image3 = models.ImageField(blank=True, default='image3', upload_to="store")
+    # image3 = models.ImageField(blank=True, default='image3', upload_to="store")
+    image3 = models.ImageField(storage=MediaCloudinaryStorage(), blank=True, null=True)  # صورة المنتج على Cloudinary
+
+
     title3 = models.CharField(max_length=50, blank=True, null=True, default="title3")
     subtitle3 = models.CharField(max_length=50, blank=True, null=True, default="subtitle3")
     # description3 = models.TextField(null=True, blank=True, default="description3")
@@ -82,7 +93,9 @@ class Store(models.Model):
 class Brand(models.Model):
     name  = models.CharField(max_length=128, unique=True, verbose_name =_('Name of brand'))
     slug  = models.SlugField(blank=True,null=True)
-    image = models.ImageField(upload_to='brand', default='brand.jpg', blank=True, verbose_name=_('brand'))
+    # image = models.ImageField(upload_to='brand', default='brand.jpg', blank=True, verbose_name=_('brand'))
+    image = models.ImageField(storage=MediaCloudinaryStorage(), blank=True, null=True)  # صورة المنتج على Cloudinary
+
     start = models.DateTimeField(verbose_name=_('Start at'))
     end   = models.DateTimeField(verbose_name=_('End at'))
     is_active = models.BooleanField(default=False)
@@ -196,8 +209,11 @@ class Product(models.Model):
     #     return new_price
     
 class ProductImages(models.Model):
-    product     = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True,related_name='product', verbose_name=_("Product"))
-    image       = models.ImageField(upload_to='product-images', default='product.jpg') #/%y/%m/%d')
+    product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True,related_name='product', verbose_name=_("Product"))
+    # image       = models.ImageField(upload_to='product-images', default='product.jpg') #/%y/%m/%d')
+    image   = models.ImageField(storage=MediaCloudinaryStorage(), blank=True, null=True)  # صورة المنتج على Cloudinary
+
+
     # description = models.CharField(max_length=64, blank=True, null=True, verbose_name=_("Description"))
     description = CKEditor5Field('Text', config_name='extends')
     date = models.DateTimeField(auto_now_add=True )

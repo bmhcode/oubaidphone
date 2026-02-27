@@ -16,9 +16,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # DEBUG = True
 # ALLOWED_HOSTS = ['*']
 
-SECRET_KEY = os.getenv('SECRET_KEY')
+SECRET_KEY = os.getenv('SECRET_KEY','django-insecure-vi$p6z*3@e%s+uu!2_787e+kw&_-xohlw=3@dno')
 DEBUG = os.getenv('DEBUG', 'False').lower() == 'true' 
-ALLOWED_HOSTS = ['*'] #os.getenv("ALLOWED_HOSTS", "localhost").split(",")
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "127.0.0.1,.onrender.com,localhost").split(",")
 
 # ----------------------------------
 # إعداد قاعدة البيانات

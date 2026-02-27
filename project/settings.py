@@ -43,17 +43,10 @@ else:
 # ----------------------------------
 # إعداد Cloudinary
 # ----------------------------------
-CLOUDINARY = {
-    'cloud_name': os.getenv("CLOUDINARY_CLOUD_NAME"),
-    'api_key': os.getenv("CLOUDINARY_API_KEY"),
-    'api_secret': os.getenv("CLOUDINARY_API_SECRET")
-}
-
-# تهيئة Cloudinary
 cloudinary.config(
-    cloud_name=CLOUDINARY['cloud_name'],
-    api_key=CLOUDINARY['api_key'],
-    api_secret=CLOUDINARY['api_secret'],
+    cloud_name=os.getenv("CLOUDINARY_CLOUD_NAME"),
+    api_key=os.getenv("CLOUDINARY_API_KEY"),
+    api_secret=os.getenv("CLOUDINARY_API_SECRET"),
     secure=True
 )
 # ----------------------------------
@@ -72,12 +65,13 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'app',
-    'django_ckeditor_5',
-
+    # Cloudinary
     'cloudinary',
     'cloudinary_storage',
-   
+
+    'app',
+    'django_ckeditor_5',
+      
 ]
 
 CKEDITOR_CONFIGS = {

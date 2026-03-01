@@ -38,6 +38,7 @@ https://templatemo.com/tm-559-zay-shop
         <li data-bs-target="#template-mo-zay-hero-carousel" data-bs-slide-to="2"></li>
     </ol>
     <div class="carousel-inner">
+
         <div class="carousel-item active">
             <div class="container">
                 <div class="row p-5">
@@ -86,6 +87,7 @@ https://templatemo.com/tm-559-zay-shop
                 </div>
             </div>
         </div>
+
     </div>
     <a class="carousel-control-prev text-decoration-none w-auto ps-3" href="#template-mo-zay-hero-carousel"
         role="button" data-bs-slide="prev">
@@ -129,31 +131,30 @@ https://templatemo.com/tm-559-zay-shop
 </section>
 <!-- End Categories -->
 
-<!-- Start New Product -->
+<!-- Start Product -->
 <section class="bg-light">
     <div class="container py-4">
         <div class="row text-center py-2">
             <div class="col-lg-9 m-auto">
-                <h2>New Arrivals المنتجات الجديدة </h2>
-                <p> Our new products that will impress you with their quality </p>
-                <p> منتجاتنا الجديدة التي ستبهرك بجودتها </p>
+                <h2>Products المنتجات</h2>
+                <p> Our products that will impress you with their quality </p>
+                <p> منتجاتنا التي ستبهرك بجودتها </p>
             </div>
         </div>
         <div class="row">
             {% for product in products %}
-            {% if product.new_product %}
+
             <div class="col-12 col-md-3 mb-4">
                 <div class="product-wap card rounded-0 m-2">
                     <div class="card rounded-0">
                         <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                            New
+                            Vendu
                         </span>
                         <a href="{{product.get_absolute_url}}">
                             <!-- <a href="{% url 'product' product.id %}"> -->
 
                             <img src="{{ product.imageURL }}" class="card-img-top p-2"
                                 style="min-height: 200px; max-height: 200px;" alt="...">
-
                             <div
                                 class="card-img-overlay rounded-0 product-overlay d-flex align-items-center justify-content-center">
                                 <ul class="list-unstyled">
@@ -171,13 +172,13 @@ https://templatemo.com/tm-559-zay-shop
                     </div>
                     <div class="card-body">
                         <ul class="list-unstyled d-flex justify-content-between">
-                            {% comment %} <li>
+                            <!-- <li>
                                 <i class="text-warning fa fa-star"></i>
                                 <i class="text-warning fa fa-star"></i>
                                 <i class="text-warning fa fa-star"></i>
                                 <i class="text-muted fa fa-star"></i>
                                 <i class="text-muted fa fa-star"></i>
-                            </li> {% endcomment %}
+                            </li>  -->
 
                         </ul>
                         <a href="{{ product.get_absolute_url }}" class="h2 text-decoration-none text-dark">
@@ -192,14 +193,14 @@ https://templatemo.com/tm-559-zay-shop
                             </h5>
                         </a>
                         <p class="card-text"> {{product.description|truncatechars:30}} </p>
-                        {% comment %} <p class="text-muted">Reviews (24)</p> {% endcomment %}
+                        <!-- <p class="text-muted">Reviews (24)</p>  -->
                         <div class="d-flex justify-content-between">
-                            {% if product.old_price and product.old_price > product.price %}
-                            <span class="text-muted text-right"><del>{{ product.old_price }} Da</del></span>
+                            <!-- {% if product.old_price and product.old_price > product.price %} -->
+                            <span class="text-muted text-right"><del>{{ product.price }} Da</del></span>
                             <span>{{ product.price }} Da</span>
-                            {% else %}
+                            <!-- {% else %} -->
                             <span>{{ product.price }} Da</span>
-                            {% endif %}
+                            <!-- {% endif %} -->
                         </div>
 
                         {% if request.user == product.user or request.user.is_superuser %}
@@ -216,182 +217,13 @@ https://templatemo.com/tm-559-zay-shop
                     </div>
                 </div>
             </div>
-            {% endif %}
+
             {% endfor %}
         </div>
     </div>
 </section>
-<!-- End New Product -->
+<!-- End Product -->
 
-<!-- Start Featured Product -->
-<section class="bg-light">
-    <div class="container py-4">
-        <div class="row text-center py-2">
-            <div class="col-lg-9 m-auto">
-                <h2> Featured Product المنتج المميز </h2>
-                <p> A special product makes you more special </p>
-                <p>المنتج المميز يجعلك الأكثر تميز </p>
-            </div>
-        </div>
-        <div class="row">
-            {% for product in products %}
-            {% if product.featured_product %}
-            <div class="col-12 col-md-3 mb-4">
-                <div class="product-wap card rounded-0 m-2">
-                    <div class="card rounded-0">
-                        {% if product.new_product %}
-                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                            New
-                        </span>
-                        {% endif %}
-                        <a href="{{product.get_absolute_url}}"> {% comment %} <a href="{% url 'product' product.id %}">
-                                {% endcomment %}
-                                <img src="{{ product.imageURL }}" class="card-img-top p-2"
-                                    style="min-height: 200px; max-height: 200px;" alt="...">
-
-                                <div
-                                    class="card-img-overlay rounded-0 product-overlay d-flex align-items-center justify-content-center">
-                                    <ul class="list-unstyled">
-                                        <li><a class="btn btn-success text-white" href="shop-single.html"><i
-                                                    class="far fa-heart"></i></a></li>
-                                        <li><a class="btn btn-success text-white mt-2"
-                                                href="{{product.get_absolute_url}}"><i class="far fa-eye"></i></a></li>
-                                        <!-- <li><a class="btn btn-success text-white mt-2" href="product_detail.html"><i
-                                                    class="fas fa-cart-plus"></i></a></li> -->
-                                    </ul>
-                                </div>
-                            </a>
-                    </div>
-                    <div class="card-body">
-                        <ul class="list-unstyled d-flex justify-content-between">
-                            <!-- <li>
-                                <i class="text-warning fa fa-star"></i>
-                                <i class="text-warning fa fa-star"></i>
-                                <i class="text-warning fa fa-star"></i>
-                                <i class="text-muted fa fa-star"></i>
-                                <i class="text-muted fa fa-star"></i>
-                            </li>  -->
-                            {% if product.old_price and product.old_price > product.price %}
-                            <span class="text-muted text-right"><del>{{ product.old_price }} Da</del></span>
-                            <span>{{ product.price }} Da</span>
-                            {% else %}
-                            <li class="mr-1">{{ product.price }} Da</li>
-                            {% endif %}
-                        </ul>
-                        <a href="{{ product.get_absolute_url }}" class="h2 text-decoration-none text-dark">
-                            <h5 class="card-title"> {{ product.name }}
-                                {% if product.featured_product %}
-                                <span
-                                    class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-success">
-                                    Featured
-                                    {% comment %} <span class="visually-hidden">unread messages</span> {% endcomment %}
-                                </span>
-                                {% endif %}
-                            </h5>
-                        </a>
-                        <p class="card-text">{{product.description|truncatechars:20}}</p>
-                        {% if request.user == product.user or request.user.is_superuser %}
-                        <div class="mt-2 text-center border-top pt-2">
-                            <a href="{% url 'update_product' product.slug %}"
-                                class="btn btn-sm btn-warning py-0 px-1"><i class="fas fa-edit"></i></a>
-                            <a href="{% url 'delete_product' product.slug %}" class="btn btn-sm btn-danger py-0 px-1"><i
-                                    class="fas fa-trash"></i></a>
-                            <a href="{% url 'manage_product_images' product.slug %}"
-                                class="btn btn-sm btn-primary py-0 px-1"><i class="fas fa-images"></i></a>
-                        </div>
-                        {% endif %}
-                        {% comment %} <p class="text-muted">Reviews (24)</p> {% endcomment %}
-                    </div>
-                </div>
-            </div>
-            {% endif %}
-            {% endfor %}
-        </div>
-    </div>
-</section>
-<!-- End Featured Product -->
-
-<!-- Start Promotion Product -->
-<section class="bg-light">
-    <div class="container py-4">
-        <div class="row text-center py-2">
-            <div class="col-lg-9 m-auto">
-                <h2>Promotional Products تخفيضات </h2>
-                <p> Hurry and take advantage of the discounts offered by us </p>
-                <p> أسرع و إستفد من التخفيضات المقدمة منا </p>
-            </div>
-        </div>
-        <div class="row">
-            {% for product in products %}
-            {% if product.old_price and product.old_price > product.price %}
-            <div class="col-12 col-md-3 mb-4">
-                <div class="product-wap card rounded-0 m-2">
-                    <div class="card rounded-0">
-                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                            New
-                        </span>
-                        <a href="{{product.get_absolute_url}}"> {% comment %} <a href="{% url 'product' product.id %}">
-                                {% endcomment %}
-                                <img src="{{ product.imageURL }}" class="card-img-top p-2"
-                                    style="min-height: 200px; max-height: 200px;" alt="...">
-
-                                <div
-                                    class="card-img-overlay rounded-0 product-overlay d-flex align-items-center justify-content-center">
-                                    <ul class="list-unstyled">
-                                        <li><a class="btn btn-success text-white" href="shop-single.html"><i
-                                                    class="far fa-heart"></i></a></li>
-                                        <li><a class="btn btn-success text-white mt-2"
-                                                href="{{product.get_absolute_url}}"><i class="far fa-eye"></i></a></li>
-                                        <!-- <li><a class="btn btn-success text-white mt-2" href="product_detail.html"><i
-                                                    class="fas fa-cart-plus"></i></a></li> -->
-                                    </ul>
-                                </div>
-                            </a>
-                    </div>
-                    <div class="card-body">
-                        <ul class="list-unstyled d-flex justify-content-between">
-                            {% comment %} <li>
-                                <i class="text-warning fa fa-star"></i>
-                                <i class="text-warning fa fa-star"></i>
-                                <i class="text-warning fa fa-star"></i>
-                                <i class="text-muted fa fa-star"></i>
-                                <i class="text-muted fa fa-star"></i>
-                            </li> {% endcomment %}
-                            <span class="text-muted text-right"><del>{{ product.old_price }} Da</del></span>
-                            <span>{{ product.price }} Da</span>
-                        </ul>
-                        <a href="{{ product.get_absolute_url }}" class="h2 text-decoration-none text-dark">
-                            <h5 class="card-title"> {{ product.name }}
-                                {% if product.featured_product %}
-                                <span
-                                    class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-success">
-                                    Featured
-                                    {% comment %} <span class="visually-hidden">unread messages</span> {% endcomment %}
-                                </span>
-                                {% endif %}
-                            </h5>
-                        </a>
-                        <p class="card-text"> {{ product.description|truncatechars:20 }} </p>
-                        {% if request.user == product.user or request.user.is_superuser %}
-                        <div class="mt-2 text-center border-top pt-2">
-                            <a href="{% url 'update_product' product.slug %}"
-                                class="btn btn-sm btn-warning py-0 px-1"><i class="fas fa-edit"></i></a>
-                            <a href="{% url 'delete_product' product.slug %}" class="btn btn-sm btn-danger py-0 px-1"><i
-                                    class="fas fa-trash"></i></a>
-                            <a href="{% url 'manage_product_images' product.slug %}"
-                                class="btn btn-sm btn-primary py-0 px-1"><i class="fas fa-images"></i></a>
-                        </div>
-                        {% endif %}
-                        {% comment %} <p class="text-muted">Reviews (24)</p> {% endcomment %}
-                    </div>
-                </div>
-            </div>
-            {% endif %}
-            {% endfor %}
-        </div>
-    </div>
-</section>
-<!-- End Promotion Product -->
 
 <!-- Start Brands -->
 <section class="bg-light py-5">

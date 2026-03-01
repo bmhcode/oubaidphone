@@ -19,14 +19,17 @@ class StoreForm(forms.ModelForm):
             'phone': forms.TextInput(attrs={'class': 'form-control'}),
             'email': forms.EmailInput(attrs={'class': 'form-control'}),
             'logo': forms.ClearableFileInput(attrs={'class': 'form-control'}),
+
             'image1': forms.ClearableFileInput(attrs={'class': 'form-control'}),
             'title1': forms.TextInput(attrs={'class': 'form-control'}),
             'subtitle1': forms.TextInput(attrs={'class': 'form-control'}),
             'description1': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+
             'image2': forms.ClearableFileInput(attrs={'class': 'form-control'}),
             'title2': forms.TextInput(attrs={'class': 'form-control'}),
             'subtitle2': forms.TextInput(attrs={'class': 'form-control'}),
             'description2': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+            
             'image3': forms.ClearableFileInput(attrs={'class': 'form-control'}),
             'title3': forms.TextInput(attrs={'class': 'form-control'}),
             'subtitle3': forms.TextInput(attrs={'class': 'form-control'}),
@@ -47,17 +50,14 @@ class CategoryForm(forms.ModelForm):
 class ProductForm(forms.ModelForm):
     class Meta:
         model = Product
-        fields = ['category', 'name', 'description', 'price', 'old_price', 'image', 'is_active', 'new_product', 'featured_product']
+        fields = ['category', 'name', 'description', 'price', 'image', 'is_active']
         widgets = {
             'category': forms.Select(attrs={'class': 'form-control'}),
             'name': forms.TextInput(attrs={'class': 'form-control'}), #, 'placeholder': 'Product Name'}),
             'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 4}), #, 'placeholder': 'Description'}),
             'price': forms.NumberInput(attrs={'class': 'form-control'}),
-            'old_price': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Old Price (Optional)'}),
             'image': forms.ClearableFileInput(attrs={'class': 'form-control'}),
             'is_active': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
-            'new_product': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
-            'featured_product': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }
 
 class ProductImageForm(forms.ModelForm):

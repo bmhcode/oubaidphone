@@ -4,19 +4,22 @@ from django.contrib.auth.models import User
 from django.urls import reverse
 from datetime import datetime, date
 from django.utils.text import slugify
+import uuid
+
 from django.utils.html import mark_safe
 import django.utils.timezone
 from django_ckeditor_5.fields import CKEditor5Field
 
+# cloudinary
 from cloudinary.models import CloudinaryField
 from cloudinary_storage.storage import MediaCloudinaryStorage
+# / cloudinary
 
 def user_directory_path(instance,filename):
     return 'user_{0}/{1}'.format(instance.user.id, filename)
     
 class Store(models.Model):
     name    = models.CharField('name of store', max_length=255, blank=True, null=False, default="Store name")
-    # about_us = RichTextField(null=True, blank=True, default="About Us")
     about_us = CKEditor5Field('Text', config_name='extends')
     address = models.CharField(max_length=255, blank=True, null=True, default="Store adress")
     phone  = models.CharField('Contact Phone',max_length=255, blank=True, null=True, default="Store phone")
@@ -27,7 +30,7 @@ class Store(models.Model):
     
     # image1 = models.ImageField(blank=True, default='image1', upload_to="store")
     image1 = models.ImageField(storage=MediaCloudinaryStorage(), blank=True, null=True)  # صورة المنتج على Cloudinary
-
+    # image1 = CloudinaryField('image')
 
     title1 = models.CharField(max_length=50, blank=True, null=True, default="title1")
     subtitle1 = models.CharField(max_length=50, blank=True, null=True, default="subtitle1")
@@ -90,26 +93,33 @@ class Store(models.Model):
             url = ''
         return url
 
-class Brand(models.Model):
-    name  = models.CharField(max_length=128, unique=True, verbose_name =_('Name of brand'))
-    slug  = models.SlugField(blank=True,null=True)
-    # image = models.ImageField(upload_to='brand', default='brand.jpg', blank=True, verbose_name=_('brand'))
-    image = models.ImageField(storage=MediaCloudinaryStorage(), blank=True, null=True)  # صورة المنتج على Cloudinary
+# class StoreSection(models.Model):
+#     store = models.ForeignKey(Store, on_delete=models.CASCADE, related_name="sections")
+#     title = models.CharField(max_length=50)
+#     subtitle = models.CharField(max_length=50)
+#     description = CKEditor5Field('Text', config_name='extends')
+#     image = CloudinaryField('image')
 
+
+class Brand(models.Model):
+    name  = models.CharField(unique=True, max_length=128, verbose_name =_('Name of brand'))
+    slug  = models.SlugField(blank=True,null=True, unique=True)
+    image = models.ImageField(storage=MediaCloudinaryStorage(), blank=True, null=True)  # صورة المنتج على Cloudinary
     start = models.DateTimeField(verbose_name=_('Start at'))
     end   = models.DateTimeField(verbose_name=_('End at'))
     is_active = models.BooleanField(default=False)
    
+    # image = models.ImageField(upload_to='brand', default='brand.jpg', blank=True, verbose_name=_('brand'))
     def __str__(self):
         return  f"{self.name}" 
     
     class Meta:
         ordering = ['-start'] #, '-created']
-            
+
     def save(self, *args, **kwargs):
         if not self.slug:
-            self.slug = slugify(self.name)
-        super(Brand, self).save(*args, **kwargs)
+            self.slug = slugify(self.name) + "-" + str(uuid.uuid4())[:8]
+        super().save(*args, **kwargs)
          
     @property
     def imageURL(self):
@@ -120,11 +130,10 @@ class Brand(models.Model):
         return url
 
 class Category(models.Model):
-    name   = models.CharField(max_length=100, verbose_name=_("Category")) #,default='name of the category', help_text='name of catygory')
-    slug   = models.SlugField(blank=True,null=True)
-    # image  = models.ImageField(upload_to='category',default='category.jpg')
+    name   = models.CharField(unique=True, max_length=100, verbose_name=_("Category")) #,default='name of the category', help_text='name of catygory')
+    slug   = models.SlugField(blank=True,null=True, unique=True)
     image = models.ImageField(storage=MediaCloudinaryStorage(), blank=True, null=True)  # صورة المنتج على Cloudinary
-    
+    # image  = models.ImageField(upload_to='category',default='category.jpg')
     is_active = models.BooleanField(default=True)
 
     def __str__(self):
@@ -136,8 +145,8 @@ class Category(models.Model):
       
     def save(self, *args, **kwargs):
         if not self.slug:
-            self.slug = slugify(self.name)
-        super(Category, self).save(*args, **kwargs)            
+            self.slug = slugify(self.name) + "-" + str(uuid.uuid4())[:8]
+        super().save(*args, **kwargs)            
       
     def get_absolute_url(self):
         return reverse('index')
@@ -151,27 +160,31 @@ class Category(models.Model):
             url = ''
         return url
     
+    # def category_image(self):
+    #     return mark_safe('<img src="%s" width="50" height="50" />' % (self.image.url))
+
     def category_image(self):
-        return mark_safe('<img src="%s" width="50" height="50" />' % (self.image.url))
+        if self.image:
+            return mark_safe(f'<img src="{self.image.url}" width="50" height="50" />')
+        return "-"    
 
 class Product(models.Model):
-    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
-    category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='category')
-    name = models.CharField(max_length=128, verbose_name =_('Name of product'))
-    slug = models.SlugField(blank=True,null=True)
-    # description = models.TextField(null=True,blank=True, verbose_name =_('informations about product')) #description = RichTextField(blank=True, null=True)
+    user     = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='products')
+    name     = models.CharField(unique=True, max_length=128, verbose_name =_('Name of product'))
+    slug     = models.SlugField(blank=True, null=True, unique=True)
+    price    = models.DecimalField(max_digits=12, decimal_places=2, default=0.00, blank=True,null=True)
     description = CKEditor5Field('Text', config_name='extends')
-    price = models.DecimalField(max_digits=12, decimal_places=2)
-    old_price = models.DecimalField(max_digits=12, decimal_places=2, default=0.00, blank=True,null=True, verbose_name =_('old price'))
+    image    = models.ImageField(storage=MediaCloudinaryStorage(), blank=True, null=True)  # صورة المنتج على Cloudinary
 
-    # image   = models.ImageField(upload_to='product', default='product.jpg') # upload_to=user_directory_path it's for users
-    image = models.ImageField(storage=MediaCloudinaryStorage(), blank=True, null=True)  # صورة المنتج على Cloudinary
-
-    created = models.DateTimeField(auto_now_add=True, verbose_name=_('Created at'))
-    updated = models.DateTimeField(auto_now=True, verbose_name=_('Updated at'))
+    created  = models.DateTimeField(auto_now_add=True, verbose_name=_('Created at'))
+    updated  = models.DateTimeField(auto_now=True, verbose_name=_('Updated at'))
     is_active = models.BooleanField(default=False)
-    new_product = models.BooleanField(default=False)
-    featured_product = models.BooleanField(default=False)
+
+    # old_price = models.DecimalField(max_digits=12, decimal_places=2, default=0.00, blank=True,null=True, verbose_name =_('old price'))
+    # image   = models.ImageField(upload_to='product', default='product.jpg') # upload_to=user_directory_path it's for users
+    # new_product = models.BooleanField(default=False)
+    # featured_product = models.BooleanField(default=False)
 
     def __str__(self):
         return  f"{self.name}" # ({self.description[0:50]})"
@@ -180,11 +193,17 @@ class Product(models.Model):
         ordering = ['-updated', '-created']
         verbose_name = _("Product")
         # verbose_name_plural = _("Products")
+
+    # class Meta:
+    # indexes = [
+    #     models.Index(fields=['slug']),
+    #     models.Index(fields=['is_active']),
+    # ]
     
     def save(self, *args, **kwargs):
         if not self.slug:
-            self.slug = slugify(self.name)
-        super(Product, self).save(*args, **kwargs)
+            self.slug = slugify(self.name) + "-" + str(uuid.uuid4())[:8]
+        super().save(*args, **kwargs)
             
     def get_absolute_url(self):
         return reverse("product", kwargs={"slug":self.slug})
@@ -205,20 +224,18 @@ class Product(models.Model):
             return mark_safe('<img src="%s" width="50" height="50"/>' % self.image.url)
         return "-"  
     product_image.short_description = 'Image'
-
     # def get_precentage(self):
     #     new_price = (self.price / self.old_price) * 100
     #     return new_price
     
 class ProductImages(models.Model):
-    product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True,related_name='product', verbose_name=_("Product"))
-    # image       = models.ImageField(upload_to='product-images', default='product.jpg') #/%y/%m/%d')
+    product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True,related_name='images', verbose_name=_("Product"))
     image   = models.ImageField(storage=MediaCloudinaryStorage(), blank=True, null=True)  # صورة المنتج على Cloudinary
-
-
-    # description = models.CharField(max_length=64, blank=True, null=True, verbose_name=_("Description"))
-    description = CKEditor5Field('Text', config_name='extends')
+    description = models.CharField(max_length=128)
     date = models.DateTimeField(auto_now_add=True )
+
+    # description = CKEditor5Field('Text', config_name='extends')
+    # image       = models.ImageField(upload_to='product-images', default='product.jpg') #/%y/%m/%d')
     # expirationTime = models.DateTimeField('expiration time (of ad)', default=timezone.now() + datetime.timedelta(days=30))
 
     class Meta:

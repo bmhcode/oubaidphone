@@ -19,6 +19,10 @@ urlpatterns = [
     path('product/<str:slug>',views.product_detail, name="product"),
     path('contact',views.contact, name="contact"),
     
+    # Store CRUD URLs
+    path('store/settings/', views.update_store, name='update_store'),
+    path('store/delete/', views.delete_store, name='delete_store'),
+    
     # Auth URLs
     path('accounts/', include('django.contrib.auth.urls')),
     path('signup/', views.signup, name='signup'),
@@ -52,9 +56,6 @@ urlpatterns = [
     path('category/update/<slug:slug>/', views.update_category, name='update_category'),
     path('category/delete/<slug:slug>/', views.delete_category, name='delete_category'),
     
-    # Store CRUD URLs
-    path('store/settings/', views.update_store, name='update_store'),
-    path('store/delete/', views.delete_store, name='delete_store'),
 ]
 
 if settings.DEBUG:

@@ -105,7 +105,6 @@ def shop(request):
     }
     return render(request, 'app/shop.html', context)
 
-
 def brands(request):
     context = get_context()
     return render(request, 'app/brands.html', context)
@@ -149,7 +148,6 @@ def contact(request):
     return render(request, 'app/contact.html', context)
 
 def signup(request):
-
     store = _get_store()
     categories = Category.objects.filter(is_active=True)
     
@@ -275,7 +273,6 @@ def delete_product_image(request, image_id):
         messages.success(request, 'Image deleted.')
 
     return redirect('manage_product_images', slug=product.slug)
-
 
 @user_passes_test(lambda u: u.is_superuser)
 def add_brand(request):

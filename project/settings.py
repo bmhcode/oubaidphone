@@ -71,6 +71,8 @@ INSTALLED_APPS = [
 
     'app',
     'django_ckeditor_5',
+
+    'django.contrib.humanize', # لإستظهار وقت إضافة المنتج
       
 ]
 
@@ -111,11 +113,15 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+
                 'app.context_processors.wishlist_count',
+                'app.context_processors.global_data',
             ],
         },
     },
 ]
+
+
 
 WSGI_APPLICATION = 'project.wsgi.application'
 
@@ -155,6 +161,9 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 
 USE_TZ = True
+
+# TIME_ZONE = 'Africa/Algiers'
+
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/

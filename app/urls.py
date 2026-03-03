@@ -18,6 +18,7 @@ urlpatterns = [
     path('shop',views.shop, name="shop"),
     path('product/<str:slug>',views.product_detail, name="product"),
     path('contact',views.contact, name="contact"),
+    path('update_profile',views.update_profile, name="update_profile"),
     
     # Store CRUD URLs
     path('store/settings/', views.update_store, name='update_store'),

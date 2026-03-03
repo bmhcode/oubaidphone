@@ -25,7 +25,7 @@
                             {% if field.name == 'image' and category %}
                             <div class="mb-2">
                                 <img src="{{ category.imageURL }}" alt="{{ category.name }}" class="img-thumbnail"
-                                    style="max-height: 200px;">
+                                    style="max-height: 200px;" loading="lazy">
                             </div>
                             {% endif %}
 

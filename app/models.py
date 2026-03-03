@@ -6,8 +6,12 @@ from datetime import datetime, date
 from django.utils.text import slugify
 import uuid
 
+from django.core.exceptions import ValidationError
+
 from django.utils.html import mark_safe
-import django.utils.timezone
+from django.utils.timesince import timesince
+from django.utils import timezone
+from datetime import timedelta
 from django_ckeditor_5.fields import CKEditor5Field
 
 # cloudinary
@@ -25,36 +29,29 @@ class Store(models.Model):
     phone  = models.CharField('Contact Phone',max_length=255, blank=True, null=True, default="Store phone")
     email  = models.EmailField('Email Address', max_length=255, default="yourmail@gmail.com")
     # logo   = models.ImageField(blank=True, default='', upload_to="store")
-    logo   = models.ImageField(storage=MediaCloudinaryStorage(), blank=True, null=True)  # صورة المنتج على Cloudinary
-
+    # logo   = models.ImageField(storage=MediaCloudinaryStorage(), blank=True, null=True)  # صورة المنتج على Cloudinary
+    logo = CloudinaryField('logo', blank=True, null=True)
     
     # image1 = models.ImageField(blank=True, default='image1', upload_to="store")
-    image1 = models.ImageField(storage=MediaCloudinaryStorage(), blank=True, null=True)  # صورة المنتج على Cloudinary
-    # image1 = CloudinaryField('image')
-
+    # image1 = models.ImageField(storage=MediaCloudinaryStorage(), blank=True, null=True)  # صورة المنتج على Cloudinary
+    image1 = CloudinaryField('image1', blank=True, null=True)
     title1 = models.CharField(max_length=50, blank=True, null=True, default="title1")
     subtitle1 = models.CharField(max_length=50, blank=True, null=True, default="subtitle1")
-    # description1 = models.TextField(null=True, blank=True, default="description1")
     description1 = CKEditor5Field('Text', config_name='extends')
 
     # image2 = models.ImageField(blank=True,default='image2', upload_to="store")
-    image2 = models.ImageField(storage=MediaCloudinaryStorage(), blank=True, null=True)  # صورة المنتج على Cloudinary
-
-
+    # image2 = models.ImageField(storage=MediaCloudinaryStorage(), blank=True, null=True)  # صورة المنتج على Cloudinary
+    image2 = CloudinaryField('image2', blank=True, null=True)
     title2 = models.CharField(max_length=50, blank=True, null=True, default="title2")
     subtitle2 = models.CharField(max_length=50, blank=True, null=True, default="subtitle2")
-    # description2 = models.TextField(null=True, blank=True, default="description2")    
     description2 = CKEditor5Field('Text', config_name='extends')
 
     # image3 = models.ImageField(blank=True, default='image3', upload_to="store")
-    image3 = models.ImageField(storage=MediaCloudinaryStorage(), blank=True, null=True)  # صورة المنتج على Cloudinary
-
-
+    # image3 = models.ImageField(storage=MediaCloudinaryStorage(), blank=True, null=True)  # صورة المنتج على Cloudinary
+    image3 = CloudinaryField('image3', blank=True, null=True)
     title3 = models.CharField(max_length=50, blank=True, null=True, default="title3")
     subtitle3 = models.CharField(max_length=50, blank=True, null=True, default="subtitle3")
-    # description3 = models.TextField(null=True, blank=True, default="description3")
     description3 = CKEditor5Field('Text', config_name='extends')
-
 
     # web = models.URLField('Website Adress',null=True, blank=True)
 
@@ -100,11 +97,12 @@ class Store(models.Model):
 #     description = CKEditor5Field('Text', config_name='extends')
 #     image = CloudinaryField('image')
 
-
 class Brand(models.Model):
     name  = models.CharField(unique=True, max_length=128, verbose_name =_('Name of brand'))
     slug  = models.SlugField(blank=True,null=True, unique=True)
-    image = models.ImageField(storage=MediaCloudinaryStorage(), blank=True, null=True)  # صورة المنتج على Cloudinary
+    # image = models.ImageField(storage=MediaCloudinaryStorage(), blank=True, null=True)  # صورة المنتج على Cloudinary
+    image = CloudinaryField('image', blank=True, null=True)
+    
     start = models.DateTimeField(verbose_name=_('Start at'))
     end   = models.DateTimeField(verbose_name=_('End at'))
     is_active = models.BooleanField(default=False)
@@ -132,8 +130,9 @@ class Brand(models.Model):
 class Category(models.Model):
     name   = models.CharField(unique=True, max_length=100, verbose_name=_("Category")) #,default='name of the category', help_text='name of catygory')
     slug   = models.SlugField(blank=True,null=True, unique=True)
-    image = models.ImageField(storage=MediaCloudinaryStorage(), blank=True, null=True)  # صورة المنتج على Cloudinary
+    # image = models.ImageField(storage=MediaCloudinaryStorage(), blank=True, null=True)  # صورة المنتج على Cloudinary
     # image  = models.ImageField(upload_to='category',default='category.jpg')
+    image = CloudinaryField('image', blank=True, null=True)
     is_active = models.BooleanField(default=True)
 
     def __str__(self):
@@ -175,7 +174,9 @@ class Product(models.Model):
     slug     = models.SlugField(blank=True, null=True, unique=True)
     price    = models.DecimalField(max_digits=12, decimal_places=2, default=0.00, blank=True,null=True)
     description = CKEditor5Field('Text', config_name='extends')
-    image    = models.ImageField(storage=MediaCloudinaryStorage(), blank=True, null=True)  # صورة المنتج على Cloudinary
+
+    # image    = models.ImageField(storage=MediaCloudinaryStorage(), blank=True, null=True)  # صورة المنتج على Cloudinary
+    image = CloudinaryField('image', blank=True, null=True)
 
     created  = models.DateTimeField(auto_now_add=True, verbose_name=_('Created at'))
     updated  = models.DateTimeField(auto_now=True, verbose_name=_('Updated at'))
@@ -223,6 +224,28 @@ class Product(models.Model):
         if self.image:
             return mark_safe('<img src="%s" width="50" height="50"/>' % self.image.url)
         return "-"  
+
+    # @property
+    # def time_since_created(self):
+    #     delta = timezone.now() - self.created
+    #     seconds = delta.total_seconds()
+        
+    #     if seconds < 60:
+    #         return "Just now"
+    #     elif seconds < 3600:
+    #         return f"il ya {int(seconds // 60)} minutes ago"
+    #     elif seconds < 86400:
+    #         return f"il ya {int(seconds // 3600)} hours ago"
+    #     elif seconds < 604800:
+    #         return f"il ya {int(seconds // 86400)} days ago"
+    #     else:
+    #         return self.created.strftime("%d %b %Y")
+    @property
+    def is_new(self):
+        """يرجع True إذا المنتج تم إنشاؤه منذ أقل من 7 أيام"""
+        return timezone.now() - self.created <= timedelta(days=1)
+
+
     product_image.short_description = 'Image'
     # def get_precentage(self):
     #     new_price = (self.price / self.old_price) * 100
@@ -230,16 +253,16 @@ class Product(models.Model):
     
 class ProductImages(models.Model):
     product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True,related_name='images', verbose_name=_("Product"))
-    image   = models.ImageField(storage=MediaCloudinaryStorage(), blank=True, null=True)  # صورة المنتج على Cloudinary
-    description = models.CharField(max_length=128)
-    date = models.DateTimeField(auto_now_add=True )
+    caption = models.CharField(max_length=128, blank=True, null=True)
+    # image   = models.ImageField(storage=MediaCloudinaryStorage(), blank=True, null=True)  # صورة المنتج على Cloudinary
+    image   = CloudinaryField('image', blank=True, null=True)
 
     # description = CKEditor5Field('Text', config_name='extends')
     # image       = models.ImageField(upload_to='product-images', default='product.jpg') #/%y/%m/%d')
     # expirationTime = models.DateTimeField('expiration time (of ad)', default=timezone.now() + datetime.timedelta(days=30))
 
     class Meta:
-        verbose_name_plural = _("Product Images") 
+        verbose_name_plural = _("Product images") 
       
     @property
     def imageURL(self):
@@ -256,3 +279,13 @@ class Wishlist(models.Model):
 
     def __str__(self):
         return f"Wishlist for {self.user.username}"
+
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    phone = models.CharField(max_length=20, blank=True, null=True)
+    # image = models.ImageField(upload_to='profiles/', blank=True, null=True)
+    image   = CloudinaryField('image', blank=True, null=True)
+    is_vendor = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.user.username

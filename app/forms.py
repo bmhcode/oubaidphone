@@ -1,6 +1,8 @@
 from django import forms
-from .models import Product, Brand, Category, ProductImages, Store
+from .models import Product, Brand, Category, ProductImages, Store,Profile
 from django_ckeditor_5.widgets import CKEditor5Widget
+from django.contrib.auth.models import User
+from django.contrib.auth.forms import AuthenticationForm
 
 
 class StoreForm(forms.ModelForm):
@@ -36,7 +38,6 @@ class StoreForm(forms.ModelForm):
             'description3': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
         }
 
-
 class CategoryForm(forms.ModelForm):
     class Meta:
         model = Category
@@ -63,12 +64,11 @@ class ProductForm(forms.ModelForm):
 class ProductImageForm(forms.ModelForm):
     class Meta:
         model = ProductImages
-        fields = ['image', 'description']
+        fields = ['image', 'caption']
         widgets = {
             'image': forms.ClearableFileInput(attrs={'class': 'form-control'}),
-            'description': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Optional caption'}),
+            'caption': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'caption'}),
         }
-
 
 class BrandForm(forms.ModelForm):
     class Meta:
@@ -87,4 +87,40 @@ class BrandForm(forms.ModelForm):
         # Set input formats for datetime fields
         self.fields['start'].input_formats = ['%Y-%m-%dT%H:%M']
         self.fields['end'].input_formats = ['%Y-%m-%dT%H:%M']
+
+# class ProfileUpdateForm(forms.ModelForm):
+#     class Meta:
+#         model = Profile
+#         fields = ['phone', 'image']
+#         widgets = {
+#             'phone': forms.TextInput(attrs={'class': 'form-control'}),
+#             'email': forms.EmailInput(attrs={'class': 'form-control'}),
+#             'image': forms.ClearableFileInput(attrs={'class': 'form-control'}),
+#         }
+
+
+class LoginForm(AuthenticationForm):
+    username = forms.CharField(widget=forms.TextInput(attrs={
+        'class': 'form-control',
+        'placeholder': 'Enter username'
+    }))
+    
+    password = forms.CharField(widget=forms.PasswordInput(attrs={
+        'class': 'form-control',
+        'placeholder': 'Enter password'
+    }))
+
+class UserUpdateForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['first_name', 'last_name', 'email']
+
+class ProfileUpdateForm(forms.ModelForm):
+    class Meta:
+        model = Profile
+        fields = ['phone','image'] #,'first_name','last_name','is_vender']
+        widgets = {
+            'phone': forms.TextInput(attrs={'class': 'form-control'}),
+            'image': forms.ClearableFileInput(attrs={'class': 'form-control'}),
+        }
 

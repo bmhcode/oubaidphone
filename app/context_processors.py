@@ -1,4 +1,12 @@
-from .models import Wishlist
+from .models import Category, Wishlist
+from .views import _get_store
+
+def global_data(request):
+    return {
+        'store': _get_store(),
+        'categories': Category.objects.filter(is_active=True)
+    }
+
 
 def wishlist_count(request):
     count = 0

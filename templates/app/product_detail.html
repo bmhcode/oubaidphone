@@ -38,7 +38,7 @@ OubaidPhone/{{ product.name }}
                     </span>
                     {% endif %}
                     <img class="card-img img-fluid" src="{{ product.imageURL }}" alt="Card image cap"
-                        id="product-detail" style="height: 400px;">
+                        id="product-detail" style="height: 400px;" loading="lazy">
                 </div>
                 <div class="row">
                     <!--Start Controls-->
@@ -58,12 +58,12 @@ OubaidPhone/{{ product.name }}
                             <!--First slide-->
                             <div class="carousel-item active">
                                 <div class="row">
-                                    {% comment %} {% for image in productImages %} {% endcomment %}
-                                    {% for image in product.product.all %}
+                                    {% for img in product.images.all %}
                                     <div class="col-4">
                                         <a href="#">
-                                            <img class="card-img img-fluid" src="{{ image.imageURL }}"
-                                                alt="Product Image 1" style="min-height:100px; max-height: 100px;">
+                                            <img class="card-img img-fluid" src="{{ img.imageURL }}"
+                                                alt="Product Image 1" style="min-height:100px; max-height: 100px;"
+                                                loading="lazy">
                                         </a>
                                     </div>
                                     {% endfor %}
@@ -114,13 +114,7 @@ OubaidPhone/{{ product.name }}
                 <div class="card">
                     <div class="card-body">
                         <h1 class="h2 list-item">{{ product.name }}</h1>
-                        {% if product.old_price and product.old_price > product.price %}
-                        <span class="text-muted text-right"><del>{{ product.old_price }} Da</del></span>
                         <span>{{ product.price }} Da</span>
-                        {% else %}
-                        <span>{{ product.price }} Da</span>
-                        {% endif %}
-
                         <!-- <ul class="list-inline">
                             <li class="list-inline-item">
                                 <h6>Brand</h6>
@@ -169,28 +163,29 @@ OubaidPhone/{{ product.name }}
         <div class="row">
             <!--Start Carousel Wrapper-->
             <div id="carousel-related-product">
-                {% for rproduct in product.category.category.all %}
+                {% for related_product in related_products %}
 
-                {% if rproduct != product %}
                 <div class="product-wap card rounded-0 m-2">
                     <div class="card rounded-0">
-                        <img class="card-img rounded-0 img-fluid" src="{{ rproduct.imageURL }}" style="height: 250px;">
+                        <img class="card-img rounded-0 img-fluid" src="{{ related_product.imageURL }}"
+                            style="height: 250px;" loading="lazy">
                         <div
                             class="card-img-overlay rounded-0 product-overlay d-flex align-items-center justify-content-center">
                             <ul class="list-unstyled">
                                 <li><a class="btn btn-success text-white" href="shop-single.html"><i
                                             class="far fa-heart"></i></a></li>
-                                <li><a class="btn btn-success text-white mt-2" href="{{rproduct.get_absolute_url}}"><i
-                                            class="far fa-eye"></i></a></li>
+                                <li><a class="btn btn-success text-white mt-2"
+                                        href="{{related_product.get_absolute_url}}"><i class="far fa-eye"></i></a></li>
                                 <li><a class="btn btn-success text-white mt-2" href="product_detail.html"><i
                                             class="fas fa-cart-plus"></i></a></li>
                             </ul>
                         </div>
                     </div>
                     <div class="card-body">
-                        <a class="h3 text-decoration-none" href="{{rproduct.get_absolute_url}}">{{ rproduct.name }}</a>
+                        <a class="h3 text-decoration-none" href="{{related_product.get_absolute_url}}">
+                            {{ related_product.name }}</a>
                         <ul class="w-100 list-unstyled d-flex justify-content-between mb-0">
-                            <li>{{ rproduct.description|truncatechars:30 }} </li>
+                            <li>{{ related_product.description|truncatechars:30 }} </li>
                             {% comment %} <li class="pt-2">
                                 <span class="product-color-dot color-dot-red float-left rounded-circle ml-1"></span>
                                 <span class="product-color-dot color-dot-blue float-left rounded-circle ml-1"></span>
@@ -210,28 +205,17 @@ OubaidPhone/{{ product.name }}
                         </ul>
 
                         <div class="d-flex justify-content-between">
-                            {% if rproduct.old_price and rproduct.old_price > rproduct.price %}
-                            <span class="text-muted text-right"><del>{{ rproduct.old_price }} Da</del></span>
-                            <span>{{ rproduct.price }} Da</span>
-                            {% else %}
-                            <span>{{ rproduct.price }} Da</span>
-                            {% endif %}
+                            <span>{{ related_product.price }} Da</span>
                         </div>
-
-
                     </div>
                 </div>
-                {% endif %}
+
                 {% endfor %}
             </div>
         </div>
     </div>
 </section>
 <!-- End Related Products -->
-
-
-
-
 
 
 <!-- Start Script -->

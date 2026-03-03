@@ -36,7 +36,7 @@
                     <div class="card-header bg-success text-white fw-bold">Main Product Image</div>
                     <div class="card-body text-center">
                         <img src="{{ product.imageURL }}" alt="{{ product.name }}" class="img-fluid rounded"
-                            style="max-height: 220px; object-fit: cover;">
+                            style="max-height: 220px; object-fit: cover;" loading="lazy">
                     </div>
                 </div>
 
@@ -47,15 +47,15 @@
                     </div>
                     <div class="card-body">
                         <form method="post" action="{% url 'add_product_image' product.slug %}"
-                            enctype="multipart/form-data">
+                            enctype="multipart/form-data" loading="lazy">
                             {% csrf_token %}
                             <div class="mb-3">
                                 <label class="form-label fw-semibold">Image <span class="text-danger">*</span></label>
                                 {{ form.image }}
                             </div>
                             <div class="mb-3">
-                                <label class="form-label fw-semibold">Caption (Optional)</label>
-                                {{ form.description }}
+                                <!-- <label class="form-label fw-semibold">Caption</label> -->
+                                {{ form.caption }}
                             </div>
                             <button type="submit" class="btn btn-primary w-100">
                                 <i class="fas fa-upload me-1"></i> Upload Image
@@ -79,7 +79,7 @@
                             <div class="col-6 col-md-4">
                                 <div class="card h-100 border shadow-sm">
                                     <img src="{{ img.imageURL }}" alt="{{ img.description|default:'Product Image' }}"
-                                        class="card-img-top" style="height: 150px; object-fit: cover;">
+                                        class="card-img-top" style="height: 150px; object-fit: cover;" loading="lazy">
                                     <div class="card-body p-2">
                                         {% if img.description %}
                                         <p class="card-text small text-muted text-center mb-1">{{ img.description }}</p>

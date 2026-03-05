@@ -194,26 +194,28 @@ https://templatemo.com/tm-559-zay-shop
 
 
                             <!-- زر الاتصال -->
-                            {% if user.profile.phone %}
+                            {% if product.user.profile.phone %}
                             <button type="button"
                                 class="btn btn-link text-dark p-0 lh-1 align-baseline text-decoration-none"
-                                data-bs-toggle="modal" data-bs-target="#phoneModal">
+                                data-bs-toggle="modal" data-bs-target="#phoneModal{{ product.id }}">
                                 <i class="fa fa-phone"></i> Appeler
                             </button>
                             {% endif %}
 
                             <!-- Modal -->
-                            <div class="modal fade" id="phoneModal" tabindex="-1" aria-labelledby="phoneModalLabel"
-                                aria-hidden="true">
+                            <div class="modal fade" id="phoneModal{{ product.id }}" tabindex="-1">
                                 <div class="modal-dialog">
                                     <div class="modal-content">
                                         <div class="modal-header">
-                                            <h5 class="modal-title" id="phoneModalLabel">Numéro de téléphone</h5>
+                                            <h5 class="modal-title" id="phoneModalLabel">Appeler</h5>
                                             <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                 aria-label="Close"></button>
                                         </div>
                                         <div class="modal-body">
-                                            {{ user.profile.phone }}
+                                            <div class="modal-body">
+                                                {{ product.user.username }} -
+                                                {{ product.user_phone }}
+                                            </div>
                                         </div>
                                         <div class="modal-footer">
                                             <button type="button" class="btn btn-secondary"
@@ -222,18 +224,8 @@ https://templatemo.com/tm-559-zay-shop
                                     </div>
                                 </div>
                             </div>
-
-
-
-
-
-
-
-
-
                             <span>{{ product.price }} Da</span>
                         </div>
-
                         {% if request.user == product.user or request.user.is_superuser %}
                         <div class="mt-2 text-center border-top pt-2">
                             <a href="{% url 'update_product' product.slug %}"

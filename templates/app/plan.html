@@ -1,0 +1,82 @@
+{% extends "app/base.html" %}
+{% load static %}
+
+{% block title %}
+BMH / upgrade plan
+{% endblock title %}
+
+
+{% block body %}
+
+<div class="container mt-5">
+    <div class="text-center mb-4">
+        <h2>Your Plan</h2>
+        <a href="{% url 'upgrade_plan' %}" class="btn btn-dark mt-3">
+            Upgrade your plan
+        </a>
+        <!-- <p class="text-muted">
+            You have reached the free plan limit.
+        </p> -->
+    </div>
+
+    <div class="row justify-content-center">
+
+        <!-- Free Plan -->
+        <div class="col-md-4">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header text-center bg-light">
+                    <h4>Free</h4>
+                </div>
+                <div class="card-body text-center">
+                    <h3>$0 / month</h3>
+                    <ul class="list-unstyled mt-3 mb-4">
+                        <li>✔ 03 Products</li>
+                        <li>✔ Basic Support</li>
+                        <li>✖ Advanced Features</li>
+                    </ul>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Pro Plan -->
+        <div class="col-md-4">
+            <div class="card shadow border-primary mb-4">
+                <div class="card-header text-center bg-primary text-white">
+                    <h4>Pro</h4>
+                </div>
+                <div class="card-body text-center">
+                    <h3>$10 / month</h3>
+                    <ul class="list-unstyled mt-3 mb-4">
+                        <li>✔ 05 Products</li>
+                        <li>✔ Basic Support</li>
+                        <li>✔ Advanced Analytics</li>
+                    </ul>
+
+
+                </div>
+            </div>
+        </div>
+
+        <!-- BUSINESS Plan -->
+        <div class="col-md-4">
+            <div class="card shadow border-primary mb-4">
+                <div class="card-header text-center bg-success text-white">
+                    <h4>BUSINESS</h4>
+                </div>
+                <div class="card-body text-center">
+                    <h3>$19 / month</h3>
+                    <ul class="list-unstyled mt-3 mb-4">
+                        <li>✔ Unlimited Products</li>
+                        <li>✔ Priority Support</li>
+                        <li>✔ Advanced Analytics</li>
+                    </ul>
+
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+{% endblock %}

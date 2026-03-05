@@ -9,38 +9,77 @@
     <div class="row">
         <div class="col-lg-6 m-auto">
             <h1 class="h1 text-center">My Products
-                {% if products.count < 2 %} <li class="nav-item">
-                    <a class="nav-link" href="{% url 'add_product' %}"><i class="fa fa-fw fa-plus text-dark mr-3"></i>
-                        Add Product</a>
-                    </li>
+
+                {% if plan == "BUSINESS" %}
+                <a class="nav-link" href="{% url 'add_product' %}">
+                    <i class="fa fa-fw fa-plus text-dark mr-3"></i>
+                    Add Product
+                </a>
+
+                <p>{{plan}} Unlimited Products</p>
+                {% else %}
+                {% if products.count < max_products %} <a class="nav-link" href="{% url 'add_product' %}">
+                    <i class="fa fa-fw fa-plus text-dark mr-3"></i>
+                    Add Product : ({{products.count}}/{{max_products}})
+                    </a>
                     {% else %}
-                    <a class="nav-link" data-bs-toggle="modal" data-bs-target="#phoneModal"><i
-                            class="fa fa-fw fa-plus text-dark mr-3"></i>
-                        Add Product x </a>
+                    <div class="modal-body text-center">
+                        <p>You reached your plan limit.</p>
+                        <a href="{% url 'upgrade_plan' %}" class="btn btn-dark mt-3">
+                            Upgrade Plan
+                        </a>
+                    </div>
                     {% endif %}
+                    <p>{{plan}} {{max_products}}</p>
+                    {% endif %}
+
+
+
+
+
+
+
+
+
+                    <!-- {% if plan == "FREE" %}
+                {% if products.count < max_products %} 
+                    <a class="nav-link" href="{% url 'add_product' %}">
+                        <i class="fa fa-fw fa-plus text-dark mr-3"></i>
+                        Add Product : ({{products.count}}/{{max_products}})
+                    </a>
+                    {% else %}
+                    <div class="modal-body text-center">
+                        <p>You reached your plan limit.</p>
+                        <a href="{% url 'upgrade_plan' %}" class="btn btn-dark mt-3">
+                            Upgrade Plan
+                        </a>
+                    </div>
+                    {% endif %}
+
+                    {% elif plan == "PRO" %}
+                    {% if products.count < max_products %} <a class="nav-link" href="{% url 'add_product' %}">
+                        <i class="fa fa-fw fa-plus text-dark mr-3"></i>
+                        Add Product : ({{products.count}}/{{max_products}})
+                        </a>
+                        {% else %}
+                        <div class="modal-body text-center">
+                            <p>You reached your plan limit.</p>
+                            <a href="{% url 'upgrade_plan' %}" class="btn btn-dark mt-3">
+                                Upgrade Plan
+                            </a>
+                        </div>
+                        {% endif %}
+                        {% elif plan == "BUSINESS" %}
+                        <a class="nav-link" href="{% url 'add_product' %}">
+                            <i class="fa fa-fw fa-plus text-dark mr-3"></i>
+                            Add Product
+                        </a>
+
+                        {% endif %} -->
+
             </h1>
         </div>
     </div>
-
-    <!-- Modal -->
-    <div class="modal fade" id="phoneModal" tabindex="-1" aria-labelledby="phoneModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="phoneModalLabel">Numéro de téléphone</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    "You cannot add more than 5 products."
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-
 
 
 

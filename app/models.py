@@ -21,7 +21,33 @@ from cloudinary_storage.storage import MediaCloudinaryStorage
 
 def user_directory_path(instance,filename):
     return 'user_{0}/{1}'.format(instance.user.id, filename)
+
     
+
+class Subscription(models.Model):
+
+    PLAN_CHOICES = (
+        ('FREE', 'Free'),
+        ('PRO', 'Pro'),
+        ('BUSINESS', 'Business'),
+    )
+
+    PLAN_LIMITS = {
+        'FREE': 3,
+        'PRO': 5,
+        'BUSINESS': None,  # None = Unlimited
+    }
+
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    plan = models.CharField(max_length=20, choices=PLAN_CHOICES, default='FREE')
+
+    def max_products(self):
+        return self.PLAN_LIMITS.get(self.plan)
+
+    def __str__(self):
+        return f"{self.user.username} - {self.plan}"
+
+
 class Store(models.Model):
     name    = models.CharField('name of store', max_length=255, blank=True, null=False, default="Store name")
     about_us = CKEditor5Field('Text', config_name='extends')
@@ -99,10 +125,10 @@ class Store(models.Model):
 
 class Brand(models.Model):
     name  = models.CharField(unique=True, max_length=128, verbose_name =_('Name of brand'))
-    slug  = models.SlugField(blank=True,null=True, unique=True)
+    slug = models.SlugField(unique=True, blank=True)
     # image = models.ImageField(storage=MediaCloudinaryStorage(), blank=True, null=True)  # صورة المنتج على Cloudinary
     image = CloudinaryField('image', blank=True, null=True)
-    
+
     start = models.DateTimeField(verbose_name=_('Start at'))
     end   = models.DateTimeField(verbose_name=_('End at'))
     is_active = models.BooleanField(default=False)
@@ -115,10 +141,10 @@ class Brand(models.Model):
         ordering = ['-start'] #, '-created']
 
     def save(self, *args, **kwargs):
-        if not self.slug:
+        if not self.slug or self.slug == "":
             self.slug = slugify(self.name) + "-" + str(uuid.uuid4())[:8]
         super().save(*args, **kwargs)
-         
+      
     @property
     def imageURL(self):
         try:
@@ -224,6 +250,14 @@ class Product(models.Model):
         if self.image:
             return mark_safe('<img src="%s" width="50" height="50"/>' % self.image.url)
         return "-"  
+
+    @property
+    def user_phone(self):
+        if hasattr(self.user, 'profile'):
+            return self.user.profile.phone
+        return None
+
+
 
     # @property
     # def time_since_created(self):

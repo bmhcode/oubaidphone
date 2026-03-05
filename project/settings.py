@@ -12,20 +12,33 @@ load_dotenv()  # لتحميل متغيرات البيئة من .env
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# localhost
 # SECRET_KEY="django-insecure-vi$p6z*3@e%s+uu!2_787e+kw&_-xohlw=3@dno#-ikd1m73z0"
 # DEBUG = True
 # ALLOWED_HOSTS = ['*']
+# / localhost
 
+# on web host
 SECRET_KEY = os.getenv('SECRET_KEY','django-insecure-vi$p6z*3@e%s+uu!2_787e+kw&_-xohlw=3@dno')
 DEBUG = os.getenv('DEBUG', 'False').lower() == 'true' 
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "127.0.0.1,.onrender.com,localhost").split(",")
+# / on web host
 
 # ----------------------------------
 # إعداد قاعدة البيانات
 # ----------------------------------
 # مثال على PostgreSQL
 import dj_database_url
+# Localhost
+# DATABASES = { 
+#         "default": {
+#             "ENGINE": "django.db.backends.sqlite3",
+#             "NAME": BASE_DIR / "db.sqlite3",
+#         }
+#     }
+# / localhost
 
+# on web host
 if os.environ.get("DATABASE_URL"):
     DATABASES = {
         'default': dj_database_url.config(
@@ -39,6 +52,7 @@ else:
             "NAME": BASE_DIR / "db.sqlite3",
         }
     }
+# / on web host
 
 # ----------------------------------
 # إعداد Cloudinary
@@ -73,8 +87,10 @@ INSTALLED_APPS = [
     'django_ckeditor_5',
 
     'django.contrib.humanize', # لإستظهار وقت إضافة المنتج
-      
+
 ]
+      
+
 
 CKEDITOR_CONFIGS = {
     'default': {
@@ -217,13 +233,13 @@ LOGGING = {
     },
 }
 
-JAZZMIN_SETTINGS = {
+JAZZMIN_SETTINGS = { # pip install django-jazzmin
     'site_header' : "BMHcode Shop",
     'site_brand' : "Your Wilcome",
     'site_logo' : "app/img/about-left-image.png",
     'copyright' : "bmhcode-shop.com",
      
-}  # pip install django-jazzmin
+}  
 
 '''
 JAZZMIN_SETTINGS = {

@@ -7,13 +7,14 @@ from .models import Store, Brand, Category, Product, Wishlist, ProductImages
 from .forms import ProductForm, BrandForm, CategoryForm, ProductImageForm, StoreForm, UserUpdateForm, ProfileUpdateForm
 from django.contrib import messages
 from django.contrib.auth.decorators import user_passes_test
+from django.http import JsonResponse
+
+from .models import Subscription
 
 
-# def get_context():
-#     return {
-#         'products': Product.objects.filter(is_active=True),
-        
-#     }
+
+
+
 
 def _get_store():
     """
@@ -25,10 +26,10 @@ def _get_store():
         store = Store.objects.create(name="My Store", about_us="Welcome to our store!")
     return store
 
-@login_required
+@login_required # update_store
 @user_passes_test(lambda u: u.is_superuser)
 def update_store(request):
-   
+    store = _get_store()
     if request.method == 'POST':
         form = StoreForm(request.POST, request.FILES, instance=store)
         if form.is_valid():
@@ -40,7 +41,7 @@ def update_store(request):
     context = {'form': form, 'title': 'Store Settings'}
     return render(request, 'app/store_form.html', context)
 
-@login_required
+@login_required # delete_store
 @user_passes_test(lambda u: u.is_superuser)
 def delete_store(request):
   
@@ -50,7 +51,6 @@ def delete_store(request):
         return redirect('index')
     context = {}
     return render(request, 'app/store_confirm_delete.html', context)
-
 
 def index(request):
   
@@ -99,7 +99,7 @@ def shop(request):
     return render(request, 'app/shop.html', context)
 
 def brands(request):
-    brands = Brand.objects.filter(),
+    brands = Brand.objects.filter(is_active=True)
     context = {'brands': brands}
     return render(request, 'app/brands.html', context)
 
@@ -128,6 +128,11 @@ def contact(request):
     context = {}
     return render(request, 'app/contact.html', context)
 
+def plan(request):
+    context = {}
+    return render(request, 'app/plan.html', context)
+
+
 def signup(request):
     
     if request.method == 'POST':
@@ -144,16 +149,8 @@ def signup(request):
     }
     return render(request, 'registration/signup.html', context)
 
-@login_required
+@login_required # add_product
 def add_product(request):
-   
-    # تحقق من عدد المنتجات
-    # if Product.objects.filter(user=request.user).count() >= 5:
-    #     print("You cannot add more than 5 products.")
-    #     messages.error(request, "You cannot add more than 5 products.")
-    #     return redirect('myproducts')  # أو أي صفحة تريد
-
-
     if request.method == 'POST':
         form = ProductForm(request.POST, request.FILES)
         if form.is_valid():
@@ -168,7 +165,55 @@ def add_product(request):
     context = {'form': form, 'title': 'Add Product'}
     return render(request, 'app/product_form.html', context)
 
+
+
+@login_required # myproducts
+def myproducts(request):
+    products     = Product.objects.filter(user=request.user)
+    plan         = request.user.subscription.plan
+    max_products = request.user.subscription.max_products()      
+
+    context = {
+        'products': products,
+        'plan': plan,
+        'max_products': max_products
+    }
+    return render(request, 'app/myproducts.html', context)
+
+
 @login_required
+def upgrade_plan(request):
+
+    # تأكد أن المستخدم عنده اشتراك
+    subscription, created = Subscription.objects.get_or_create(
+        user=request.user,
+        defaults={"plan": "FREE"}
+    )
+
+    if request.method == "POST":
+        plan = request.POST.get("plan")
+        
+        # تحقق ديناميكي من القيم الموجودة في الموديل
+        valid_plans = dict(Subscription.PLAN_CHOICES).keys()
+
+        if plan not in valid_plans:
+            return redirect("upgrade_plan")
+
+        subscription.plan = plan
+        subscription.save()
+
+        return redirect("add_product")
+
+    context = {
+        "plans": Subscription.PLAN_CHOICES,
+        "current_plan": subscription.plan,
+    }
+
+    return render(request, "app/upgrade_plan.html", context)
+
+
+
+@login_required # update_product
 def update_product(request, slug):
    
     product = get_object_or_404(Product, slug=slug)
@@ -191,7 +236,7 @@ def update_product(request, slug):
     context = {'form': form, 'title': 'Edit Product', 'product': product}
     return render(request, 'app/product_form.html', context)
 
-@login_required
+@login_required # delete_product
 def delete_product(request, slug):
  
     product = get_object_or_404(Product, slug=slug)
@@ -209,7 +254,7 @@ def delete_product(request, slug):
     context = {'product': product}
     return render(request, 'app/product_confirm_delete.html', context)
 
-@login_required
+@login_required # manage_product_images
 def manage_product_images(request, slug):
    
     product = get_object_or_404(Product, slug=slug)
@@ -223,7 +268,7 @@ def manage_product_images(request, slug):
     context = {'product': product,  'images': images, 'form': form}
     return render(request, 'app/product_images.html', context)
 
-@login_required
+@login_required # add_product_image
 def add_product_image(request, slug):
     product = get_object_or_404(Product, slug=slug)
 
@@ -243,7 +288,7 @@ def add_product_image(request, slug):
 
     return redirect('manage_product_images', slug=slug)
 
-@login_required
+@login_required # delete_product_image
 def delete_product_image(request, image_id):
     image = get_object_or_404(ProductImages, id=image_id)
     product = image.product
@@ -258,7 +303,7 @@ def delete_product_image(request, image_id):
 
     return redirect('manage_product_images', slug=product.slug)
 
-@user_passes_test(lambda u: u.is_superuser)
+@user_passes_test(lambda u: u.is_superuser) # add_brand
 def add_brand(request):
    
     if request.method == 'POST':
@@ -273,7 +318,7 @@ def add_brand(request):
     context = {'form': form, 'title': 'Add Brand'}
     return render(request, 'app/brand_form.html', context)
 
-@login_required
+@login_required # update_brand
 @user_passes_test(lambda u: u.is_superuser)
 def update_brand(request, slug):
   
@@ -291,7 +336,7 @@ def update_brand(request, slug):
     context = {'form': form, 'title': 'Edit Brand'}
     return render(request, 'app/brand_form.html', context)
 
-@login_required
+@login_required # delete_brand
 @user_passes_test(lambda u: u.is_superuser)
 def delete_brand(request, slug):
     
@@ -305,7 +350,7 @@ def delete_brand(request, slug):
     context = {'brand': brand}
     return render(request, 'app/brand_confirm_delete.html', context)
 
-@login_required
+@login_required # add_category
 @user_passes_test(lambda u: u.is_superuser)
 def add_category(request):
    
@@ -321,7 +366,7 @@ def add_category(request):
     context = {'form': form, 'title': 'Add Category'}
     return render(request, 'app/category_form.html', context)
 
-@login_required
+@login_required # update_category
 @user_passes_test(lambda u: u.is_superuser)
 def update_category(request, slug):
     
@@ -339,7 +384,7 @@ def update_category(request, slug):
     context = {'form': form, 'title': 'Edit Category', 'category': category}
     return render(request, 'app/category_form.html', context)
 
-@login_required
+@login_required # delete_category
 @user_passes_test(lambda u: u.is_superuser)
 def delete_category(request, slug):
     category = get_object_or_404(Category, slug=slug)
@@ -352,7 +397,7 @@ def delete_category(request, slug):
     context = {'category': category}
     return render(request, 'app/category_confirm_delete.html', context)
 
-@login_required
+@login_required # wishlist_list
 def wishlist_list(request):
  
     wishlist, created = Wishlist.objects.get_or_create(user=request.user)
@@ -363,31 +408,22 @@ def wishlist_list(request):
     }
     return render(request, 'app/wishlist.html', context)
 
-@login_required
+@login_required # add_to_wishlist
 def add_to_wishlist(request, product_id):
     product = get_object_or_404(Product, id=product_id)
     wishlist, created = Wishlist.objects.get_or_create(user=request.user)
     wishlist.products.add(product)
     return redirect('wishlist')
 
-@login_required
+@login_required # remove_from_wishlist
 def remove_from_wishlist(request, product_id):
     product = get_object_or_404(Product, id=product_id)
     wishlist, created = Wishlist.objects.get_or_create(user=request.user)
     wishlist.products.remove(product)
     return redirect('wishlist')
 
-@login_required
-def myproducts(request):
-    products = Product.objects.filter(user=request.user)
-    
-    context = {
-        'products': products,
-    }
-    return render(request, 'app/myproducts.html', context)
 
-
-@login_required
+@login_required # update_profile
 def update_profile(request):
     if request.method == 'POST':
         u_form = UserUpdateForm(request.POST, instance=request.user)

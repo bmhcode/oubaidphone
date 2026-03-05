@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block title %}
-OubaidPhone/about
+BMH / Brands
 {% endblock title %}
 
 
@@ -29,10 +29,12 @@ OubaidPhone/about
                     <div class="col-3 p-md-5">
                         <a href="#"><img class="img-fluid brand-img" src="{{brand.imageURL}}"></a>
                         {% if request.user.is_superuser %}
+                        {% if brand.slug %}
                         <div class="text-center mt-2">
                             <a href="{% url 'update_brand' brand.slug %}" class="btn btn-sm btn-warning">Edit</a>
                             <a href="{% url 'delete_brand' brand.slug %}" class="btn btn-sm btn-danger">Delete</a>
                         </div>
+                        {% endif %}
                         {% endif %}
                     </div>
                     {% endfor %}

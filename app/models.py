@@ -323,3 +323,11 @@ class Profile(models.Model):
 
     def __str__(self):
         return self.user.username
+
+    @property
+    def imageURL(self):
+        try:
+            url = self.image.url
+        except:
+            url = ''
+        return url

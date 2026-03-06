@@ -113,7 +113,13 @@ class LoginForm(AuthenticationForm):
 class UserUpdateForm(forms.ModelForm):
     class Meta:
         model = User
-        fields = ['first_name', 'last_name', 'email']
+        fields = ['username','first_name', 'last_name', 'email']
+        widgets = {
+            'username': forms.TextInput(attrs={'class': 'form-control'}),
+            'first_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'last_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'email': forms.TextInput(attrs={'class': 'form-control'}),
+        }
 
 class ProfileUpdateForm(forms.ModelForm):
     class Meta:
@@ -121,6 +127,12 @@ class ProfileUpdateForm(forms.ModelForm):
         fields = ['phone','image'] #,'first_name','last_name','is_vender']
         widgets = {
             'phone': forms.TextInput(attrs={'class': 'form-control'}),
-            'image': forms.ClearableFileInput(attrs={'class': 'form-control'}),
+            'image': forms.ClearableFileInput(
+                    attrs={
+                        'class': 'd-none',
+                        'accept': 'image/*',
+                        'id': 'imageUpload'
+                    }
+                    )
         }
 

@@ -1,8 +1,83 @@
-<form method="POST" enctype="multipart/form-data">
-    {% csrf_token %}
+{% extends "app/base.html" %}
+{% load static %}
 
-    {{ u_form.as_p }}
-    {{ p_form.as_p }}
+{% block title %}
+Update Profile
+{% endblock title %}
 
-    <button type="submit">Update</button>
-</form>
+{% block body %}
+
+<div class="container mt-5" style="max-width:700px;">
+
+    <div class="card shadow-lg border-0">
+        <div class="card-header bg-primary text-white text-center">
+            <h4 class="mb-0">Update Your Profile</h4>
+        </div>
+
+        <div class="card-body">
+
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <div class="text-center mb-4">
+
+                    <label for="imageUpload" style="cursor:pointer">
+
+                        {% if user.profile.image %}
+                        <img id="preview" src="{{ user.profile.image.url }}" class="rounded-circle shadow" width="150"
+                            height="150" style="object-fit:cover;">
+                        {% else %}
+                        <img id="preview" src="https://cdn-icons-png.flaticon.com/512/149/149071.png"
+                            class="rounded-circle shadow" width="150" height="150">
+                        {% endif %}
+
+                    </label>
+
+                    <p class="text-muted mt-2">Click the image to change it</p>
+
+                    {{ p_form.image }}
+
+                </div>
+
+                <div class="mb-3">
+                    {{ u_form.username.label_tag }}
+                    {{ u_form.username }}
+                </div>
+
+                <div class="mb-3">
+                    {{ u_form.email.label_tag }}
+                    {{ u_form.email }}
+                </div>
+
+                <div class="mb-3">
+                    {{ p_form.phone.label_tag }}
+                    {{ p_form.phone }}
+                </div>
+
+                <button class="btn btn-primary w-100">
+                    Update Profile
+                </button>
+
+            </form>
+
+        </div>
+    </div>
+
+</div>
+<script>
+
+    const imageUpload = document.getElementById("imageUpload")
+    const preview = document.getElementById("preview")
+
+    imageUpload.addEventListener("change", function () {
+
+        const file = this.files[0]
+
+        if (file) {
+            preview.src = URL.createObjectURL(file)
+        }
+
+    })
+
+</script>
+{% endblock body %}

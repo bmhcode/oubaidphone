@@ -203,27 +203,47 @@ https://templatemo.com/tm-559-zay-shop
                             {% endif %}
 
                             <!-- Modal -->
-                            <div class="modal fade" id="phoneModal{{ product.id }}" tabindex="-1">
-                                <div class="modal-dialog">
+
+                            <div class="modal fade" id="phoneModal{{ product.id }}" tabindex="-1"
+                                aria-labelledby="phoneModalLabel{{ product.id }}" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered">
                                     <div class="modal-content">
+
+                                        <!-- Header -->
                                         <div class="modal-header">
-                                            <h5 class="modal-title" id="phoneModalLabel">Appeler</h5>
+                                            <h5 class="modal-title" id="phoneModalLabel{{ product.id }}">
+                                                {{ product.user.username }}
+                                            </h5>
                                             <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                 aria-label="Close"></button>
                                         </div>
-                                        <div class="modal-body">
-                                            <div class="modal-body">
-                                                {{ product.user.username }} -
+
+                                        <!-- Image -->
+                                        <div class="text-center">
+                                            <img src="{{ product.user.profile.imageURL }}"
+                                                class="img-fluid p-3 rounded-circle" style="max-width:120px;"
+                                                alt="{{ product.user.username }}" loading="lazy">
+                                        </div>
+
+                                        <!-- Body -->
+                                        <div class="modal-body text-center">
+                                            <h4 class="text-primary">
                                                 {{ product.user_phone }}
-                                            </div>
+                                            </h4>
                                         </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary"
-                                                data-bs-dismiss="modal">Fermer</button>
+
+                                        <!-- Footer -->
+                                        <div class="modal-footer justify-content-center">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                                Fermer
+                                            </button>
                                         </div>
+
                                     </div>
                                 </div>
                             </div>
+                            <!-- / Modal -->
+
                             <span>{{ product.price }} Da</span>
                         </div>
                         {% if request.user == product.user or request.user.is_superuser %}

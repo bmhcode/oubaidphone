@@ -1,5 +1,6 @@
 {% extends "app/base.html" %}
 {% load static %}
+{% load humanize %}
 
 {% block title %} BMH / shop {% endblock title %}
 
@@ -7,8 +8,11 @@
 {% block body %}
 
 <!-- Start Content -->
+
+
 <div class="container py-5">
     <div class="row">
+
         <!-- Start Categories -->
         <div class="col-lg-3">
             <h1 class="h2 pb-4">{{ categories.count }} Categories </h1>
@@ -26,9 +30,20 @@
                 </li>
                 {% for cat in categories %}
                 <li class="list-group-item d-flex justify-content-between align-items-center">
-                    <a class="nav-link" href="{% url 'shop' %}?cat_filter={{cat.name}}">
-                        {{ cat.name|capfirst }} <span> ({{ cat.products.count }})</span>
+
+                    <a class="text-decoration-none category-link" href="{% url 'shop' %}?cat_filter={{ cat.slug }}">
+
+
+                        <i class="fas fa-tag text-primary me-2"></i>
+                        {{ cat.name|capfirst }}
+
+                        <span class="badge bg-secondary ms-2">
+                            {{ cat.products.count }}
+                        </span>
                     </a>
+
+
+
                     {% if request.user.is_superuser %}
                     <span>
                         <a href="{% url 'update_category' cat.slug %}" class="btn btn-sm btn-warning py-0 px-1"
@@ -41,12 +56,12 @@
                 {% endfor %}
             </ul>
         </div>
-        <!-- End Categories -->
+        <!-- / Categories -->
 
         <!-- Start products -->
         <div class="col-lg-9">
             <div class="row">
-                {{ products.count }} Products
+                <h3 id="category-display">All Products - {{ products.count }} Products</h3>
                 <div class="col-md-6">
                     <ul class="list-inline shop-top-menu pb-3 pt-1">
                         <li class="list-inline-item">
@@ -66,21 +81,20 @@
             </div>
 
             <div class="row">
+
                 {% if products %}
                 {% for product in products %}
                 <div class="col-12 col-md-4 mb-4">
                     <div class="product-wap card rounded-0 m-2">
                         <div class="card rounded-0">
-                            {% if product.new_product %}
+                            {% if product.is_new %}
                             <span
                                 class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                                New
-                            </span>
+                                New</span>
                             {% endif %}
                             <a href="{{product.get_absolute_url}}">
                                 <img src="{{ product.imageURL }}" class="card-img-top p-2"
-                                    style="min-height: 200px; max-height: 200px;" alt="..." loading="lazy">
-
+                                    style="min-height: 300px; max-height: 300px;" alt="..." loading="lazy">
                                 <div
                                     class="card-img-overlay rounded-0 product-overlay d-flex align-items-center justify-content-center">
                                     <ul class="list-unstyled">
@@ -88,8 +102,10 @@
                                                 href="{% url 'add_to_wishlist' product.id %}"><i
                                                     class="far fa-heart"></i></a></li>
                                         <li><a class="btn btn-success text-white mt-2"
-                                                href="{{product.get_absolute_url}}"><i class="far fa-eye"></i></a>
-                                        </li>
+                                                href="{{product.get_absolute_url}}"><i class="far fa-eye"></i></a></li>
+                                        <!-- <li><a class="btn btn-success text-white mt-2" 
+                                                    href="product_detail.html"><i
+                                                    class="fas fa-cart-plus"></i></a></li> -->
                                     </ul>
                                 </div>
                             </a>
@@ -97,47 +113,84 @@
                         <div class="card-body">
                             <ul class="list-unstyled d-flex justify-content-between">
                                 <!-- <li>
-                                                    <i class="text-warning fa fa-star"></i>
-                                                    <i class="text-warning fa fa-star"></i>
-                                                    <i class="text-warning fa fa-star"></i>
-                                                    <i class="text-muted fa fa-star"></i>
-                                                    <i class="text-muted fa fa-star"></i>
-                                                </li>  -->
+                                    <i class="text-warning fa fa-star"></i>
+                                    <i class="text-warning fa fa-star"></i>
+                                    <i class="text-warning fa fa-star"></i>
+                                    <i class="text-muted fa fa-star"></i>
+                                    <i class="text-muted fa fa-star"></i>
+                                </li>  -->
 
                             </ul>
-                            <a href="{{product.get_absolute_url}}" class="h2 text-decoration-none text-dark">
-                                <h5 class="card-title">{{product.name}}
-                                    {% if product.featured_product %}
-                                    <span
-                                        class="position-absolute left-0  start-100 translate-middle badge rounded-pill bg-success">
-                                        Featured
-                                    </span>
-                                    {% endif %}
-                                </h5>
+                            <a href="{{ product.get_absolute_url }}" class="h2 text-decoration-none text-dark">
+                                <h5 class="card-title"> {{ product.name }}</h5>
                             </a>
-                            <p class="card-text">{{product.description|truncatechars:20}}</p>
+                            <!-- <p class="card-text"> {{ product.description|truncatechars:30 }} </p> -->
+                            <!-- <small>{{ product.time_since_created }} </small> -->
+                            <small>{{ product.created|naturaltime }}</small>
 
-                            <div class="d-flex justify-content-between align-items-center">
-                                {% if product.old_price and product.old_price > product.price %}
-                                <span class="text-muted">
-                                    <del>{{ product.old_price }} Da</del>
-                                </span>
-                                {% else %}
-                                <span></span>
+                            <div class="d-flex justify-content-between">
+                                <!-- <span class="text-right">{{ user.profile.phone }}</span> -->
+
+                                <!-- زر الاتصال -->
+                                {% if product.user.profile.phone %}
+                                <button type="button"
+                                    class="btn btn-link text-dark p-0 lh-1 align-baseline text-decoration-none"
+                                    data-bs-toggle="modal" data-bs-target="#phoneModal{{ product.id }}">
+                                    <i class="fa fa-phone"></i> Appeler
+                                </button>
                                 {% endif %}
-                                <span class="fw-bold text-success ms-auto">
-                                    {{ product.price }} Da
-                                </span>
-                            </div>
 
+                                <!-- Modal display le product owner and his phone-->
+                                <div class="modal fade" id="phoneModal{{ product.id }}" tabindex="-1"
+                                    aria-labelledby="phoneModalLabel{{ product.id }}" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered">
+                                        <div class="modal-content">
+
+                                            <!-- Header -->
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="phoneModalLabel{{ product.id }}">
+                                                    {{ product.user.username }}
+                                                </h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                    aria-label="Close"></button>
+                                            </div>
+
+                                            <!-- Image -->
+                                            <div class="text-center">
+                                                <img src="{{ product.user.profile.imageURL }}"
+                                                    class="img-fluid p-3 rounded-circle" style="max-width:120px;"
+                                                    alt="{{ product.user.username }}" loading="lazy">
+                                            </div>
+
+                                            <!-- Body -->
+                                            <div class="modal-body text-center">
+                                                <h4 class="text-primary">
+                                                    {{ product.user_phone }}
+                                                </h4>
+                                            </div>
+
+                                            <!-- Footer -->
+                                            <div class="modal-footer justify-content-center">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                                    Fermer
+                                                </button>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- / Modal -->
+
+                                <span>{{ product.price|intcomma }} Da </span>
+                            </div>
                             {% if request.user == product.user or request.user.is_superuser %}
                             <div class="mt-2 text-center border-top pt-2">
-                                <a href="{% url 'update_product' product.slug %}" class="btn btn-sm btn-warning"><i
-                                        class="fas fa-edit"></i></a>
-                                <a href="{% url 'delete_product' product.slug %}" class="btn btn-sm btn-danger"><i
-                                        class="fas fa-trash"></i></a>
+                                <a href="{% url 'update_product' product.slug %}"
+                                    class="btn btn-sm btn-warning py-0 px-1"><i class="fas fa-edit"></i></a>
+                                <a href="{% url 'delete_product' product.slug %}"
+                                    class="btn btn-sm btn-danger py-0 px-1"><i class="fas fa-trash"></i></a>
                                 <a href="{% url 'manage_product_images' product.slug %}"
-                                    class="btn btn-sm btn-primary"><i class="fas fa-images"></i></a>
+                                    class="btn btn-sm btn-primary py-0 px-1"><i class="fas fa-images"></i></a>
                             </div>
                             {% endif %}
 
@@ -179,7 +232,7 @@
                 </nav>
             </div>
         </div>
-        <!-- End products -->
+        <!-- / products -->
 
         <!-- Start Brands -->
         <div class="row">
@@ -205,13 +258,10 @@
             </section>
 
         </div>
-        <!--End Brands-->
+        <!--/ Brands-->
     </div>
 
 </div>
 <!-- End Content -->
-
-
-
 
 {% endblock body %}

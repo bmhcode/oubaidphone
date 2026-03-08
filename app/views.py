@@ -1,5 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.core.paginator import Paginator
+from django.db.models import Q
+
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
@@ -10,10 +12,6 @@ from django.contrib.auth.decorators import user_passes_test
 from django.http import JsonResponse
 
 from .models import Subscription
-
-
-
-
 
 
 def _get_store():
@@ -67,35 +65,39 @@ def index(request):
         'products': products,
         'brands': brands,
     }
-    return render(request, 'app/index.html', context)
+    return render(request, 'app/index.html', context) 
+   
 
 def shop(request):
-    
-    # Show active products OR products owned by the current user
+
     if request.user.is_authenticated:
-        from django.db.models import Q
         products = Product.objects.filter(Q(is_active=True) | Q(user=request.user))
     else:
         products = Product.objects.filter(is_active=True)
 
-    # Filter products
+    # filter by category
     cat_filter = request.GET.get('cat_filter')
     if cat_filter:
-        products = products.filter(category__name=cat_filter)
+        products = products.filter(category__slug=cat_filter)
 
-    # Set up Pagination
-    paginator = Paginator(products, 9)
+    # pagination
+    paginator = Paginator(products, 8)
     page_number = request.GET.get('page')
     product_pages = paginator.get_page(page_number)
+
     nums = "a" * product_pages.paginator.num_pages
 
     brands = Brand.objects.filter(is_active=True)
+    categories = Category.objects.all()
+
     context = {
-        'products': products,
+        'products': product_pages,
         'product_pages': product_pages,
         'nums': nums,
         'brands': brands,
+        'categories': categories,
     }
+
     return render(request, 'app/shop.html', context)
 
 def brands(request):
@@ -158,7 +160,7 @@ def add_product(request):
             product.user = request.user
             product.save()
             messages.success(request, 'Product added successfully!')
-            return redirect('myproducts')
+            return redirect('mystore')
     else:
         form = ProductForm()
     
@@ -167,8 +169,8 @@ def add_product(request):
 
 
 
-@login_required # myproducts
-def myproducts(request):
+@login_required # mystore
+def mystore(request):
     products     = Product.objects.filter(user=request.user)
     plan         = request.user.subscription.plan
     max_products = request.user.subscription.max_products()      
@@ -178,7 +180,7 @@ def myproducts(request):
         'plan': plan,
         'max_products': max_products
     }
-    return render(request, 'app/myproducts.html', context)
+    return render(request, 'app/mystore.html', context)
 
 
 @login_required
@@ -229,7 +231,7 @@ def update_product(request, slug):
             form.save()
             messages.success(request, 'Product updated successfully!')
             # return redirect('product', slug=product.slug)
-            return redirect('myproducts')
+            return redirect('mystore')
     else:
         form = ProductForm(instance=product)
     

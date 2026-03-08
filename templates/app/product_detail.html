@@ -8,66 +8,46 @@ OubaidPhone | {{ product.name }}
 {% block body %}
 
 <section class="container py-5">
-
     <div class="row">
-
         <!-- LEFT : GALLERY -->
         <div class="col-lg-7">
-
             <div class="card shadow-sm">
-
                 {% if product.new %}
                 <span class="badge bg-danger position-absolute m-3">
                     NEW
                 </span>
                 {% endif %}
-
                 <img id="mainImage" src="{{ product.imageURL }}" class="img-fluid rounded"
                     style="height:450px;object-fit:cover">
-
             </div>
 
             <!-- THUMBNAILS -->
             <div class="row mt-3">
-
                 {% for img in product.images.all %}
-
                 <div class="col-3 mb-2">
-
                     <img src="{{ img.imageURL }}" class="img-fluid rounded border thumb"
                         style="height:90px;object-fit:cover;cursor:pointer">
-
                 </div>
-
                 {% endfor %}
-
             </div>
-
         </div>
-
 
         <!-- RIGHT : PRODUCT INFO -->
         <div class="col-lg-5">
 
             <div class="card shadow-sm p-4">
-
                 <h2 class="mb-2">{{ product.name }}</h2>
-
                 <h3 class="text-success mb-3">
                     {{ product.price }} Da
                 </h3>
-
                 <hr>
-
                 <p class="text-muted">
                     {{ product.description }}
                 </p>
-
                 <hr>
 
                 <!-- SELLER INFO -->
                 <div class="d-flex align-items-center mb-3">
-
                     <div class="me-3">
                         <i class="fa fa-store fa-2x text-success"></i>
                     </div>
@@ -75,11 +55,8 @@ OubaidPhone | {{ product.name }}
                         <strong>{{ product.user }}</strong>
                         <br>
                         <span class="text-muted">
-
                             <a href="tel:{{product.user.profile.phone}}" class="btn btn-success w-100 mb-2">
-
                                 Appeler moi 📞 {{product.user.profile.phone}}
-
                             </a>
                         </span>
                     </div>
@@ -87,43 +64,23 @@ OubaidPhone | {{ product.name }}
 
                 <!-- ACTION BUTTONS -->
 
-
-
                 <a href="{% url 'add_to_wishlist' product.id %}" class="btn btn-outline-danger w-100 mb-2">
-
                     ❤ Add to Wishlist
-
                 </a>
-
-
                 {% if request.user == product.user or request.user.is_superuser %}
-
                 <a href="{% url 'update_product' product.slug %}" class="btn btn-warning w-100 mb-2">
-
                     Edit Product
-
                 </a>
-
                 <a href="{% url 'delete_product' product.slug %}" class="btn btn-danger w-100 mb-2">
-
                     Delete Product
-
                 </a>
-
                 <a href="{% url 'manage_product_images' product.slug %}" class="btn btn-primary w-100">
-
                     Manage Images
-
                 </a>
-
                 {% endif %}
-
             </div>
-
         </div>
-
     </div>
-
 </section>
 
 
@@ -200,6 +157,7 @@ OubaidPhone | {{ product.name }}
     })
 
 </script>
+
 
 
 {% endblock body %}

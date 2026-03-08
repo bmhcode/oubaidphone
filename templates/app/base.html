@@ -156,14 +156,14 @@
                         <ul class="dropdown-menu">
 
                             <li>
-                                <a class="dropdown-item" href="{% url 'myproducts' %}">
-                                    <i class="fa fa-user-tie me-2"></i> Store Owner
+                                <a class="dropdown-item" href="{% url 'mystore' %}">
+                                    <i class="fas fa-store me-2"></i> my Store
                                 </a>
                             </li>
 
                             <li>
                                 <a class="dropdown-item" href="{% url 'update_profile' %}">
-                                    <i class="fa fa-user me-2"></i> My Profile
+                                    <i class="fa fa-user me-2"></i> my Profile
                                 </a>
                             </li>
                             {% if user.is_superuser %}

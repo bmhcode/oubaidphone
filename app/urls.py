@@ -13,9 +13,12 @@ from . import views
 # app_name = 'app'
 
 urlpatterns = [
+
     path('',views.index, name="index"),
     path('about',views.about, name="about"),
+
     path('shop',views.shop, name="shop"),
+    
     path('product/<str:slug>',views.product_detail, name="product"),
     path('contact',views.contact, name="contact"),
     path('update_profile',views.update_profile, name="update_profile"),
@@ -37,9 +40,9 @@ urlpatterns = [
     path('product/add/', views.add_product, name='add_product'),
     path('product/update/<slug:slug>/', views.update_product, name='update_product'),
     path('product/delete/<slug:slug>/', views.delete_product, name='delete_product'),
-    path('myproducts/', views.myproducts, name='myproducts'),
-    path('myproducts/update/<slug:slug>/', views.update_product, name='update_product'),
-    path('myproducts/delete/<slug:slug>/', views.delete_product, name='delete_product'),
+    path('mystore/', views.mystore, name='mystore'),
+    path('mystore/update/<slug:slug>/', views.update_product, name='update_product'),
+    path('mystore/delete/<slug:slug>/', views.delete_product, name='delete_product'),
   
     # Product Images URLs
     path('product/<slug:slug>/images/', views.manage_product_images, name='manage_product_images'),

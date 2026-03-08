@@ -1,77 +1,27 @@
 import os
 from pathlib import Path
-
-import cloudinary
-import cloudinary.uploader
-import cloudinary.api
-
+import dj_database_url
 from dotenv import load_dotenv
 
-load_dotenv()  # لتحميل متغيرات البيئة من .env
-
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
+load_dotenv()  # يقوم بتحميل القيم من .env
+# ----------------------------------------
+# Paths
+# ----------------------------------------
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# localhost
-# SECRET_KEY="django-insecure-vi$p6z*3@e%s+uu!2_787e+kw&_-xohlw=3@dno#-ikd1m73z0"
-# DEBUG = True
-# ALLOWED_HOSTS = ['*']
-# / localhost
+# ----------------------------------------
+# مفاتيح السرية والإعدادات الأساسية
+# ---------------- Web------------------------
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-dev-key')
+DEBUG = True  # للتطوير المحلي
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 
-# on web host
-SECRET_KEY = os.getenv('SECRET_KEY','django-insecure-vi$p6z*3@e%s+uu!2_787e+kw&_-xohlw=3@dno')
-DEBUG = os.getenv('DEBUG', 'False').lower() == 'true' 
-ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "127.0.0.1,.onrender.com,localhost").split(",")
-# / on web host
-
-# ----------------------------------
-# إعداد قاعدة البيانات
-# ----------------------------------
-# مثال على PostgreSQL
-import dj_database_url
-# Localhost
-# DATABASES = { 
-#         "default": {
-#             "ENGINE": "django.db.backends.sqlite3",
-#             "NAME": BASE_DIR / "db.sqlite3",
-#         }
-#     }
-# / localhost
-
-# on web host
-if os.environ.get("DATABASE_URL"):
-    DATABASES = {
-        'default': dj_database_url.config(
-            default=os.environ.get("DATABASE_URL")
-        )
-    }   
-else:
-    DATABASES = {
-        "default": {
-            "ENGINE": "django.db.backends.sqlite3",
-            "NAME": BASE_DIR / "db.sqlite3",
-        }
-    }
-# / on web host
-
-# ----------------------------------
-# إعداد Cloudinary
-# ----------------------------------
-cloudinary.config(
-    cloud_name=os.getenv("CLOUDINARY_CLOUD_NAME"),
-    api_key=os.getenv("CLOUDINARY_API_KEY"),
-    api_secret=os.getenv("CLOUDINARY_API_SECRET"),
-    secure=True
-)
-# ----------------------------------
-# استخدام Cloudinary لتخزين الوسائط (Media)
-# ----------------------------------
-DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
-
-
-# Application definition
+# ----------------------------------------
+# التطبيقات المثبتة
+# ----------------------------------------
 INSTALLED_APPS = [
     'jazzmin',
+   
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -79,25 +29,25 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    # Cloudinary
-    'cloudinary',
-    'cloudinary_storage',
-
     'app',
     'django_ckeditor_5',
 
-    'django.contrib.humanize', # لإستظهار وقت إضافة المنتج
+    'cloudinary',
+    'cloudinary_storage',
 
+    'django.contrib.humanize',
 ]
-      
 
-
+# ----------------------------------------
+# CKEditor إعدادات
+# ----------------------------------------
 CKEDITOR_CONFIGS = {
     'default': {
         'toolbar': 'Custom',
         'toolbar_Custom': [
             ['Bold', 'Italic', 'Underline'],
-            ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock'],
+            ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent',
+             '-', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock'],
             ['Link', 'Unlink'],
             ['RemoveFormat', 'Source']
         ],
@@ -105,9 +55,12 @@ CKEDITOR_CONFIGS = {
     },
 }
 
+# ----------------------------------------
+# Middleware
+# ----------------------------------------
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware', # pip install 'whitenoise[brotli]' $ pip freeze > requirements.txt
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -118,6 +71,9 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'project.urls'
 
+# ----------------------------------------
+# Templates إعدادات
+# ----------------------------------------
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -129,7 +85,6 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-
                 'app.context_processors.wishlist_count',
                 'app.context_processors.global_data',
             ],
@@ -137,93 +92,83 @@ TEMPLATES = [
     },
 ]
 
-
-
 WSGI_APPLICATION = 'project.wsgi.application'
 
-# Database
-# https://docs.djangoproject.com/en/5.0/ref/settings/#databases
+# ----------------------------------------
+# قواعد البيانات
+# ----------------------------------------
+if os.environ.get("DATABASE_URL"):
+    DATABASES = {
+        'default': dj_database_url.config(
+            default=os.environ.get("DATABASE_URL"),
+            conn_max_age=600
+        )
+    }
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
+        }
+    }
 
-
-# Login/Logout Redirects
+# ----------------------------------------
+# تسجيل الدخول والخروج
+# ----------------------------------------
 LOGIN_REDIRECT_URL = 'index'
 LOGOUT_REDIRECT_URL = 'index'
 
-# Password validation
-# https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
-
+# ----------------------------------------
+# Validators لكلمات المرور
+# ----------------------------------------
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
+    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',},
+    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',},
+    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',},
+    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',},
 ]
 
-# Internationalization
-# https://docs.djangoproject.com/en/5.0/topics/i18n/
-
+# ----------------------------------------
+# الترجمة والتوقيت
+# ----------------------------------------
 LANGUAGE_CODE = 'fr-fr'
-
 TIME_ZONE = 'UTC'
-
 USE_I18N = True
-
 USE_TZ = True
 
-# TIME_ZONE = 'Africa/Algiers'
-
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/5.0/howto/static-files/
+# ----------------------------------------
+# Static و Media
+# ----------------------------------------
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
-STATICFILES_DIRS = [
-    BASE_DIR / "static",
-]
-
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-
+STATICFILES_DIRS = [BASE_DIR / "static"]
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
+MEDIA_URL = '/media/'
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
-# # Default primary key field type
-# # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
-# DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+# ----------------------------------------
+# Cloudinary إعدادات
+# ----------------------------------------
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': os.environ.get('CLOUDINARY_CLOUD_NAME'),
+    'API_KEY': os.environ.get('CLOUDINARY_API_KEY'),
+    'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET'),
+}
 
-# ----------------- cloudinary
-# import cloudinary
-# cloudinary.config(
-#     secure=True
-# )
-# CLOUDINARY_STORAGE = {
-#     'CLOUDINARY_URL': os.environ.get('CLOUDINARY_URL'),
-# }
-# DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+# ----------------------------------------
+# Key الافتراضية لمفتاح PK
+# ----------------------------------------
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-
-
-# settings.py
+# ----------------------------------------
+# Logging
+# ----------------------------------------
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
-    'handlers': {
-        'console': {
-            'class': 'logging.StreamHandler',
-        },
-    },
-    'root': {
-        'handlers': ['console'],
-        'level': 'WARNING',
-    },
+    'handlers': {'console': {'class': 'logging.StreamHandler',},},
+    'root': {'handlers': ['console'], 'level': 'WARNING',},
     'loggers': {
         'django': {
             'handlers': ['console'],
@@ -233,13 +178,25 @@ LOGGING = {
     },
 }
 
-JAZZMIN_SETTINGS = { # pip install django-jazzmin
+# ----------------------------------------
+# CSRF Trusted Origins (HTTP محلي)
+# ----------------------------------------
+CSRF_TRUSTED_ORIGINS = [
+    "http://127.0.0.1:8000",
+    "http://localhost:8000",
+]
+
+# ----------------------------------------
+# Jazzmin Admin (اختياري)
+# ----------------------------------------
+
+JAZZMIN_SETTINGS = {
     'site_header' : "BMHcode Shop",
     'site_brand' : "Your Wilcome",
     'site_logo' : "app/img/about-left-image.png",
     'copyright' : "bmhcode-shop.com",
      
-}  
+}  # pip install django-jazzmin
 
 '''
 JAZZMIN_SETTINGS = {

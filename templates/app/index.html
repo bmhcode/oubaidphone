@@ -191,8 +191,6 @@ https://templatemo.com/tm-559-zay-shop
                         <div class="d-flex justify-content-between">
                             <!-- <span class="text-right">{{ user.profile.phone }}</span> -->
 
-
-
                             <!-- زر الاتصال -->
                             {% if product.user.profile.phone %}
                             <button type="button"
@@ -202,8 +200,7 @@ https://templatemo.com/tm-559-zay-shop
                             </button>
                             {% endif %}
 
-                            <!-- Modal -->
-
+                            <!-- Modal display le product owner and his phone-->
                             <div class="modal fade" id="phoneModal{{ product.id }}" tabindex="-1"
                                 aria-labelledby="phoneModalLabel{{ product.id }}" aria-hidden="true">
                                 <div class="modal-dialog modal-dialog-centered">

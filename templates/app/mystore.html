@@ -1,89 +1,50 @@
 {% extends 'app/base.html' %}
 {% load static %}
 
-{% block title %} My Products - {{ store.name }} {% endblock title %}
+{% block title %} {{ user }} store - {% endblock title %}
 
 {% block body %}
 <!-- Start Content -->
 <div class="container py-5">
-    <div class="row">
+
+    <h1 class="h1 text-center">store of {{ user }} </h1>
+    <p class="h4 text-center">Feel free to call me {{user.profile.phone}}</p>
+    {% if not user.profile.phone %}
+    <h6 class="h6 text-center"> You must add your phone in your profile </h6>
+
+    <a href="{% url 'update_profile' %}" class="d-block text-center">
+        <i class="fa fa-user me-2"></i> My Profile
+    </a>
+
+    {% else %}
+
+    <div class="row d-block text-center">
         <div class="col-lg-6 m-auto">
-            <h1 class="h1 text-center">My Products
 
-                {% if plan == "BUSINESS" %}
-                <a class="nav-link" href="{% url 'add_product' %}">
-                    <i class="fa fa-fw fa-plus text-dark mr-3"></i>
-                    Add Product
-                </a>
+            {% if plan == "BUSINESS" %}
+            <a class="nav-link " href="{% url 'add_product' %}">
+                <i class="fa fa-fw fa-plus text-dark mr-3"></i>Add Product
+            </a>
+            <p>{{plan}} Unlimited Products</p>
 
-                <p>{{plan}} Unlimited Products</p>
+            {% else %}
+            <p>plan : {{plan}} ( {{max_products}} products max )</p>
+
+            {% if products.count < max_products %} <a href="{% url 'add_product' %}" class="btn btn-success btn-lg">Add
+                Product : ({{products.count}}/{{max_products}})</a>
                 {% else %}
-                {% if products.count < max_products %} <a class="nav-link" href="{% url 'add_product' %}">
-                    <i class="fa fa-fw fa-plus text-dark mr-3"></i>
-                    Add Product : ({{products.count}}/{{max_products}})
+                <div class="modal-body">
+                    <p>You reached your plan limit.</p>
+                    <a href="{% url 'upgrade_plan' %}" class="btn btn-dark mt-3">
+                        Upgrade Plan
                     </a>
-                    {% else %}
-                    <div class="modal-body text-center">
-                        <p>You reached your plan limit.</p>
-                        <a href="{% url 'upgrade_plan' %}" class="btn btn-dark mt-3">
-                            Upgrade Plan
-                        </a>
-                    </div>
-                    {% endif %}
-                    <p>{{plan}} {{max_products}}</p>
-                    {% endif %}
+                </div>
+                {% endif %}
 
+                {% endif %}
 
-
-
-
-
-
-
-
-                    <!-- {% if plan == "FREE" %}
-                {% if products.count < max_products %} 
-                    <a class="nav-link" href="{% url 'add_product' %}">
-                        <i class="fa fa-fw fa-plus text-dark mr-3"></i>
-                        Add Product : ({{products.count}}/{{max_products}})
-                    </a>
-                    {% else %}
-                    <div class="modal-body text-center">
-                        <p>You reached your plan limit.</p>
-                        <a href="{% url 'upgrade_plan' %}" class="btn btn-dark mt-3">
-                            Upgrade Plan
-                        </a>
-                    </div>
-                    {% endif %}
-
-                    {% elif plan == "PRO" %}
-                    {% if products.count < max_products %} <a class="nav-link" href="{% url 'add_product' %}">
-                        <i class="fa fa-fw fa-plus text-dark mr-3"></i>
-                        Add Product : ({{products.count}}/{{max_products}})
-                        </a>
-                        {% else %}
-                        <div class="modal-body text-center">
-                            <p>You reached your plan limit.</p>
-                            <a href="{% url 'upgrade_plan' %}" class="btn btn-dark mt-3">
-                                Upgrade Plan
-                            </a>
-                        </div>
-                        {% endif %}
-                        {% elif plan == "BUSINESS" %}
-                        <a class="nav-link" href="{% url 'add_product' %}">
-                            <i class="fa fa-fw fa-plus text-dark mr-3"></i>
-                            Add Product
-                        </a>
-
-                        {% endif %} -->
-
-            </h1>
         </div>
     </div>
-
-
-
-
 
     <!-- Start products -->
     <div class="col-lg-12">
@@ -95,8 +56,8 @@
                 <div class="product-wap card rounded-0 m-2">
                     <div class="card rounded-0">
                         <!-- <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                            New
-                        </span> -->
+                                            New
+                                        </span> -->
                         <a href="{{product.get_absolute_url}}">
                             <img src="{{ product.imageURL }}" class="card-img-top p-2"
                                 style="min-height: 200px; max-height: 200px;" alt="..." loading="lazy">
@@ -106,12 +67,13 @@
                                 <ul class="list-unstyled">
                                     <li><a class="btn btn-success text-white"
                                             href="{% url 'add_to_wishlist' product.id %}"><i
-                                                class="far fa-heart"></i></a></li>
+                                                class="far fa-heart"></i></a>
+                                    </li>
                                     <li><a class="btn btn-success text-white mt-2"
                                             href="{{product.get_absolute_url}}"><i class="far fa-eye"></i></a>
                                     </li>
                                     <!-- <li><a class="btn btn-success text-white mt-2" href="product_detail.html"><i
-                                                class="fas fa-cart-plus"></i></a></li> -->
+                                                                class="fas fa-cart-plus"></i></a></li> -->
                                 </ul>
                             </div>
                         </a>
@@ -119,12 +81,12 @@
                     <div class="card-body">
                         <ul class="list-unstyled d-flex justify-content-between">
                             <!-- <li>
-                                        <i class="text-warning fa fa-star"></i>
-                                        <i class="text-warning fa fa-star"></i>
-                                        <i class="text-warning fa fa-star"></i>
-                                        <i class="text-muted fa fa-star"></i>
-                                        <i class="text-muted fa fa-star"></i>
-                                    </li>  -->
+                                                        <i class="text-warning fa fa-star"></i>
+                                                        <i class="text-warning fa fa-star"></i>
+                                                        <i class="text-warning fa fa-star"></i>
+                                                        <i class="text-muted fa fa-star"></i>
+                                                        <i class="text-muted fa fa-star"></i>
+                                                    </li>  -->
 
                         </ul>
                         <a href="{{product.get_absolute_url}}" class="h2 text-decoration-none text-dark">
@@ -138,15 +100,6 @@
                         </a>
                         <p class="card-text">{{product.description|truncatechars:20}}</p>
                         <div class="d-flex justify-content-between align-items-center">
-                            <!-- {% if product.old_price and product.old_price > product.price %}
-                            <span class="text-muted">
-                                <del>{{ product.old_price }} Da</del>
-                            </span>
-                            {% else %} 
-                            <span></span>  -->
-                            <!-- vide pour maintenir l'espacement -->
-                            <!-- {% endif %} -->
-
                             <span class="fw-bold text-success ms-auto">
                                 {{ product.price }} Da
                             </span>
@@ -159,21 +112,17 @@
                             <a href="{% url 'manage_product_images' product.slug %}" class="btn btn-sm btn-primary"><i
                                     class="fas fa-images"></i></a>
                         </div>
-                        <!-- <div class="d-flex justify-content-between align-items-center">
-                            <a href="{% url 'product' product.slug %}" class="btn btn-succes text-white mt-2">View</a>
-                            <a href="{% url 'remove_from_wishlist' product.id %}"
-                                class="btn btn-danger text-white mt-2">Remove</a>
-                        </div> -->
+
                     </div>
                 </div>
             </div>
             <!-- {% endif %} -->
             {% endfor %}
-            {% else %}
+            <!-- {% else %}
             <div class="col-12 text-center">
                 <p class="lead">Your products list is empty.</p>
                 <a href="{% url 'add_product' %}" class="btn btn-success btn-lg">Start creating your products</a>
-            </div>
+            </div> -->
             {% endif %}
         </div>
 
@@ -195,17 +144,19 @@
 
                     {% if productsPages.has_next %}
                     <li class="page-item"><a class="page-link"
-                            href="?page={{ productsPages.next_page_number }}">next</a></li>
+                            href="?page={{ productsPages.next_page_number }}">next</a>
+                    </li>
                     <li class="page-item"><a class="page-link"
                             href="?page={{ productsPages.paginator.num_pages }}">&raquo;</a></li>
                     {% endif %}
                 </ul>
             </nav>
         </div>
-
     </div>
     <!-- End products -->
-
+    {% endif %}
 </div>
 <!-- End Content -->
+</div>
+
 {% endblock body %}

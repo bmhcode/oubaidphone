@@ -5,7 +5,7 @@
 
 <head>
 
-    <title>{% block title %}{{store.name}}{% endblock %}</title>
+    <title>{% block title %}{{mystore.name}}{% endblock %}</title>
 
     <!-- Meta -->
     <meta charset="utf-8">
@@ -18,7 +18,7 @@
     <meta name="robots" content="index, follow">
 
     <!-- Open Graph -->
-    <meta property="og:title" content="{{store.name}}">
+    <meta property="og:title" content="{{mystore.name}}">
     <meta property="og:description" content="Best marketplace for products">
     <meta property="og:type" content="website">
 
@@ -46,7 +46,6 @@
 
 <body>
 
-
     <!-- ================= TOP NAV ================= -->
 
     <nav class="navbar navbar-expand-lg bg-dark navbar-light d-none d-lg-block">
@@ -56,14 +55,14 @@
                 <div>
                     <i class="fa fa-envelope mx-2"></i>
 
-                    <a class="text-light text-decoration-none" href="mailto:{{store.email}}">
-                        {{store.email}}
+                    <a class="text-light text-decoration-none" href="mailto:{{mystore.email}}">
+                        {{mystore.email}}
                     </a>
 
                     <i class="fa fa-phone mx-2"></i>
 
-                    <a class="text-light text-decoration-none" href="tel:{{store.phone}}">
-                        {{store.phone}}
+                    <a class="text-light text-decoration-none" href="tel:{{mystore.phone}}">
+                        {{mystore.phone}}
                     </a>
                 </div>
 
@@ -97,7 +96,7 @@
         <div class="container d-flex justify-content-between align-items-center">
 
             <a class="navbar-brand text-success logo h2" href="{% url 'index' %}">
-                {{store.name}}
+                {{mystore.name}}
             </a>
 
             <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#main_nav">
@@ -146,20 +145,24 @@
 
                     </a>
 
-
                     <li class="nav-item dropdown list-unstyled">
-
                         <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#">
                             {{user.username}}
                         </a>
-
                         <ul class="dropdown-menu">
 
+
+
                             <li>
-                                <a class="dropdown-item" href="{% url 'mystore' %}">
-                                    <i class="fas fa-store me-2"></i> my Store
+                                <a class="dropdown-item" href="{% url 'store' user.username %}">
+                                    <i class="fas fa-store me-2"></i> visit {{user.username}} store
                                 </a>
                             </li>
+
+
+
+
+
 
                             <li>
                                 <a class="dropdown-item" href="{% url 'update_profile' %}">
@@ -168,8 +171,8 @@
                             </li>
                             {% if user.is_superuser %}
                             <li>
-                                <a class="dropdown-item" href="{% url 'update_store' %}">
-                                    <i class="fa fa-cog me-2"></i> Store Settings
+                                <a class="dropdown-item" href="{% url 'update_mystore' %}">
+                                    <i class="fa fa-cog me-2"></i> My Store Settings
                                 </a>
                             </li>
                             <li>
@@ -235,28 +238,27 @@
 
             <div class="row">
 
+                <div class="col-md-5">
 
-                <div class="col-md-4">
-
-                    <h2 class="text-success">{{store.name}}</h2>
+                    <h2 class="text-success">{{mystore.name}}</h2>
 
                     <ul class="list-unstyled">
 
                         <li>
                             <i class="fa fa-map-marker-alt"></i>
-                            {{store.address}}
+                            {{mystore.address}}
                         </li>
 
                         <li>
                             <i class="fa fa-phone"></i>
                             <a class="text-light text-decoration-none" href="tel:{{store.phone}}">
-                                {{store.phone}}
+                                {{mystore.phone}}
                             </a>
                         </li>
                         <li>
                             <i class="fa fa-envelope"></i>
                             <a class="text-light text-decoration-none" href="mailto:{{store.email}}">
-                                {{store.email}}
+                                {{mystore.email}}
                             </a>
                         </li>
                     </ul>
@@ -274,7 +276,7 @@
                         {% endfor %}
                     </ul>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <h5>Pages</h5>
                     <ul class="list-unstyled">
                         <li><a class="text-light text-decoration-none" href="{% url 'index' %}">Home</a></li>
@@ -283,6 +285,7 @@
                         <li><a class="text-light text-decoration-none" href="{% url 'contact' %}">Contact</a></li>
                     </ul>
                 </div>
+
             </div>
             <hr>
             <div class="text-center">

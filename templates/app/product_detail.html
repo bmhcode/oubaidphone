@@ -67,7 +67,7 @@ OubaidPhone | {{ product.name }}
                 <a href="{% url 'add_to_wishlist' product.id %}" class="btn btn-outline-danger w-100 mb-2">
                     ❤ Add to Wishlist
                 </a>
-                {% if request.user == product.user or request.user.is_superuser %}
+                {% if request.user.is_superuser or request.user == product.user %}
                 <a href="{% url 'update_product' product.slug %}" class="btn btn-warning w-100 mb-2">
                     Edit Product
                 </a>

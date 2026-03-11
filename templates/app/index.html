@@ -7,7 +7,7 @@ https://templatemo.com/tm-559-zay-shop
 -->
 
 {% block title %}
-{{ store.name }}
+{{ mystore.name }}
 {% endblock title %}
 
 {% block body %}
@@ -43,14 +43,14 @@ https://templatemo.com/tm-559-zay-shop
             <div class="container">
                 <div class="row p-5">
                     <div class="mx-auto col-md-8 col-lg-6 order-lg-last">
-                        <img class="img-fluid" src="{{ store.imageURL_1 }}" alt="image 01" loading="lazy">
+                        <img class="img-fluid" src="{{ mystore.imageURL_1 }}" alt="image 01" loading="lazy">
                         <!-- image 800x800-->
                     </div>
                     <div class="col-lg-6 mb-0 d-flex align-items-center">
                         <div class="text-align-left align-self-center">
-                            <h1 class="h1 text-success"><b>{{ store.title1 }}</b> </h1>
-                            <h3 class="h2">{{ store.subtitle1 }}</h3>
-                            <p>{{ store.description1 }}</p>
+                            <h1 class="h1 text-success"><b>{{ mystore.title1 }}</b> </h1>
+                            <h3 class="h2">{{ mystore.subtitle1 }}</h3>
+                            <p>{{ mystore.description1 }}</p>
                         </div>
                     </div>
                 </div>
@@ -60,13 +60,13 @@ https://templatemo.com/tm-559-zay-shop
             <div class="container">
                 <div class="row p-5">
                     <div class="mx-auto col-md-8 col-lg-6 order-lg-last">
-                        <img class="img-fluid" src="{{ store.imageURL_2 }}" alt="image 02" loading="lazy">
+                        <img class="img-fluid" src="{{ mystore.imageURL_2 }}" alt="image 02" loading="lazy">
                     </div>
                     <div class="col-lg-6 mb-0 d-flex align-items-center">
                         <div class="text-align-left">
-                            <h1 class="h1">{{ store.title2 }}</h1>
-                            <h3 class="h2">{{ store.subtitle2 }}</h3>
-                            <p>{{ store.description2 }}</p>
+                            <h1 class="h1">{{ mystore.title2 }}</h1>
+                            <h3 class="h2">{{ mystore.subtitle2 }}</h3>
+                            <p>{{ mystore.description2 }}</p>
                         </div>
                     </div>
                 </div>
@@ -76,13 +76,13 @@ https://templatemo.com/tm-559-zay-shop
             <div class="container">
                 <div class="row p-5">
                     <div class="mx-auto col-md-8 col-lg-6 order-lg-last">
-                        <img class="img-fluid" src="{{ store.imageURL_3 }}" alt="image 03" loading="lazy">
+                        <img class="img-fluid" src="{{ mystore.imageURL_3 }}" alt="image 03" loading="lazy">
                     </div>
                     <div class="col-lg-6 mb-0 d-flex align-items-center">
                         <div class="text-align-left">
-                            <h1 class="h1">{{ store.title3 }}</h1>
-                            <h3 class="h2">{{ store.subtitle3 }}</h3>
-                            <p>{{ store.description3 }}</p>
+                            <h1 class="h1">{{ mystore.title3 }}</h1>
+                            <h3 class="h2">{{ mystore.subtitle3 }}</h3>
+                            <p>{{ mystore.description3 }}</p>
                         </div>
                     </div>
                 </div>
@@ -200,46 +200,71 @@ https://templatemo.com/tm-559-zay-shop
                             </button>
                             {% endif %}
 
-                            <!-- Modal display le product owner and his phone-->
+
+
+
+                            <!-- Modal display product owner -->
                             <div class="modal fade" id="phoneModal{{ product.id }}" tabindex="-1"
                                 aria-labelledby="phoneModalLabel{{ product.id }}" aria-hidden="true">
+
                                 <div class="modal-dialog modal-dialog-centered">
                                     <div class="modal-content">
 
                                         <!-- Header -->
                                         <div class="modal-header">
                                             <h5 class="modal-title" id="phoneModalLabel{{ product.id }}">
-                                                {{ product.user.username }}
+                                                {{ product.user.username }} - {{ product.user.product_set.count }}
+                                                products
                                             </h5>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                aria-label="Close"></button>
+
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                         </div>
 
-                                        <!-- Image -->
-                                        <div class="text-center">
-                                            <img src="{{ product.user.profile.imageURL }}"
-                                                class="img-fluid p-3 rounded-circle" style="max-width:120px;"
-                                                alt="{{ product.user.username }}" loading="lazy">
+                                        <!-- Seller Image -->
+                                        <div class="text-center mt-3">
+
+                                            {% if product.user.profile.imageURL %}
+                                            <img src="{{ product.user.profile.imageURL }}" class="rounded-circle shadow"
+                                                width="120" height="120" alt="{{ product.user.username }}"
+                                                loading="lazy">
+                                            {% else %}
+                                            <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png"
+                                                class="rounded-circle shadow" width="120" height="120">
+                                            {% endif %}
+
                                         </div>
 
-                                        <!-- Body -->
+                                        <!-- Phone -->
                                         <div class="modal-body text-center">
+
                                             <h4 class="text-primary">
                                                 {{ product.user_phone }}
                                             </h4>
+
                                         </div>
 
                                         <!-- Footer -->
                                         <div class="modal-footer justify-content-center">
-                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+
+                                            <button class="btn btn-secondary" data-bs-dismiss="modal">
                                                 Fermer
                                             </button>
+
+                                            {% if product.user.username %}
+                                            <a class="btn btn-outline-primary"
+                                                href="{% url 'store' product.user.username %}">
+
+                                                <i class="fas fa-store me-2"></i>
+                                                Visit {{ product.user.username }} Store
+
+                                            </a>
+                                            {% endif %}
+
                                         </div>
 
                                     </div>
                                 </div>
                             </div>
-                            <!-- / Modal -->
 
                             <span>{{ product.price }} Da</span>
                         </div>

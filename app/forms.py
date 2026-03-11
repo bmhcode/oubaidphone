@@ -1,13 +1,13 @@
 from django import forms
-from .models import Product, Brand, Category, ProductImages, Store,Profile
+from .models import Mystore, Profile, Product, Brand, Category, ProductImages 
 from django_ckeditor_5.widgets import CKEditor5Widget
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import AuthenticationForm
 
 
-class StoreForm(forms.ModelForm):
+class MystoreForm(forms.ModelForm):
     class Meta:
-        model = Store
+        model = Mystore
         fields = [
             'name', 'about_us', 'address', 'phone', 'email', 'logo',
             'image1', 'title1', 'subtitle1', 'description1',

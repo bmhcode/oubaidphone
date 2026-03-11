@@ -23,7 +23,6 @@ def user_directory_path(instance,filename):
     return 'user_{0}/{1}'.format(instance.user.id, filename)
 
     
-
 class Subscription(models.Model):
 
     PLAN_CHOICES = (
@@ -47,13 +46,12 @@ class Subscription(models.Model):
     def __str__(self):
         return f"{self.user.username} - {self.plan}"
 
-
-class Store(models.Model):
-    name    = models.CharField('name of store', max_length=255, blank=True, null=False, default="Store name")
+class Mystore(models.Model):
+    name    = models.CharField('name of my store', max_length=255, blank=True, null=False, default="my Store name")
     about_us = CKEditor5Field('Text', config_name='extends')
-    address = models.CharField(max_length=255, blank=True, null=True, default="Store adress")
-    phone  = models.CharField('Contact Phone',max_length=255, blank=True, null=True, default="Store phone")
-    email  = models.EmailField('Email Address', max_length=255, default="yourmail@gmail.com")
+    address = models.CharField(max_length=255, blank=True, null=True, default="my Store adress")
+    phone  = models.CharField('Contact Phone',max_length=255, blank=True, null=True, default="my Store phone")
+    email  = models.EmailField('Email Address', max_length=255, default="mystore@gmail.com")
     # logo   = models.ImageField(blank=True, default='', upload_to="store")
     # logo   = models.ImageField(storage=MediaCloudinaryStorage(), blank=True, null=True)  # صورة المنتج على Cloudinary
     logo = CloudinaryField('logo', blank=True, null=True)
@@ -116,8 +114,8 @@ class Store(models.Model):
             url = ''
         return url
 
-# class StoreSection(models.Model):
-#     store = models.ForeignKey(Store, on_delete=models.CASCADE, related_name="sections")
+# class MyStoreSection(models.Model):
+#     mystore = models.ForeignKey(Mystore, on_delete=models.CASCADE, related_name="sections")
 #     title = models.CharField(max_length=50)
 #     subtitle = models.CharField(max_length=50)
 #     description = CKEditor5Field('Text', config_name='extends')

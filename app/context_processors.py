@@ -1,9 +1,9 @@
+from .views import _get_mystore
 from .models import Category, Wishlist
-from .views import _get_store
 
 def global_data(request):
     return {
-        'store': _get_store(),
+        'mystore': _get_mystore(),
         'categories': Category.objects.filter(is_active=True)
     }
 

@@ -1,15 +1,15 @@
 {% extends 'app/base.html' %}
 {% load static %}
 
-{% block title %} {{ user }} store - {% endblock title %}
+{% block title %} {{ store_user }} store - {% endblock title %}
 
 {% block body %}
 <!-- Start Content -->
 <div class="container py-5">
 
-    <h1 class="h1 text-center">store of {{ user }} </h1>
-    <p class="h4 text-center">Feel free to call me {{user.profile.phone}}</p>
-    {% if not user.profile.phone %}
+    <h1 class="h1 text-center">store of {{ store_user }} </h1>
+    <p class="h4 text-center">Feel free to call me {{store_user.profile.phone}}</p>
+    {% if not store_user.profile.phone %}
     <h6 class="h6 text-center"> You must add your phone in your profile </h6>
 
     <a href="{% url 'update_profile' %}" class="d-block text-center">
@@ -17,7 +17,7 @@
     </a>
 
     {% else %}
-
+    <!-- Plan -->
     <div class="row d-block text-center">
         <div class="col-lg-6 m-auto">
 
@@ -42,22 +42,22 @@
                 {% endif %}
 
                 {% endif %}
-
         </div>
     </div>
+    <!-- / Plan -->
 
     <!-- Start products -->
     <div class="col-lg-12">
         <div class="row">
             {% if products %}
             {% for product in products %}
-            <!-- {% if request.user == product.user or request.user.is_superuser %} -->
+
             <div class="col-12 col-md-3 mb-4">
                 <div class="product-wap card rounded-0 m-2">
                     <div class="card rounded-0">
                         <!-- <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                                            New
-                                        </span> -->
+                                                    New
+                                                </span> -->
                         <a href="{{product.get_absolute_url}}">
                             <img src="{{ product.imageURL }}" class="card-img-top p-2"
                                 style="min-height: 200px; max-height: 200px;" alt="..." loading="lazy">
@@ -73,7 +73,7 @@
                                             href="{{product.get_absolute_url}}"><i class="far fa-eye"></i></a>
                                     </li>
                                     <!-- <li><a class="btn btn-success text-white mt-2" href="product_detail.html"><i
-                                                                class="fas fa-cart-plus"></i></a></li> -->
+                                                                        class="fas fa-cart-plus"></i></a></li> -->
                                 </ul>
                             </div>
                         </a>
@@ -81,12 +81,12 @@
                     <div class="card-body">
                         <ul class="list-unstyled d-flex justify-content-between">
                             <!-- <li>
-                                                        <i class="text-warning fa fa-star"></i>
-                                                        <i class="text-warning fa fa-star"></i>
-                                                        <i class="text-warning fa fa-star"></i>
-                                                        <i class="text-muted fa fa-star"></i>
-                                                        <i class="text-muted fa fa-star"></i>
-                                                    </li>  -->
+                                                                <i class="text-warning fa fa-star"></i>
+                                                                <i class="text-warning fa fa-star"></i>
+                                                                <i class="text-warning fa fa-star"></i>
+                                                                <i class="text-muted fa fa-star"></i>
+                                                                <i class="text-muted fa fa-star"></i>
+                                                            </li>  -->
 
                         </ul>
                         <a href="{{product.get_absolute_url}}" class="h2 text-decoration-none text-dark">
@@ -104,6 +104,7 @@
                                 {{ product.price }} Da
                             </span>
                         </div>
+                        {% if request.user.is_superuser or request.user == store_user %}
                         <div class="mt-2 text-center border-top pt-2">
                             <a href="{% url 'update_product' product.slug %}" class="btn btn-sm btn-warning"><i
                                     class="fas fa-edit"></i></a>
@@ -112,17 +113,18 @@
                             <a href="{% url 'manage_product_images' product.slug %}" class="btn btn-sm btn-primary"><i
                                     class="fas fa-images"></i></a>
                         </div>
+                        {% endif %}
 
                     </div>
                 </div>
             </div>
-            <!-- {% endif %} -->
+
             {% endfor %}
-            <!-- {% else %}
+            {% else %}
             <div class="col-12 text-center">
                 <p class="lead">Your products list is empty.</p>
                 <a href="{% url 'add_product' %}" class="btn btn-success btn-lg">Start creating your products</a>
-            </div> -->
+            </div>
             {% endif %}
         </div>
 

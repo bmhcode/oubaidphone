@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Store, Brand, Category, Product, ProductImages, Profile,Subscription
+from .models import Mystore, Brand, Category, Product, ProductImages, Profile,Subscription
 
 from django.contrib.auth.models import User
 from django.contrib.auth.admin import UserAdmin
@@ -23,7 +23,7 @@ admin.site.unregister(User)
 admin.site.register(User, CustomUserAdmin)
 
 
-class StoreAdmin(admin.ModelAdmin):
+class MystoreAdmin(admin.ModelAdmin):
     list_display = ['name','about_us','address', 'logo', 'id']    
 
 class CategoryAdmin(admin.ModelAdmin):
@@ -61,13 +61,7 @@ class ProductAdmin(admin.ModelAdmin):
     get_user_phone.short_description = "Phone"
 
 
-
-
-
-
-
-
-admin.site.register(Store,StoreAdmin)
+admin.site.register(Mystore,MystoreAdmin)
 admin.site.register(Category,CategoryAdmin)
 admin.site.register(Brand,BrandAdmin)
 admin.site.register(Product,ProductAdmin)

@@ -1,5 +1,6 @@
 {% extends 'app/base.html' %}
 {% load static %}
+{% load humanize %} <!-- لإستظهار وقت إضافة المنتج -->
 
 {% block title %} Wishlist - {{ store.name }} {% endblock title %}
 
@@ -26,7 +27,7 @@
                         </span>
                         <a href="{{product.get_absolute_url}}">
                             <img src="{{ product.imageURL }}" class="card-img-top p-2"
-                                style="min-height: 200px; max-height: 200px;" alt="..." loading="lazy">
+                                style="min-height: 300px; max-height: 300px;" alt="..." loading="lazy">
 
                             <div
                                 class="card-img-overlay rounded-0 product-overlay d-flex align-items-center justify-content-center">
@@ -64,7 +65,9 @@
                             </h5>
                         </a>
                         <p class="card-text">{{product.description|truncatechars:20}}</p>
+                        <small>{{ product.created|naturaltime }}</small>
                         <div class="d-flex justify-content-between align-items-center">
+
                             {% if product.old_price and product.old_price > product.price %}
                             <span class="text-muted">
                                 <del>{{ product.old_price }} Da</del>
@@ -74,8 +77,9 @@
                             {% endif %}
 
                             <span class="fw-bold text-success ms-auto">
-                                {{ product.price }} Da
+                                {{ product.price|intcomma }} Da
                             </span>
+
                         </div>
                         <!-- <div class="d-flex justify-content-between align-items-center">
                             <a href="{% url 'product' product.slug %}" class="btn btn-primary text-white mt-2">View</a>
@@ -119,7 +123,7 @@
                 </ul>
             </nav>
         </div>
-
+        <!--/ Pagination -->
     </div>
     <!-- End products -->
 

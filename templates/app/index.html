@@ -152,6 +152,8 @@ https://templatemo.com/tm-559-zay-shop
                         <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
                             New</span>
                         {% endif %}
+
+
                         <a href="{{product.get_absolute_url}}">
                             <img src="{{ product.imageURL }}" class="card-img-top p-2"
                                 style="min-height: 300px; max-height: 300px;" alt="..." loading="lazy">
@@ -185,12 +187,9 @@ https://templatemo.com/tm-559-zay-shop
                             <h5 class="card-title"> {{ product.name }}</h5>
                         </a>
                         <!-- <p class="card-text"> {{ product.description|truncatechars:30 }} </p> -->
-                        <!-- <small>{{ product.time_since_created }} </small> -->
                         <small>{{ product.created|naturaltime }}</small>
 
                         <div class="d-flex justify-content-between">
-                            <!-- <span class="text-right">{{ user.profile.phone }}</span> -->
-
                             <!-- زر الاتصال -->
                             {% if product.user.profile.phone %}
                             <button type="button"
@@ -199,9 +198,6 @@ https://templatemo.com/tm-559-zay-shop
                                 <i class="fa fa-phone"></i> Appeler
                             </button>
                             {% endif %}
-
-
-
 
                             <!-- Modal display product owner -->
                             <div class="modal fade" id="phoneModal{{ product.id }}" tabindex="-1"
@@ -253,22 +249,21 @@ https://templatemo.com/tm-559-zay-shop
                                             {% if product.user.username %}
                                             <a class="btn btn-outline-primary"
                                                 href="{% url 'store' product.user.username %}">
-
                                                 <i class="fas fa-store me-2"></i>
                                                 Visit {{ product.user.username }} Store
-
                                             </a>
                                             {% endif %}
 
                                         </div>
-
                                     </div>
                                 </div>
                             </div>
-
-                            <span>{{ product.price }} Da</span>
+                            <span class="fw-bold text-success ms-auto">
+                                {{ product.price|intcomma }} Da
+                            </span>
+                            <!-- / Modal display product owner -->
                         </div>
-                        {% if request.user == product.user or request.user.is_superuser %}
+                        {% if request.user.is_superuser or request.user == product.user %}
                         <div class="mt-2 text-center border-top pt-2">
                             <a href="{% url 'update_product' product.slug %}"
                                 class="btn btn-sm btn-warning py-0 px-1"><i class="fas fa-edit"></i></a>

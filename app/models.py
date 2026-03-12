@@ -12,6 +12,7 @@ from django.utils.html import mark_safe
 from django.utils.timesince import timesince
 from django.utils import timezone
 from datetime import timedelta
+
 from django_ckeditor_5.fields import CKEditor5Field
 
 # cloudinary
@@ -255,6 +256,8 @@ class Product(models.Model):
             return self.user.profile.phone
         return None
 
+    def is_new(self):
+        return self.created >= timezone.now() - timedelta(days=3)
 
 
     # @property

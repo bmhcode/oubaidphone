@@ -130,16 +130,7 @@
                             </a>
                         </div>
                         <div class="card-body">
-                            <ul class="list-unstyled d-flex justify-content-between">
-                                <!-- <li>
-                                    <i class="text-warning fa fa-star"></i>
-                                    <i class="text-warning fa fa-star"></i>
-                                    <i class="text-warning fa fa-star"></i>
-                                    <i class="text-muted fa fa-star"></i>
-                                    <i class="text-muted fa fa-star"></i>
-                                </li>  -->
 
-                            </ul>
                             <a href="{{ product.get_absolute_url }}" class="h2 text-decoration-none text-dark">
                                 <h5 class="card-title"> {{ product.name }}</h5>
                             </a>
@@ -199,8 +190,9 @@
                                     </div>
                                 </div>
                                 <!-- / Modal -->
-
-                                <span>{{ product.price|intcomma }} Da </span>
+                                <span class="fw-bold text-success ms-auto">
+                                    {{ product.price|intcomma }} Da
+                                </span>
                             </div>
                             {% if request.user == product.user or request.user.is_superuser %}
                             <div class="mt-2 text-center border-top pt-2">

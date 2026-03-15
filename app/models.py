@@ -196,7 +196,7 @@ class Product(models.Model):
     user     = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='products')
     name     = models.CharField(unique=True, max_length=128, verbose_name =_('Name of product'))
-    slug     = models.SlugField(blank=True, null=True, unique=True)
+    slug     = models.SlugField(unique=True)
     price    = models.DecimalField(max_digits=12, decimal_places=2, default=0.00, blank=True,null=True)
     description = CKEditor5Field('Text', config_name='extends')
 
@@ -216,7 +216,7 @@ class Product(models.Model):
         return  f"{self.name}" # ({self.description[0:50]})"
     
     class Meta:
-        ordering = ['-updated', '-created']
+        ordering = ['-created', '-updated']
         verbose_name = _("Product")
         # verbose_name_plural = _("Products")
 
@@ -231,10 +231,14 @@ class Product(models.Model):
             self.slug = slugify(self.name) + "-" + str(uuid.uuid4())[:8]
         super().save(*args, **kwargs)
             
+    # def get_absolute_url(self):
+    #     return reverse("product", kwargs={"slug":self.slug})
+    #     # return reverse('index')
+    #     # return 'https://www.google.fr'
+
     def get_absolute_url(self):
-        return reverse("product", kwargs={"slug":self.slug})
-        # return reverse('index')
-        # return 'https://www.google.fr'
+        return reverse("product_detail", kwargs={"slug": self.slug})
+
     
     @property
     def imageURL(self):
@@ -285,19 +289,30 @@ class Product(models.Model):
     # def get_precentage(self):
     #     new_price = (self.price / self.old_price) * 100
     #     return new_price
+
+    @property
+    def main_image(self):
+        first = self.images.first()
+        if first:
+            return first.image.url
+        return ""
     
 class ProductImages(models.Model):
-    product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True,related_name='images', verbose_name=_("Product"))
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, null=True,related_name='images', verbose_name=_("Product images"))
     caption = models.CharField(max_length=128, blank=True, null=True)
-    # image   = models.ImageField(storage=MediaCloudinaryStorage(), blank=True, null=True)  # صورة المنتج على Cloudinary
     image   = CloudinaryField('image', blank=True, null=True)
-
-    # description = CKEditor5Field('Text', config_name='extends')
+    created = models.DateTimeField(auto_now_add=True)  
+    # models.py
+    order = models.PositiveIntegerField(default=0) 
+    # image   = models.ImageField(storage=MediaCloudinaryStorage(), blank=True, null=True)  # صورة المنتج على Cloudinary
     # image       = models.ImageField(upload_to='product-images', default='product.jpg') #/%y/%m/%d')
-    # expirationTime = models.DateTimeField('expiration time (of ad)', default=timezone.now() + datetime.timedelta(days=30))
-
+   
     class Meta:
         verbose_name_plural = _("Product images") 
+        ordering = ['order', 'created']
+
+    def __str__(self):
+        return f"Image of {self.product.name} - {self.id}"
       
     @property
     def imageURL(self):

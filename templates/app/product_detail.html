@@ -17,24 +17,32 @@ OubaidPhone | {{ product.name }}
                     NEW
                 </span>
                 {% endif %}
-                <img id="mainImage" src="{{ product.imageURL }}" class="img-fluid rounded"
-                    style="height:450px;object-fit:cover">
+                <img id="mainImage" src="{{ product.main_image }}" class="img-fluid rounded"
+                    style="height:450px;object-fit:contain">
             </div>
 
-            <!-- THUMBNAILS -->
+            <!-- Display all images -->
             <div class="row mt-3">
                 {% for img in product.images.all %}
-                <div class="col-3 mb-2">
+                <div class="col-3 mb-2 position-relative">
+
                     <img src="{{ img.imageURL }}" class="img-fluid rounded border thumb"
-                        style="height:90px;object-fit:cover;cursor:pointer">
+                        style="height:150px;object-fit:cover;cursor:pointer">
+
+                    {% if forloop.first %}
+                    <span class="badge bg-primary position-absolute top-0 start-0 m-1">
+                        Principal
+                    </span>
+                    {% endif %}
+
                 </div>
                 {% endfor %}
             </div>
-        </div>
+            <!-- /Display all images -->
 
+        </div>
         <!-- RIGHT : PRODUCT INFO -->
         <div class="col-lg-5">
-
             <div class="card shadow-sm p-4">
                 <h2 class="mb-2">{{ product.name }}</h2>
                 <h3 class="text-success mb-3">
@@ -87,15 +95,11 @@ OubaidPhone | {{ product.name }}
 <!-- RELATED PRODUCTS -->
 
 <section class="container py-5">
-
     <h4 class="mb-4">
         Similar Products
     </h4>
-
     <div class="row">
-
         {% for related_product in related_products %}
-
         <div class="col-md-3 mb-4">
 
             <div class="card product-card h-100 shadow-sm">
@@ -131,13 +135,9 @@ OubaidPhone | {{ product.name }}
             </div>
 
         </div>
-
         {% endfor %}
-
     </div>
-
 </section>
-
 
 <!-- IMAGE SWITCH SCRIPT -->
 

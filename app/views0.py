@@ -11,10 +11,9 @@ from .forms import MystoreForm, ProductForm, BrandForm, CategoryForm, ProductIma
 from django.contrib import messages
 from django.contrib.auth.decorators import user_passes_test
 from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
-from django.http import JsonResponse
 
-def index(request): # index page
+
+def index(request):
   
     # Show active products OR products owned by the current user
     if request.user.is_authenticated:
@@ -31,14 +30,14 @@ def index(request): # index page
     }
     return render(request, 'app/index.html', context) 
    
-def shop(request): # shop list
+def shop(request):
 
     if request.user.is_authenticated:
         products = Product.objects.filter(Q(is_active=True) | Q(user=request.user))
     else:
         products = Product.objects.filter(is_active=True)
 
-    # filter 
+    # filter by category
     cat_filter = request.GET.get('cat_filter')
     if cat_filter:
         products = products.filter(category__slug=cat_filter)
@@ -53,27 +52,23 @@ def shop(request): # shop list
 
     elif sort == "new":
         products = products.order_by("-created_at")
-    # /filter
 
     # pagination
     paginator = Paginator(products, 9)
     page_number = request.GET.get('page')
     product_pages = paginator.get_page(page_number)
     nums = "a" * product_pages.paginator.num_pages
-
     brands = Brand.objects.filter(is_active=True)
     context = {
         'products': product_pages,
         'product_pages': product_pages,
         'nums': nums,
         'brands': brands,
-        "products_count": products.count(),
-        "current_sort": sort or "",
-        "current_category": cat_filter or "",
+        "products_count": products.count()
     }
     return render(request, 'app/shop.html', context)
 
-def about(request): # about page
+def about(request):
    
     brands     = Brand.objects.filter(is_active=True)   # Show the brands
              
@@ -82,7 +77,7 @@ def about(request): # about page
     }
     return render(request, 'app/about.html', context)
 
-def contact(request):# contact page
+def contact(request):
     context = {}
     return render(request, 'app/contact.html', context)
 
@@ -315,66 +310,40 @@ def upgrade_plan(request):
 #--------------------- Product --------------------------------
 @login_required # add_product
 def add_product(request):
-    """
-    Add new product
-    """
-    if request.method == "POST":
+    if request.method == 'POST':
         form = ProductForm(request.POST, request.FILES)
+        images = request.FILES.getlist("images")    
         if form.is_valid():
             product = form.save(commit=False)
             product.user = request.user
             product.save()
-
-            # Save uploaded images
-            images = request.FILES.getlist("images")
-            for img in images:
-                ProductImages.objects.create(product=product, image=img)
-
-            return redirect(product.get_absolute_url())
+            for image in images:
+                ProductImages.objects.create(
+                    product=product, 
+                    image=image
+                )
+            messages.success(request, 'Product added successfully!')
+            return redirect('store', request.user.username)
     else:
         form = ProductForm()
+    context = {'form': form, 'title': 'Add Product'}
+    return render(request, 'app/product_form.html', context)
 
-    return render(request, "app/product_form.html", {"form": form})
-
-
-import json
 @login_required # update_product
 def update_product(request, slug):
-    """
-    Update existing product
-    """
+   
     product = get_object_or_404(Product, slug=slug)
-
-    if request.method == "POST":
+   
+    if request.method == 'POST':
         form = ProductForm(request.POST, request.FILES, instance=product)
         if form.is_valid():
             form.save()
-
-            # Save new uploaded images
-            new_images = request.FILES.getlist("images")
-            for img in new_images:
-                ProductImages.objects.create(product=product, image=img)
-
-           
-
-            image_order = request.POST.get("image_order")
-
-            if image_order:
-                image_order = json.loads(image_order)
-
-                for item in image_order:
-                    img = ProductImages.objects.get(id=item["id"])
-                    img.order = item["order"]
-                    img.save()
-
-            # Optional: handle image order here if sent via POST
-            # Example: order = request.POST.getlist("image_order[]")
-            # loop through order and update an order field in ProductImage
-
-            return redirect(product.get_absolute_url())
+            messages.success(request, 'Product updated successfully!')
+            return redirect('store', request.user.username)
     else:
+       
         form = ProductForm(instance=product)
- 
+     
     context = {'form': form, 'title': 'Edit Product', 'product': product}
     return render(request, 'app/product_form.html', context)
 
@@ -413,13 +382,13 @@ def manage_product_images(request, slug):
    
     product = get_object_or_404(Product, slug=slug)
 
-    # if product.user != request.user and not request.user.is_superuser:
-    #     messages.error(request, 'You are not authorized to manage this product\'s images.')
-    #     return redirect('product', slug=slug)
+    if product.user != request.user and not request.user.is_superuser:
+        messages.error(request, 'You are not authorized to manage this product\'s images.')
+        return redirect('product', slug=slug)
 
     images = product.images.all()
     form = ProductImageForm()
-    context = {'form': form, 'product': product,  'images': images }
+    context = {'product': product,  'images': images, 'form': form}
     return render(request, 'app/product_images.html', context)
 
 @login_required # add_product_image
@@ -443,16 +412,17 @@ def add_product_image(request, slug):
     return redirect('manage_product_images', slug=slug)
 
 @login_required # delete_product_image
-@csrf_exempt
 def delete_product_image(request, image_id):
-    """
-    Delete an image via AJAX
-    """
     image = get_object_or_404(ProductImages, id=image_id)
-    if request.method == "POST":
+    product = image.product
+
+    if product.user != request.user and not request.user.is_superuser:
+        messages.error(request, 'Not authorized.')
+        return redirect('product', slug=product.slug)
+
+    if request.method == 'POST':
         image.delete()
-        return JsonResponse({"status": "ok"})
-    return JsonResponse({"status": "error"}, status=400)
+        messages.success(request, 'Image deleted.')
 
 def delete_category(request, slug):
     category = get_object_or_404(Category, slug=slug)

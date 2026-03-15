@@ -40,7 +40,7 @@ urlpatterns = [
     path('product/add/', views.add_product, name='add_product'),
     path('product/update/<slug:slug>/', views.update_product, name='update_product'),
     path('product/delete/<slug:slug>/', views.delete_product, name='delete_product'),
-    path('product/<str:slug>',views.product_detail, name="product"),
+    path('product/<slug:slug>',views.product_detail, name="product_detail"),
 #--------------------- / Product -------------------------
 
 #--------------------- Product Images -----------------------

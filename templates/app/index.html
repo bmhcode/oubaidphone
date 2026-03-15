@@ -155,7 +155,7 @@ https://templatemo.com/tm-559-zay-shop
 
 
                         <a href="{{product.get_absolute_url}}">
-                            <img src="{{ product.imageURL }}" class="card-img-top p-2"
+                            <img src="{{ product.main_image }}" class="card-img-top p-2"
                                 style="min-height: 300px; max-height: 300px;" alt="..." loading="lazy">
                             <div
                                 class="card-img-overlay rounded-0 product-overlay d-flex align-items-center justify-content-center">
@@ -212,13 +212,11 @@ https://templatemo.com/tm-559-zay-shop
                                                 {{ product.user.username }} - {{ product.user.product_set.count }}
                                                 products
                                             </h5>
-
                                             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                         </div>
 
                                         <!-- Seller Image -->
                                         <div class="text-center mt-3">
-
                                             {% if product.user.profile.imageURL %}
                                             <img src="{{ product.user.profile.imageURL }}" class="rounded-circle shadow"
                                                 width="120" height="120" alt="{{ product.user.username }}"
@@ -227,9 +225,8 @@ https://templatemo.com/tm-559-zay-shop
                                             <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png"
                                                 class="rounded-circle shadow" width="120" height="120">
                                             {% endif %}
-
                                         </div>
-
+                                        <!--/ Seller Image -->
                                         <!-- Phone -->
                                         <div class="modal-body text-center">
 
@@ -278,6 +275,36 @@ https://templatemo.com/tm-559-zay-shop
                 </div>
             </div>
             {% endfor %}
+            <!-- Pagination -->
+            <h1> pagination </h1>
+            <div div="row">
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination justify-content-center">
+                        {% if productsPages.has_previous %}
+                        <li class="page-item"><a class="page-link" href="?page=1">&laquo</a></li>
+                        <li class="page-item"><a class="page-link"
+                                href="?page={{ productsPages.previous_page_number }}">
+                                Previous </a></li>
+                        {% endif %}
+
+                        {% for i in nums %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ forloop.counter }}">{{ forloop.counter }}</a>
+                        </li>
+                        {% endfor %}
+
+                        {% if productsPages.has_next %}
+                        <li class="page-item"><a class="page-link"
+                                href="?page={{ productsPages.next_page_number }}">next</a>
+                        </li>
+                        <li class="page-item"><a class="page-link"
+                                href="?page={{ productsPages.paginator.num_pages }}">&raquo;</a></li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            </div>
+            <!-- / Pagination -->
+
         </div>
     </div>
 </section>

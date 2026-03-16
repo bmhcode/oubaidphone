@@ -5,9 +5,9 @@ from django.db.models import Q
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
-from .models import Mystore, Brand, Category, Product, Wishlist, ProductImages,Subscription
+from .models import Store, Category, Product, ProductImages, Subscription, Brand, Wishlist
 from django.contrib.auth.models import User
-from .forms import MystoreForm, ProductForm, BrandForm, CategoryForm, ProductImageForm,  UserUpdateForm, ProfileUpdateForm
+from .forms import StoreForm, ProductForm, BrandForm, CategoryForm, ProductImageForm,  UserUpdateForm, ProfileUpdateForm
 from django.contrib import messages
 from django.contrib.auth.decorators import user_passes_test
 from django.http import JsonResponse
@@ -16,13 +16,8 @@ from django.http import JsonResponse
 
 def index(request): # index page
   
-    # Show active products OR products owned by the current user
-    if request.user.is_authenticated:
-        from django.db.models import Q
-        products = Product.objects.filter(Q(is_active=True) | Q(user=request.user))
-    else:
-        products = Product.objects.filter(is_active=True)
-        
+    
+    products = Product.objects.filter(is_active=True)
     brands = Brand.objects.filter(is_active=True)
     
     context = {
@@ -30,18 +25,48 @@ def index(request): # index page
         'brands': brands,
     }
     return render(request, 'app/index.html', context) 
+  
+def about(request): # about page
    
-def shop(request): # shop list
+    brands     = Brand.objects.filter(is_active=True)   # Show the brands
+             
+    context = {
+        'brands': brands, 
+    }
+    return render(request, 'app/about.html', context)
 
-    if request.user.is_authenticated:
-        products = Product.objects.filter(Q(is_active=True) | Q(user=request.user))
-    else:
-        products = Product.objects.filter(is_active=True)
+def contact(request):# contact page
+    context = {}
+    return render(request, 'app/contact.html', context)
+
+#--------------------- Store -------------------------
+def _get_store():
+    """
+    Retrieves the first store object from the database.
+    If no store exists, it creates a default one.
+    """
+    store = Store.objects.first()
+    if not store:
+        store = Store.objects.create(name="Store", about_us="Welcome to the store!")
+    return store
+
+def store(request): # store list
+
+    products = Product.objects.filter(is_active=True)
+    products_total = products.count()
+
+     # search
+    search = request.GET.get("search")
+    if search:
+        products = products.filter(
+            Q(name__icontains=search) |
+            Q(description__icontains=search)
+        )
 
     # filter 
-    cat_filter = request.GET.get('cat_filter')
-    if cat_filter:
-        products = products.filter(category__slug=cat_filter)
+    category_filter = request.GET.get('category')
+    if category_filter:
+        products = products.filter(category__slug=category_filter)
 
     sort = request.GET.get("sort")
 
@@ -56,128 +81,55 @@ def shop(request): # shop list
     # /filter
 
     # pagination
-    paginator = Paginator(products, 9)
+    paginator = Paginator(products, 6)
     page_number = request.GET.get('page')
     product_pages = paginator.get_page(page_number)
     nums = "a" * product_pages.paginator.num_pages
 
     brands = Brand.objects.filter(is_active=True)
     context = {
+        "products_total": products_total,
+        
+        "current_sort": sort or "",
+        "current_category": category_filter or "",
+
         'products': product_pages,
         'product_pages': product_pages,
         'nums': nums,
+
         'brands': brands,
-        "products_count": products.count(),
-        "current_sort": sort or "",
-        "current_category": cat_filter or "",
     }
-    return render(request, 'app/shop.html', context)
-
-def about(request): # about page
    
-    brands     = Brand.objects.filter(is_active=True)   # Show the brands
-             
-    context = {
-        'brands': brands, 
-    }
-    return render(request, 'app/about.html', context)
+    return render(request, 'app/store.html', context)
 
-def contact(request):# contact page
-    context = {}
-    return render(request, 'app/contact.html', context)
 
-#--------------------- My store -------------------------
-def _get_mystore():
-    """
-    Retrieves the first my Store object from the database.
-    If no store exists, it creates a default one.
-    """
-    mystore = Mystore.objects.first()
-    if not mystore:
-        mystore = Mystore.objects.create(name="My store", about_us="Welcome to my store!")
-    return mystore
-
-@login_required # update_mystore
+@login_required # update store
 @user_passes_test(lambda u: u.is_superuser)
-def update_mystore(request):
-    mystore = _get_mystore()
+def update_store(request):
+    store = _get_store()
     if request.method == 'POST':
-        form = MystoreForm(request.POST, request.FILES, instance=mystore)
+        form = StoreForm(request.POST, request.FILES, instance=store)
         if form.is_valid():
             form.save()
-            messages.success(request, 'My store updated successfully!')
+            messages.success(request, 'Store updated successfully!')
             return redirect('index')
     else:
-        form = MystoreForm(instance=mystore)
-    context = {'form': form, 'title': 'My store settings'}
-    return render(request, 'app/mystore_form.html', context)
+        form = StoreForm(instance=store)
+    context = {'form': form, 'title': 'Store settings'}
+    return render(request, 'app/store_form.html', context)
 
-@login_required # delete_mystore
+@login_required # delete store
 @user_passes_test(lambda u: u.is_superuser)
-def delete_mystore(request):
+def delete_store(request):
   
     if request.method == 'POST':
-        mystore.delete()
-        messages.success(request, 'My store deleted successfully!')
+        store.delete()
+        messages.success(request, 'Store deleted successfully!')
         return redirect('index')
-    context = {'mystore': mystore}
-    return render(request, 'app/mystore_confirm_delete.html', context)
-#--------------------- / My store -------------------------
+    context = {'store': store}
+    return render(request, 'app/store_confirm_delete.html', context)
+#--------------------- / Store -------------------------
 
-#---------------------  Brands --------------------------------
-def brands(request): # brands list  
-    brands = Brand.objects.filter(is_active=True)
-    context = {'brands': brands}
-    return render(request, 'app/brands.html', context)
-
-@login_required 
-@user_passes_test(lambda u: u.is_superuser) # add brand
-def add_brand(request):
-   
-    if request.method == 'POST':
-        form = BrandForm(request.POST, request.FILES)
-        if form.is_valid():
-            form.save()
-            messages.success(request, 'Brand added successfully!')
-            return redirect('brands')
-    else:
-        form = BrandForm()
-    
-    context = {'form': form, 'title': 'Add Brand'}
-    return render(request, 'app/brand_form.html', context)
-
-@login_required 
-@user_passes_test(lambda u: u.is_superuser) # update brand
-def update_brand(request, slug):
-  
-    brand = get_object_or_404(Brand, slug=slug)
-    
-    if request.method == 'POST':
-        form = BrandForm(request.POST, request.FILES, instance=brand)
-        if form.is_valid():
-            form.save()
-            messages.success(request, 'Brand updated successfully!')
-            return redirect('brands')
-    else:
-        form = BrandForm(instance=brand)
-    
-    context = {'form': form, 'title': 'Edit Brand'}
-    return render(request, 'app/brand_form.html', context)
-
-@login_required 
-@user_passes_test(lambda u: u.is_superuser) # delete brand
-def delete_brand(request, slug):
-    
-    brand = get_object_or_404(Brand, slug=slug)
-    
-    if request.method == 'POST':
-        brand.delete()
-        messages.success(request, 'Brand deleted successfully!')
-        return redirect('brands')
-    
-    context = {'brand': brand}
-    return render(request, 'app/brand_confirm_delete.html', context)
-#---------------------  / Brans ------------------------------²
 
 #--------------------- Auth --------------------------------
 def signup(request): # signup
@@ -224,72 +176,14 @@ def update_profile(request):
 #--------------------- / Auth --------------------------------
 
 
-#--------------------- Store --------------------------------
-# @login_required # store
-def store(request, username):
-    
-    store_user = get_object_or_404(User, username=username)
-    products   = Product.objects.filter(user=store_user)
-    plan       = store_user.subscription.plan
-    max_products = store_user.subscription.max_products()      
-
-    context = {
-        'store_user': store_user,
-        'products': products,
-        'plan': plan,
-        'max_products': max_products
-    }
-    return render(request, 'app/store.html', context)
-#--------------------- / Store ------------------------------
-
-#--------------------- Category --------------------------------
-@login_required # add_category
-@user_passes_test(lambda u: u.is_superuser)
-def add_category(request):
-   
-    if request.method == 'POST':
-        form = CategoryForm(request.POST, request.FILES)
-        if form.is_valid():
-            form.save()
-            messages.success(request, 'Category added successfully!')
-            return redirect('shop')
-    else:
-        form = CategoryForm()
-    
-    context = {'form': form, 'title': 'Add Category'}
-    return render(request, 'app/category_form.html', context)
-
-@login_required # update_category
-@user_passes_test(lambda u: u.is_superuser)
-def update_category(request, slug):
-    
-    category = get_object_or_404(Category, slug=slug)
-    
-    if request.method == 'POST':
-        form = CategoryForm(request.POST, request.FILES, instance=category)
-        if form.is_valid():
-            form.save()
-            messages.success(request, 'Category updated successfully!')
-            return redirect('shop')
-    else:
-        form = CategoryForm(instance=category)
-    
-    context = {'form': form, 'title': 'Edit Category', 'category': category}
-    return render(request, 'app/category_form.html', context)
-
-@login_required # delete_category
-@user_passes_test(lambda u: u.is_superuser)
-
-
 #--------------------- Plan --------------------------------
 def plan(request): # plan
     context = {}
     return render(request, 'app/plan.html', context)
 
-#--------------------- / Plan --------------------------------
 @login_required # upgrade_plan
+@user_passes_test(lambda u: u.is_superuser)
 def upgrade_plan(request):
-
     # تأكد أن المستخدم عنده اشتراك
     subscription, created = Subscription.objects.get_or_create(
         user=request.user,
@@ -311,6 +205,75 @@ def upgrade_plan(request):
     }
     return render(request, "app/upgrade_plan.html", context)
 #--------------------- / Plan --------------------------------
+
+
+#--------------------- shop --------------------------------
+# @login_required # shop list
+def shop(request, username):
+    
+    shop_user  = get_object_or_404(User, username=username)
+    products   = Product.objects.filter(user=shop_user)
+    plan       = shop_user.subscription.plan
+    max_products = shop_user.subscription.max_products()      
+
+    context = {
+        'shop_user': shop_user,
+        'products': products,
+        'plan': plan,
+        'max_products': max_products
+    }
+    return render(request, 'app/shop.html', context)
+#--------------------- / shop ------------------------------
+
+#--------------------- Category --------------------------------
+@login_required # add_category
+@user_passes_test(lambda u: u.is_superuser)
+def add_category(request):
+   
+    if request.method == 'POST':
+        form = CategoryForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Category added successfully!')
+            return redirect('store')
+    else:
+        form = CategoryForm()
+    
+    context = {'form': form, 'title': 'Add Category'}
+    return render(request, 'app/category_form.html', context)
+
+@login_required # update_category
+@user_passes_test(lambda u: u.is_superuser)
+def update_category(request, slug):
+    
+    category = get_object_or_404(Category, slug=slug)
+    
+    if request.method == 'POST':
+        form = CategoryForm(request.POST, request.FILES, instance=category)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Category updated successfully!')
+            return redirect('store')
+    else:
+        form = CategoryForm(instance=category)
+    
+    context = {'form': form, 'title': 'Edit Category', 'category': category}
+    return render(request, 'app/category_form.html', context)
+
+@login_required # delete_category
+@user_passes_test(lambda u: u.is_superuser)
+def delete_category(request, slug):
+    
+    category = get_object_or_404(Category, slug=slug)
+    
+    if request.method == 'POST':
+        category.delete()
+        messages.success(request, 'Category deleted successfully!')
+        return redirect('store')
+    
+    context = {'category': category}
+    return render(request, 'app/category_confirm_delete.html', context)
+#--------------------- / Category ------------------------------
 
 #--------------------- Product --------------------------------
 @login_required # add_product
@@ -335,7 +298,6 @@ def add_product(request):
         form = ProductForm()
 
     return render(request, "app/product_form.html", {"form": form})
-
 
 import json
 @login_required # update_product
@@ -494,3 +456,59 @@ def remove_from_wishlist(request, product_id):
     wishlist.products.remove(product)
     return redirect('wishlist')
 #--------------------- / Wishlist --------------------------------
+
+
+#---------------------  Brands --------------------------------
+def brands(request): # brands list  
+    brands = Brand.objects.filter(is_active=True)
+    context = {'brands': brands}
+    return render(request, 'app/brands.html', context)
+
+@login_required 
+@user_passes_test(lambda u: u.is_superuser) # add brand
+def add_brand(request):
+   
+    if request.method == 'POST':
+        form = BrandForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Brand added successfully!')
+            return redirect('brands')
+    else:
+        form = BrandForm()
+    
+    context = {'form': form, 'title': 'Add Brand'}
+    return render(request, 'app/brand_form.html', context)
+
+@login_required 
+@user_passes_test(lambda u: u.is_superuser) # update brand
+def update_brand(request, slug):
+  
+    brand = get_object_or_404(Brand, slug=slug)
+    
+    if request.method == 'POST':
+        form = BrandForm(request.POST, request.FILES, instance=brand)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Brand updated successfully!')
+            return redirect('brands')
+    else:
+        form = BrandForm(instance=brand)
+    
+    context = {'form': form, 'title': 'Edit Brand'}
+    return render(request, 'app/brand_form.html', context)
+
+@login_required 
+@user_passes_test(lambda u: u.is_superuser) # delete brand
+def delete_brand(request, slug):
+    
+    brand = get_object_or_404(Brand, slug=slug)
+    
+    if request.method == 'POST':
+        brand.delete()
+        messages.success(request, 'Brand deleted successfully!')
+        return redirect('brands')
+    
+    context = {'brand': brand}
+    return render(request, 'app/brand_confirm_delete.html', context)
+#---------------------  / Brans ------------------------------

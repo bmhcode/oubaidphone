@@ -47,12 +47,12 @@ class Subscription(models.Model):
     def __str__(self):
         return f"{self.user.username} - {self.plan}"
 
-class Mystore(models.Model):
-    name    = models.CharField('name of my store', max_length=255, blank=True, null=False, default="my Store name")
+class Store(models.Model):
+    name    = models.CharField('name of store', max_length=255, blank=True, null=False, default="Store name")
     about_us = CKEditor5Field('Text', config_name='extends')
-    address = models.CharField(max_length=255, blank=True, null=True, default="my Store adress")
-    phone  = models.CharField('Contact Phone',max_length=255, blank=True, null=True, default="my Store phone")
-    email  = models.EmailField('Email Address', max_length=255, default="mystore@gmail.com")
+    address = models.CharField(max_length=255, blank=True, null=True, default="Store adress")
+    phone  = models.CharField('Contact Phone',max_length=255, blank=True, null=True, default="Store phone")
+    email  = models.EmailField('Email Address', max_length=255, default="store@mail.com")
     # logo   = models.ImageField(blank=True, default='', upload_to="store")
     # logo   = models.ImageField(storage=MediaCloudinaryStorage(), blank=True, null=True)  # صورة المنتج على Cloudinary
     logo = CloudinaryField('logo', blank=True, null=True)
@@ -115,8 +115,8 @@ class Mystore(models.Model):
             url = ''
         return url
 
-# class MyStoreSection(models.Model):
-#     mystore = models.ForeignKey(Mystore, on_delete=models.CASCADE, related_name="sections")
+# class StoreSection(models.Model):
+#     store = models.ForeignKey(Store, on_delete=models.CASCADE, related_name="sections")
 #     title = models.CharField(max_length=50)
 #     subtitle = models.CharField(max_length=50)
 #     description = CKEditor5Field('Text', config_name='extends')
@@ -208,9 +208,7 @@ class Product(models.Model):
     is_active = models.BooleanField(default=False)
 
     # old_price = models.DecimalField(max_digits=12, decimal_places=2, default=0.00, blank=True,null=True, verbose_name =_('old price'))
-    # image   = models.ImageField(upload_to='product', default='product.jpg') # upload_to=user_directory_path it's for users
-    # new_product = models.BooleanField(default=False)
-    # featured_product = models.BooleanField(default=False)
+    # is_featured = models.BooleanField(default=False)
 
     def __str__(self):
         return  f"{self.name}" # ({self.description[0:50]})"
@@ -231,13 +229,10 @@ class Product(models.Model):
             self.slug = slugify(self.name) + "-" + str(uuid.uuid4())[:8]
         super().save(*args, **kwargs)
             
-    # def get_absolute_url(self):
-    #     return reverse("product", kwargs={"slug":self.slug})
-    #     # return reverse('index')
-    #     # return 'https://www.google.fr'
-
     def get_absolute_url(self):
         return reverse("product_detail", kwargs={"slug": self.slug})
+        # return reverse('index')
+        # return 'https://www.google.fr'
 
     
     @property
@@ -248,7 +243,7 @@ class Product(models.Model):
             url = ''
         return url
     
-    # لعرض صورة مصغرة في Admin
+    # Adminلعرض صورة مصغرة في 
     def product_image(self):
         if self.image:
             return mark_safe('<img src="%s" width="50" height="50"/>' % self.image.url)

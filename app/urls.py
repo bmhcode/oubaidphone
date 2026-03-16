@@ -16,19 +16,20 @@ urlpatterns = [
 
     
     path('',views.index, name="index"),
-    path('shop',views.shop, name="shop"),
     path('about',views.about, name="about"),
     path('contact',views.contact, name="contact"),
+     
 #--------------------- Auth -------------------------
     path('accounts/', include('django.contrib.auth.urls')),
     path('signup/', views.signup, name='signup'),
     path('update_profile',views.update_profile, name="update_profile"),
 #--------------------- / Auth -------------------------
     
-#--------------------- My store -------------------------
-    path('mystore/settings/', views.update_mystore, name='update_mystore'),
-    path('mystore/delete/', views.delete_mystore, name='delete_mystore'),
-#--------------------- / My store -------------------------
+#--------------------- Store -------------------------
+    path('store',views.store, name="store"),
+    path('store/settings/', views.update_store, name='update_store'),
+    path('store/delete/', views.delete_store, name='delete_store'),
+#--------------------- / Store -------------------------
 
 #--------------------- Category -------------------------
     path('category/add/', views.add_category, name='add_category'),
@@ -49,11 +50,11 @@ urlpatterns = [
     path('product/images/delete/<int:image_id>/', views.delete_product_image, name='delete_product_image'),
 #--------------------- / Product Images -----------------------
 
-#--------------------- Store --------------------------------
-    path('store/<str:username>/', views.store, name='store'),
-    path('store/update/<slug:slug>/', views.update_product, name='update_product'),
-    path('store/delete/<slug:slug>/', views.delete_product, name='delete_product'),
-#--------------------- / Store ------------------------------
+#--------------------- Shop --------------------------------
+    path('shop/<str:username>/', views.shop, name='shop'),
+    path('shop/update/<slug:slug>/', views.update_product, name='update_product'),
+    path('shop/delete/<slug:slug>/', views.delete_product, name='delete_product'),
+#--------------------- / Shop ------------------------------
 
 #--------------------- Brand -------------------------
     path('brands/', views.brands, name='brands'),
@@ -72,7 +73,6 @@ urlpatterns = [
     path("plan/", views.plan, name="plan"),
     path("upgrade-plan/", views.upgrade_plan, name="upgrade_plan"),
 #--------------------- / Plan -------------------------
-    
     
 ]
 

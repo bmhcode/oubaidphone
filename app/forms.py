@@ -1,13 +1,13 @@
 from django import forms
-from .models import Mystore, Profile, Product, Brand, Category, ProductImages 
+from .models import Store, Profile, Product, Brand, Category, ProductImages 
 from django_ckeditor_5.widgets import CKEditor5Widget
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import AuthenticationForm
 
 
-class MystoreForm(forms.ModelForm):
+class StoreForm(forms.ModelForm):
     class Meta:
-        model = Mystore
+        model = Store
         fields = [
             'name', 'about_us', 'address', 'phone', 'email', 'logo',
             'image1', 'title1', 'subtitle1', 'description1',
@@ -87,17 +87,6 @@ class BrandForm(forms.ModelForm):
         # Set input formats for datetime fields
         self.fields['start'].input_formats = ['%Y-%m-%dT%H:%M']
         self.fields['end'].input_formats = ['%Y-%m-%dT%H:%M']
-
-# class ProfileUpdateForm(forms.ModelForm):
-#     class Meta:
-#         model = Profile
-#         fields = ['phone', 'image']
-#         widgets = {
-#             'phone': forms.TextInput(attrs={'class': 'form-control'}),
-#             'email': forms.EmailInput(attrs={'class': 'form-control'}),
-#             'image': forms.ClearableFileInput(attrs={'class': 'form-control'}),
-#         }
-
 
 class LoginForm(AuthenticationForm):
     username = forms.CharField(widget=forms.TextInput(attrs={

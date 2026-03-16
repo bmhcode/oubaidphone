@@ -88,7 +88,6 @@
         </div>
     </nav>
 
-
     <!-- ================= HEADER ================= -->
 
     <nav class="navbar navbar-expand-lg bg-white navbar-light shadow sticky-top">
@@ -113,7 +112,7 @@
                     </li>
 
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'shop' %}">Shop</a>
+                        <a class="nav-link" href="{% url 'store' %}">Store</a>
                     </li>
 
                     <li class="nav-item">
@@ -130,10 +129,8 @@
 
                 </ul>
 
-
                 <div class="d-flex align-items-center">
                     {% if user.is_authenticated %}
-
 
                     <a class="nav-icon position-relative me-3" href="{% url 'wishlist' %}">
                         <i class="fa fa-heart text-dark"></i>
@@ -155,7 +152,7 @@
                             </li>
                             {% if user.is_superuser %}
                             <li>
-                                <a class="dropdown-item" href="{% url 'update_mystore' %}">
+                                <a class="dropdown-item" href="{% url 'update_store' %}">
                                     <i class="fa fa-cog me-2"></i> Settings
                                 </a>
                             </li>
@@ -172,27 +169,22 @@
                             <li>
 
                                 <form id="logout-form" action="{% url 'logout' %}" method="post">
-
                                     {% csrf_token %}
-
                                     <button class="dropdown-item">
                                         <i class="fa fa-sign-out-alt me-2"></i>Logout
                                     </button>
-
                                 </form>
-
                             </li>
-
                         </ul>
                     </li>
-                    <a class="nav-link" href="{% url 'store' user.username %}">
-                        <i class="fas fa-store me-2"></i> visit your store
+                    <a class="nav-link" href="{% url 'shop' user.username %}">
+                        <i class="fas fa-store me-2"></i> visit your shop
                     </a>
 
                     {% else %}
 
                     <a class="nav-link" href="{% url 'login' %}">
-                        <i class="fas fa-store me-2"></i> create your store
+                        <i class="fas fa-store me-2"></i> create your shop
                     </a>
                     <a class="nav-link me-3" href="{% url 'login' %}">
                         <i class="fa fa-user"></i> Login
@@ -212,12 +204,10 @@
 
     </nav>
 
-
     <!-- ================= BODY ================= -->
 
     {% block body %}
     {% endblock %}
-
 
     <!-- ================= FOOTER ================= -->
 
@@ -258,7 +248,7 @@
                         {% for category in categories|slice:":5" %}
                         <li>
                             <a class="text-light text-decoration-none"
-                                href="{% url 'shop' %}?cat_filter={{category.name}}">
+                                href="{% url 'store' %}?cat_filter={{category.name}}">
                                 {{category.name}}
                             </a>
                         </li>
@@ -269,7 +259,7 @@
                     <h5>Pages</h5>
                     <ul class="list-unstyled">
                         <li><a class="text-light text-decoration-none" href="{% url 'index' %}">Home</a></li>
-                        <li><a class="text-light text-decoration-none" href="{% url 'shop' %}">Shop</a></li>
+                        <li><a class="text-light text-decoration-none" href="{% url 'store' %}">Store</a></li>
                         <li><a class="text-light text-decoration-none" href="{% url 'about' %}">About</a></li>
                         <li><a class="text-light text-decoration-none" href="{% url 'contact' %}">Contact</a></li>
                     </ul>

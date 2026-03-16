@@ -1,5 +1,6 @@
 {% extends "app/base.html" %}
 {% load static %}
+{% load humanize %} <!-- لإستظهار وقت إضافة المنتج -->
 
 {% block title %}
 OubaidPhone | {{ product.name }}
@@ -43,49 +44,55 @@ OubaidPhone | {{ product.name }}
         </div>
         <!-- RIGHT : PRODUCT INFO -->
         <div class="col-lg-5">
-            <div class="card shadow-sm p-4">
-                <h2 class="mb-2">{{ product.name }}</h2>
-                <h3 class="text-success mb-3">
-                    {{ product.price }} Da
+            <div class="card shadow-sm border-0 p-4 h-100">
+
+                <!-- PRODUCT INFO -->
+                <h2 class="mb-1 fw-bold">{{ product.name }}</h2>
+                <h3 class="text-success mb-3 fw-semibold">
+                    {{ product.price }} DA
                 </h3>
                 <hr>
-                <p class="text-muted">
+                <p class="text-muted mb-3">
                     {{ product.description }}
                 </p>
                 <hr>
 
                 <!-- SELLER INFO -->
-                <div class="d-flex align-items-center mb-3">
-                    <div class="me-3">
-                        <i class="fa fa-store fa-2x text-success"></i>
-                    </div>
-                    <div>
-                        <strong>{{ product.user }}</strong>
-                        <br>
-                        <span class="text-muted">
-                            <a href="tel:{{product.user.profile.phone}}" class="btn btn-success w-100 mb-2">
-                                Appeler moi 📞 {{product.user.profile.phone}}
-                            </a>
-                        </span>
+                <div class="mb-3">
+                    <strong class="d-block mb-2">{{ product.user.username }}</strong>
+                    <div class="d-flex justify-content-center gap-2 flex-wrap">
+
+                        <a href="tel:{{ product.user.profile.phone }}" class="btn btn-success flex-grow-1">
+                            📞 {{ product.user.profile.phone }}
+                        </a>
+
+                        <a class="btn btn-outline-primary flex-grow-1" href="{% url 'shop' product.user.username %}">
+                            <i class="fas fa-store me-2"></i>
+                            Visit my shop
+                        </a>
+
                     </div>
                 </div>
 
                 <!-- ACTION BUTTONS -->
+                <div class="d-grid gap-2">
+                    <a href="{% url 'add_to_wishlist' product.id %}" class="btn btn-outline-danger">
+                        ❤ Add to Wishlist
+                    </a>
 
-                <a href="{% url 'add_to_wishlist' product.id %}" class="btn btn-outline-danger w-100 mb-2">
-                    ❤ Add to Wishlist
-                </a>
-                {% if request.user.is_superuser or request.user == product.user %}
-                <a href="{% url 'update_product' product.slug %}" class="btn btn-warning w-100 mb-2">
-                    Edit Product
-                </a>
-                <a href="{% url 'delete_product' product.slug %}" class="btn btn-danger w-100 mb-2">
-                    Delete Product
-                </a>
-                <a href="{% url 'manage_product_images' product.slug %}" class="btn btn-primary w-100">
-                    Manage Images
-                </a>
-                {% endif %}
+                    {% if request.user.is_superuser or request.user == product.user %}
+                    <a href="{% url 'update_product' product.slug %}" class="btn btn-warning">
+                        ✏️ Edit Product
+                    </a>
+                    <a href="{% url 'delete_product' product.slug %}" class="btn btn-danger">
+                        🗑 Delete Product
+                    </a>
+                    <a href="{% url 'manage_product_images' product.slug %}" class="btn btn-primary">
+                        🖼 Manage Images
+                    </a>
+                    {% endif %}
+                </div>
+
             </div>
         </div>
     </div>
@@ -98,46 +105,114 @@ OubaidPhone | {{ product.name }}
     <h4 class="mb-4">
         Similar Products
     </h4>
-    <div class="row">
-        {% for related_product in related_products %}
+    <!-- <div class="row">
+        {% for product in related_products %}
         <div class="col-md-3 mb-4">
-
             <div class="card product-card h-100 shadow-sm">
-
-                <img src="{{ related_product.imageURL }}" class="card-img-top" style="height:200px;object-fit:cover">
-
+                <img src="{{ product.imageURL }}" class="card-img-top" style="height:200px;object-fit:cover">
                 <div class="card-body">
-
                     <h6>
-                        <a href="{{ related_product.get_absolute_url }}">
-                            {{ related_product.name }}
+                        <a href="{{ product.get_absolute_url }}">
+                            {{ product.name }}
                         </a>
                     </h6>
-
                     <p class="text-muted small">
-                        {{ related_product.description|truncatechars:40 }}
+                        {{ product.description|truncatechars:40 }}
                     </p>
-
                     <div class="d-flex justify-content-between">
-
                         <strong class="text-success">
-                            {{ related_product.price }} Da
+                            {{ product.price }} Da
                         </strong>
-
-                        <a href="{{ related_product.get_absolute_url }}">
+                        <a href="{{ product.get_absolute_url }}">
                             View
                         </a>
-
                     </div>
-
                 </div>
-
             </div>
-
         </div>
         {% endfor %}
+    </div> -->
+
+    <div class="row">
+
+        {% for product in related_products %}
+        <div class="col-md-3 mb-4">
+            <div class="product-wap card rounded-0">
+                <div class="card rounded-0">
+                    {% if product.is_new %}
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                        New
+                    </span>
+                    {% endif %}
+                    <a href="{{product.get_absolute_url}}">
+                        <img src="{{ product.main_image }}" class="card-img-top p-2"
+                            style="min-height: 300px; max-height: 300px;" alt="..." loading="lazy">
+
+                        <div
+                            class="card-img-overlay rounded-0 product-overlay d-flex align-items-center justify-content-center">
+                            <ul class="list-unstyled">
+                                <li><a class="btn btn-success text-white"
+                                        href="{% url 'add_to_wishlist' product.id %}"><i class="far fa-heart"></i></a>
+                                </li>
+                                <li><a class="btn btn-success text-white mt-2" href="{{product.get_absolute_url}}"><i
+                                            class="far fa-eye"></i></a>
+                                </li>
+                                <!-- <li><a class="btn btn-success text-white mt-2" href="product_detail.html"><i
+                                                                                    class="fas fa-cart-plus"></i></a></li> -->
+                            </ul>
+                        </div>
+                    </a>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled d-flex justify-content-between">
+                        <!-- <li>
+                                                                            <i class="text-warning fa fa-star"></i>
+                                                                            <i class="text-warning fa fa-star"></i>
+                                                                            <i class="text-warning fa fa-star"></i>
+                                                                            <i class="text-muted fa fa-star"></i>
+                                                                            <i class="text-muted fa fa-star"></i>
+                                                                        </li>  -->
+
+                    </ul>
+                    <a href="{{product.get_absolute_url}}" class="h2 text-decoration-none text-dark">
+                        <h5 class="card-title"> {{product.name}}
+                            {% if product.featured_product %}
+                            <span
+                                class="position-absolute left-0  start-100 translate-middle badge rounded-pill bg-success">
+                                Featured
+                            </span> {% endif %}
+                        </h5>
+                    </a>
+                    <!-- <p class="card-text">{{product.description|truncatechars:20}}</p> -->
+                    <small>{{ product.created|naturaltime }}</small>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="fw-bold text-success ms-auto">
+                            {{ product.price|intcomma }} Da
+                        </span>
+                    </div>
+                    {% if request.user.is_superuser or request.user == store_user %}
+                    <div class="mt-2 text-center border-top pt-2">
+                        <a href="{% url 'update_product' product.slug %}" class="btn btn-sm btn-warning"><i
+                                class="fas fa-edit"></i></a>
+                        <a href="{% url 'delete_product' product.slug %}" class="btn btn-sm btn-danger"><i
+                                class="fas fa-trash"></i></a>
+                        <a href="{% url 'manage_product_images' product.slug %}" class="btn btn-sm btn-primary"><i
+                                class="fas fa-images"></i></a>
+                    </div>
+                    {% endif %}
+
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+
     </div>
+
+    <!-- End products -->
+
 </section>
+
+<!-- / RELATED PRODUCTS -->
 
 <!-- IMAGE SWITCH SCRIPT -->
 

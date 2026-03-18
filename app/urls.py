@@ -22,7 +22,7 @@ urlpatterns = [
 #--------------------- Auth -------------------------
     path('accounts/', include('django.contrib.auth.urls')),
     path('signup/', views.signup, name='signup'),
-    path('update_profile',views.update_profile, name="update_profile"),
+    path('update-profile/<str:username>/',views.update_profile, name="update_profile"),
 #--------------------- / Auth -------------------------
     
 #--------------------- Store -------------------------
@@ -57,7 +57,7 @@ urlpatterns = [
 #--------------------- / Shop ------------------------------
 
 #--------------------- Brand -------------------------
-    path('brands/', views.brands, name='brands'),
+    path('brands/', views.brand_list, name='brand_list'),
     path('brand/add/', views.add_brand, name='add_brand'),
     path('brand/update/<slug:slug>/', views.update_brand, name='update_brand'),
     path('brand/delete/<slug:slug>/', views.delete_brand, name='delete_brand'),
@@ -73,6 +73,11 @@ urlpatterns = [
     path("plan/", views.plan, name="plan"),
     path("upgrade-plan/", views.upgrade_plan, name="upgrade_plan"),
 #--------------------- / Plan -------------------------
+
+#--------------------- Members -------------------------
+    path('members/', views.list_members, name='list_members'),
+    path('shops/', views.list_shops, name='list_shops'),
+#--------------------- / Members -------------------------
     
 ]
 

@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block title %}
-Update Profile
+Update Profile {{ user.username }}
 {% endblock title %}
 
 {% block body %}
@@ -18,7 +18,8 @@ Update Profile
                 {% csrf_token %}
                 <!-- Image -->
                 <div class="text-center mb-4">
-                    <label for="imageUpload" style="cursor:pointer">
+
+                    <label for="id_image" style="cursor:pointer">
                         {% if user.profile.image %}
                         <img id="preview" src="{{ user.profile.image.url }}" class="rounded-circle shadow" width="150"
                             height="150" style="object-fit:cover;">
@@ -27,8 +28,12 @@ Update Profile
                             class="rounded-circle shadow" width="150" height="150">
                         {% endif %}
                     </label>
+
                     <p class="text-muted mt-2">Click the image to change it</p>
-                    {{ p_form.image }}
+
+                    <!-- ✅ REAL INPUT -->
+                    <input type="file" name="image" id="id_image" hidden>
+
                 </div>
                 <!-- / Image -->
                 <div class="mb-3">
@@ -53,13 +58,14 @@ Update Profile
 <!-- / Profile -->
 
 <script>
-    const imageUpload = document.getElementById("imageUpload")
-    const preview = document.getElementById("preview")
+    const imageUpload = document.getElementById("id_image");
+    const preview = document.getElementById("preview");
+
     imageUpload.addEventListener("change", function () {
-        const file = this.files[0]
+        const file = this.files[0];
         if (file) {
-            preview.src = URL.createObjectURL(file)
+            preview.src = URL.createObjectURL(file);
         }
-    })
+    });
 </script>
 {% endblock body %}

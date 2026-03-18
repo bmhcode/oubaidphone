@@ -1,0 +1,79 @@
+{% extends "app/base.html" %}
+{% load static %}
+
+{% block content %}
+
+
+
+
+
+<div class="container mt-4">
+    14141414
+    <!-- Search -->
+    <form method="GET" class="mb-4">
+        <input type="text" name="q" value="{{ request.GET.q }}" class="form-control" placeholder="Search members...">
+    </form>
+
+    <!-- Title -->
+    <h5 class="mb-4">Members</h5>
+
+    <!-- Grid -->
+    <div class="row">
+
+        {% for member in members %}
+
+
+        <div class="col-md-3 col-6 mb-4">
+
+            <div class="card text-center border-0 shadow-sm p-3 member-card">
+
+                <!-- Avatar -->
+                {% if member.profile.image %}
+                <img src="{{ member.profile.imageURL }}" class="rounded-circle mx-auto"
+                    style="width:80px; height:80px; object-fit:cover;">
+                {% else %}
+                <img src="{% static 'img/default.png' %}" class="rounded-circle mx-auto"
+                    style="width:80px; height:80px;">
+                {% endif %}
+
+                <!-- Username -->
+                <h6 class="mt-2 mb-1">
+                    {{ member.username }}
+                </h6>
+
+                <!-- Rating (fake or real) -->
+                <div class="text-warning small">
+                    ★★★★☆
+                </div>
+
+                <!-- Products count -->
+                <div class="text-muted small">
+                    {{ member.product_set.count }} items
+                </div>
+
+                <!-- Profile link -->
+                <a href="{% url 'profile' member.username %}" class="btn btn-light btn-sm mt-2">
+                    View
+                </a>
+
+            </div>
+
+        </div>
+        {% endfor %}
+
+    </div>
+
+</div>
+
+<style>
+    .member-card {
+        border-radius: 12px;
+        transition: 0.3s;
+    }
+
+    .member-card:hover {
+        transform: translateY(-5px);
+    }
+</style>
+
+{% endblock %}

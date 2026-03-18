@@ -83,14 +83,16 @@
 
                 </div>
 
-                <div class="d-grid mt-4 gap-2">
-                    <button type="submit" class="btn btn-success btn-lg">
+                <div class="d-flex flex-column flex-md-row mt-4 gap-2">
+
+                    <button type="submit" class="btn btn-success w-100">
                         Save Brand
                     </button>
 
-                    <a href="{% url 'about' %}" class="btn btn-secondary">
+                    <a href="{% url 'brand_list' %}" class="btn btn-secondary w-100 text-center">
                         Cancel
                     </a>
+
                 </div>
 
             </form>

@@ -5,7 +5,7 @@
 
 <head>
 
-    <title>{% block title %}{{mystore.name}}{% endblock %}</title>
+    <title>{% block title %}{{store.name}}{% endblock %}</title>
 
     <!-- Meta -->
     <meta charset="utf-8">
@@ -18,7 +18,7 @@
     <meta name="robots" content="index, follow">
 
     <!-- Open Graph -->
-    <meta property="og:title" content="{{mystore.name}}">
+    <meta property="og:title" content="{{store.name}}">
     <meta property="og:description" content="Best marketplace for products">
     <meta property="og:type" content="website">
 
@@ -55,14 +55,14 @@
                 <div>
                     <i class="fa fa-envelope mx-2"></i>
 
-                    <a class="text-light text-decoration-none" href="mailto:{{mystore.email}}">
-                        {{mystore.email}}
+                    <a class="text-light text-decoration-none" href="mailto:{{store.email}}">
+                        {{store.email}}
                     </a>
 
                     <i class="fa fa-phone mx-2"></i>
 
-                    <a class="text-light text-decoration-none" href="tel:{{mystore.phone}}">
-                        {{mystore.phone}}
+                    <a class="text-light text-decoration-none" href="tel:{{store.phone}}">
+                        {{store.phone}}
                     </a>
                 </div>
 
@@ -95,7 +95,7 @@
         <div class="container d-flex justify-content-between align-items-center">
 
             <a class="navbar-brand text-success logo h2" href="{% url 'index' %}">
-                {{mystore.name}}
+                {{store.name}}
             </a>
 
             <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#main_nav">
@@ -126,17 +126,25 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'plan' %}">Plan</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'list_shops' %}">Shops</a>
+                    </li>
+
 
                 </ul>
 
                 <div class="d-flex align-items-center">
                     {% if user.is_authenticated %}
-
                     <a class="nav-icon position-relative me-3" href="{% url 'wishlist' %}">
                         <i class="fa fa-heart text-dark"></i>
                         <span class="badge bg-light text-dark position-absolute top-0 start-100 translate-middle">
                             {{nbr_wishlist}}
                         </span>
+                    </a>
+
+
+                    <a class="nav-link" href="{% url 'shop' user.username %}">
+                        <i class="fas fa-store me-2"></i> visit your shop
                     </a>
 
                     <li class="nav-item dropdown list-unstyled">
@@ -146,7 +154,7 @@
                         <ul class="dropdown-menu">
 
                             <li>
-                                <a class="dropdown-item" href="{% url 'update_profile' %}">
+                                <a class="dropdown-item" href="{% url 'update_profile' user.username %}">
                                     <i class="fa fa-user me-2"></i> my Profile
                                 </a>
                             </li>
@@ -157,10 +165,21 @@
                                 </a>
                             </li>
                             <li>
-                                <a class="dropdown-item" href="{% url 'brands' %}">
+                                <a class="dropdown-item" href="{% url 'brand_list' %}">
                                     <i class="fa fa-tags me-2"></i> Brands
                                 </a>
                             </li>
+                            <li>
+                                <a class="dropdown-item" href="">
+                                    <i class="fa fa-list me-2"></i> Categories
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="{% url 'list_members' %}">
+                                    <i class="fa fa-users me-2"></i> Members
+                                </a>
+                            </li>
+
                             {% endif %}
                             <li>
                                 <hr class="dropdown-divider">
@@ -177,9 +196,13 @@
                             </li>
                         </ul>
                     </li>
-                    <a class="nav-link" href="{% url 'shop' user.username %}">
-                        <i class="fas fa-store me-2"></i> visit your shop
-                    </a>
+
+
+
+
+
+
+
 
                     {% else %}
 
@@ -219,25 +242,25 @@
 
                 <div class="col-md-5">
 
-                    <h2 class="text-success">{{mystore.name}}</h2>
+                    <h2 class="text-success">{{store.name}}</h2>
 
                     <ul class="list-unstyled">
 
                         <li>
                             <i class="fa fa-map-marker-alt"></i>
-                            {{mystore.address}}
+                            {{store.address}}
                         </li>
 
                         <li>
                             <i class="fa fa-phone"></i>
                             <a class="text-light text-decoration-none" href="tel:{{store.phone}}">
-                                {{mystore.phone}}
+                                {{store.phone}}
                             </a>
                         </li>
                         <li>
                             <i class="fa fa-envelope"></i>
                             <a class="text-light text-decoration-none" href="mailto:{{store.email}}">
-                                {{mystore.email}}
+                                {{store.email}}
                             </a>
                         </li>
                     </ul>

@@ -1,0 +1,204 @@
+{% extends 'app/base.html' %}
+{% load static %}
+
+{% block title %}Members — {{ store.name }}{% endblock %}
+
+{% block body %}
+<div class="container py-5">
+
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-0">
+                <i class="fa fa-users text-success me-2"></i> Members / Shops
+            </h2>
+            <small class="text-muted">{{ total }} registered user{{ total|pluralize }}</small>
+        </div>
+    </div>
+
+    <!-- Search -->
+    <form method="GET" class="mb-4">
+        <div class="input-group" style="max-width: 400px;">
+            <input type="text" name="search" class="form-control" placeholder="Search by username, email, name…"
+                value="{{ search }}">
+            <button class="btn btn-success" type="submit">
+                <i class="fa fa-search"></i>
+            </button>
+            {% if search %}
+            <a href="{% url 'list_members' %}" class="btn btn-outline-secondary">
+                <i class="fa fa-times"></i>
+            </a>
+            {% endif %}
+        </div>
+    </form>
+
+    <!-- Table -->
+    <div class="card shadow-sm">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-dark">
+                    <tr>
+                        <th>#</th>
+                        <th>Avatar</th>
+                        <th>Username</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Plan</th>
+                        <th>Products</th>
+                        <th>Vendor</th>
+                        <th>Staff</th>
+                        <th>Joined</th>
+                        <th>Shop</th>
+
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for member in members %}
+                    <tr>
+                        <td class="text-muted small">{{ forloop.counter }}</td>
+
+                        <!-- Avatar -->
+                        <td>
+                            {% if member.profile.imageURL %}
+                            <img src="{{ member.profile.imageURL }}" alt="{{ member.username }}" class="rounded-circle"
+                                width="40" height="40" style="object-fit:cover;">
+                            {% else %}
+                            <div class="rounded-circle bg-success d-flex align-items-center justify-content-center text-white fw-bold"
+                                style="width:40px;height:40px;font-size:1rem;">
+                                {{ member.username|first|upper }}
+                            </div>
+                            {% endif %}
+                        </td>
+
+                        <!-- Username -->
+                        <td>
+                            <a href="{% url 'update_profile' member.username %}"
+                                class="fw-semibold text-decoration-none text-dark">
+                                {{ member.username }}
+                            </a>
+                            {% if member.is_superuser %}
+                            <span class="badge bg-danger ms-1">Super</span>
+                            {% endif %}
+                        </td>
+
+                        <!-- Email -->
+                        <td>
+                            <a href="mailto:{{ member.email }}" class="text-muted text-decoration-none small">
+                                {{ member.email|default:"—" }}
+                            </a>
+                        </td>
+
+                        <!-- Phone -->
+                        <td class="text-muted small">
+                            {{ member.profile.phone|default:"—" }}
+                        </td>
+
+                        <!-- Plan -->
+
+                        <td>
+                            {% if member.subscription %}
+
+                            {% if member.subscription.plan == "BUSINESS" %}
+                            <span class="badge bg-warning text-dark">Business</span>
+
+                            {% elif member.subscription.plan == "PRO" %}
+                            <span class="badge bg-primary">Pro</span>
+
+                            {% else %}
+                            <span class="badge bg-secondary">Free</span>
+
+                            {% endif %}
+
+                            {% else %}
+                            <span class="badge bg-secondary">Free</span>
+                            {% endif %}
+                        </td>
+
+
+
+                        <!-- Products count -->
+                        <td class="text-center">
+                            <span class="badge bg-success-subtle text-success border border-success">
+                                {{ member.product_set.count }}
+                            </span>
+                        </td>
+
+                        <!-- Vendor -->
+                        <td class="text-center">
+                            {% if member.profile.is_vendor %}
+                            <i class="fa fa-check-circle text-success"></i>
+                            {% else %}
+                            <i class="fa fa-times-circle text-muted"></i>
+                            {% endif %}
+                        </td>
+
+                        <!-- Staff -->
+                        <td class="text-center">
+                            {% if member.is_staff %}
+                            <i class="fa fa-check-circle text-warning"></i>
+                            {% else %}
+                            <i class="fa fa-times-circle text-muted"></i>
+                            {% endif %}
+                        </td>
+
+                        <!-- Joined -->
+                        <td class="text-muted small">
+                            {{ member.date_joined|date:"d M Y" }}
+                        </td>
+
+                        <!-- Actions -->
+                        <td>
+                            <a href="{% url 'shop' member.username %}" class="btn btn-sm btn-outline-success"
+                                title="View shop">
+                                <i class="fa fa-store"></i>
+                            </a>
+                        </td>
+
+
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="11" class="text-center text-muted py-5">
+                            <i class="fa fa-users fa-2x mb-2 d-block"></i>
+                            No members found{% if search %} for "<strong>{{ search }}</strong>"{% endif %}.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Pagination -->
+    {% if members.has_other_pages %}
+    <nav class="mt-4 d-flex justify-content-center">
+        <ul class="pagination">
+            {% if members.has_previous %}
+            <li class="page-item">
+                <a class="page-link"
+                    href="?page={{ members.previous_page_number }}{% if search %}&search={{ search }}{% endif %}">
+                    &laquo;
+                </a>
+            </li>
+            {% endif %}
+
+            {% for i in members.paginator.page_range %}
+            <li class="page-item {% if members.number == i %}active{% endif %}">
+                <a class="page-link" href="?page={{ i }}{% if search %}&search={{ search }}{% endif %}">{{ i }}</a>
+            </li>
+            {% endfor %}
+
+            {% if members.has_next %}
+            <li class="page-item">
+                <a class="page-link"
+                    href="?page={{ members.next_page_number }}{% if search %}&search={{ search }}{% endif %}">
+                    &raquo;
+                </a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+
+</div>
+{% endblock %}

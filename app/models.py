@@ -5,6 +5,7 @@ from django.urls import reverse
 from datetime import datetime, date
 from django.utils.text import slugify
 import uuid
+from django.contrib.auth.hashers import make_password
 
 from django.core.exceptions import ValidationError
 
@@ -123,34 +124,80 @@ class Store(models.Model):
 #     image = CloudinaryField('image')
 
 class Brand(models.Model):
-    name  = models.CharField(unique=True, max_length=128, verbose_name =_('Name of brand'))
-    slug = models.SlugField(unique=True, blank=True)
-    # image = models.ImageField(storage=MediaCloudinaryStorage(), blank=True, null=True)  # صورة المنتج على Cloudinary
-    image = CloudinaryField('image', blank=True, null=True)
+    name = models.CharField(
+        max_length=128,
+        unique=True,
+        verbose_name=_("Name of brand"),
+        db_index=True
+    )
 
-    start = models.DateTimeField(verbose_name=_('Start at'))
-    end   = models.DateTimeField(verbose_name=_('End at'))
-    is_active = models.BooleanField(default=False)
-   
-    # image = models.ImageField(upload_to='brand', default='brand.jpg', blank=True, verbose_name=_('brand'))
-    def __str__(self):
-        return  f"{self.name}" 
-    
+    slug = models.SlugField(
+        unique=True,
+        blank=True,
+        max_length=160
+    )
+
+    image = CloudinaryField(
+        "image",
+        blank=True,
+        null=True
+    )
+
+    start_date = models.DateTimeField(
+        verbose_name=_("Start at"),
+        default=timezone.now
+    )
+
+    end_date = models.DateTimeField(
+        verbose_name=_("End at"),
+        blank=True,
+        null=True
+    )
+
+    is_active = models.BooleanField(
+        default=True,
+        db_index=True
+    )
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
     class Meta:
-        ordering = ['-start'] #, '-created']
+        ordering = ["-start_date"]
+        verbose_name = _("Brand")
+        verbose_name_plural = _("Brands")
 
+    def __str__(self):
+        return self.name
+
+    # 🔹 slug auto-generate (clean + safe)
     def save(self, *args, **kwargs):
-        if not self.slug or self.slug == "":
-            self.slug = slugify(self.name) + "-" + str(uuid.uuid4())[:8]
+        if not self.slug:
+            base_slug = slugify(self.name)
+
+            # prevent duplicates
+            slug = base_slug
+            while Brand.objects.filter(slug=slug).exists():
+                slug = f"{base_slug}-{uuid.uuid4().hex[:6]}"
+
+            self.slug = slug
+
         super().save(*args, **kwargs)
-      
+
+    # 🔹 safe image URL
     @property
     def imageURL(self):
-        try:
-            url = self.image.url
-        except:
-            url = ''
-        return url
+        if self.image:
+            return self.image.url
+        return ""
+
+    # 🔹 check if brand is currently active (based on date)
+    @property
+    def is_current(self):
+        now = timezone.now()
+        if self.end_date:
+            return self.start_date <= now <= self.end_date
+        return self.start_date <= now
 
 class Category(models.Model):
     name   = models.CharField(unique=True, max_length=100, verbose_name=_("Category")) #,default='name of the category', help_text='name of catygory')
@@ -342,3 +389,79 @@ class Profile(models.Model):
         except:
             url = ''
         return url
+
+class Vender(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="venders")
+
+    name = models.CharField(max_length=150)
+    slug = models.SlugField(unique=True, blank=True)
+
+    description = models.TextField(blank=True)
+
+    # ✅ IMAGE
+    # image = models.ImageField(upload_to="venders/", blank=True, null=True)
+    image   = CloudinaryField('image', blank=True, null=True)
+    # ✅ TRANSACTION RATIO (commission %)
+    transaction_ratio = models.DecimalField(max_digits=5, decimal_places=2, default=0.00, help_text="Percentage (%)")
+
+    # ✅ PASSWORD (hashed)
+    password = models.CharField(max_length=128)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    start_of_contract = models.DateTimeField(blank=True, null=True)
+    end_of_contract = models.DateTimeField(blank=True, null=True)
+
+    is_active = models.BooleanField(default=True)
+
+    def __str__(self):
+        return f"{self.name} ({self.user.username})"
+
+    def save(self, *args, **kwargs):
+        # slug auto
+        if not self.slug:
+            self.slug = slugify(self.name) + "-" + str(uuid.uuid4())[:6]
+
+        # hash password if not hashed
+        if not self.password.startswith("pbkdf2_"):
+            self.password = make_password(self.password)
+
+        super().save(*args, **kwargs)
+
+    # helper (optional)
+    @property
+    def imageURL(self):
+        try:
+            return self.image.url
+        except:
+            return ""
+
+# =========================
+# SALES MODEL
+# =========================
+class Sale(models.Model):
+    vender = models.ForeignKey(Vender, on_delete=models.CASCADE, related_name="sales")
+    title = models.CharField(max_length=200)
+    slug = models.SlugField(unique=True, blank=True)
+
+    # ✅ TRANSACTION AMOUNT
+    transaction_amount = models.DecimalField(max_digits=12, decimal_places=2, blank=True)
+    # ✅ TRANSACTION RATIO (commission %)
+    transaction_ratio = models.DecimalField(max_digits=5,decimal_places=2,default=0.00,help_text="Percentage (%)")
+    profit = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+
+    created = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.title} - {self.vender.name}"
+
+    def save(self, *args, **kwargs):
+        # auto slug
+        if not self.slug:
+            self.slug = slugify(self.title) + "-" + str(uuid.uuid4())[:6]
+
+        # calculate profit
+        self.profit = self.transaction_amount * self.transaction_ratio/100
+
+        super().save(*args, **kwargs)

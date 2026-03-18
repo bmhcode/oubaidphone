@@ -16,7 +16,6 @@ from django.http import JsonResponse
 
 def index(request): # index page
   
-    
     products = Product.objects.filter(is_active=True)
     brands = Brand.objects.filter(is_active=True)
     
@@ -149,13 +148,14 @@ def signup(request): # signup
     return render(request, 'registration/signup.html', context)
 
 @login_required # update_profile
-def update_profile(request):
+def update_profile(request, username):
+    user = get_object_or_404(User, username=username)
     if request.method == 'POST':
-        u_form = UserUpdateForm(request.POST, instance=request.user)
+        u_form = UserUpdateForm(request.POST, instance=user)
         p_form = ProfileUpdateForm(
             request.POST,
             request.FILES,
-            instance=request.user.profile
+            instance=user.profile
         )
 
         if u_form.is_valid() and p_form.is_valid():
@@ -164,10 +164,11 @@ def update_profile(request):
             return redirect('index')
 
     else:
-        u_form = UserUpdateForm(instance=request.user)
-        p_form = ProfileUpdateForm(instance=request.user.profile)
+        u_form = UserUpdateForm(instance=user)
+        p_form = ProfileUpdateForm(instance=user.profile)
 
     context = {
+        'user': user,
         'u_form': u_form,
         'p_form': p_form
     }
@@ -208,7 +209,7 @@ def upgrade_plan(request):
 
 
 #--------------------- shop --------------------------------
-# @login_required # shop list
+# @login_required # shop user
 def shop(request, username):
     
     shop_user  = get_object_or_404(User, username=username)
@@ -223,6 +224,7 @@ def shop(request, username):
         'max_products': max_products
     }
     return render(request, 'app/shop.html', context)
+
 #--------------------- / shop ------------------------------
 
 #--------------------- Category --------------------------------
@@ -457,12 +459,27 @@ def remove_from_wishlist(request, product_id):
     return redirect('wishlist')
 #--------------------- / Wishlist --------------------------------
 
+#--------------------- Brands --------------------------------
+@login_required
+@user_passes_test(lambda u: u.is_superuser) # brand list
+def brand_list(request): 
+    """List all registered users - superuser only."""
+    brand_list = Brand.objects.all().order_by('-start_date')
 
-#---------------------  Brands --------------------------------
-def brands(request): # brands list  
-    brands = Brand.objects.filter(is_active=True)
-    context = {'brands': brands}
-    return render(request, 'app/brands.html', context)
+    search = request.GET.get('search', '')
+    if search:
+        brand_list = brand_list.filter(name__icontains=search) 
+
+    paginator = Paginator(brand_list, 10)
+    page_number = request.GET.get('page')
+    brands_page = paginator.get_page(page_number)
+
+    context = {
+        'brand_list': brands_page,
+        'search': search,
+        'total': Brand.objects.count(),
+    }
+    return render(request, 'app/brand_list.html', context)
 
 @login_required 
 @user_passes_test(lambda u: u.is_superuser) # add brand
@@ -473,7 +490,7 @@ def add_brand(request):
         if form.is_valid():
             form.save()
             messages.success(request, 'Brand added successfully!')
-            return redirect('brands')
+            return redirect('brand_list')
     else:
         form = BrandForm()
     
@@ -491,7 +508,7 @@ def update_brand(request, slug):
         if form.is_valid():
             form.save()
             messages.success(request, 'Brand updated successfully!')
-            return redirect('brands')
+            return redirect('brand_list')
     else:
         form = BrandForm(instance=brand)
     
@@ -507,8 +524,61 @@ def delete_brand(request, slug):
     if request.method == 'POST':
         brand.delete()
         messages.success(request, 'Brand deleted successfully!')
-        return redirect('brands')
+        return redirect('brand_list')
     
     context = {'brand': brand}
     return render(request, 'app/brand_confirm_delete.html', context)
 #---------------------  / Brans ------------------------------
+
+#---------------------  Members --------------------------------
+@login_required
+@user_passes_test(lambda u: u.is_superuser)
+def list_members(request):
+    """List all registered users - superuser only."""
+    members = User.objects.all().select_related('profile', 'subscription').order_by('-date_joined')
+
+    search = request.GET.get('search', '')
+    if search:
+        members = members.filter(
+            Q(username__icontains=search) |
+            Q(email__icontains=search) |
+            Q(first_name__icontains=search) |
+            Q(last_name__icontains=search)
+        )
+
+    paginator = Paginator(members, 20)
+    page_number = request.GET.get('page')
+    members_page = paginator.get_page(page_number)
+
+    context = {
+        'members': members_page,
+        'search': search,
+        'total': User.objects.count(),
+    }
+    return render(request, 'app/list_members.html', context)
+
+
+def list_shops(request):
+    """List all registered shops"""
+    members = User.objects.all().select_related('profile', 'subscription').order_by('-date_joined')
+
+    search = request.GET.get('search', '')
+    if search:
+        members = members.filter(
+            Q(username__icontains=search) |
+            Q(email__icontains=search) |
+            Q(first_name__icontains=search) |
+            Q(last_name__icontains=search)
+        )
+
+    paginator = Paginator(members, 20)
+    page_number = request.GET.get('page')
+    members_page = paginator.get_page(page_number)
+
+    context = {
+        'members': members_page,
+        'search': search,
+        'total': User.objects.count(),
+    }
+    return render(request, 'app/list_shops.html', context)    
+#---------------------  / Members --------------------------------

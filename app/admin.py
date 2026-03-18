@@ -58,7 +58,7 @@ class ProductAdmin(admin.ModelAdmin):
     get_user_phone.short_description = "Phone"
 
 class BrandAdmin(admin.ModelAdmin):
-    list_display = ['name','image','start', 'end','is_active']    
+    list_display = ['name','image','start_date', 'end_date','is_active']    
   
 admin.site.register(Store,StoreAdmin)
 admin.site.register(Category,CategoryAdmin)

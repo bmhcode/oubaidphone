@@ -1,65 +1,99 @@
-{% extends "app/base.html" %}
+{% extends 'app/base.html' %}
 {% load static %}
 
-{% block content %}
+{% block title %}Members — {{ store.name }}{% endblock %}
 
+{% block body %}
+<div class="container py-5">
 
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-0">
+                <i class="fa fa-users text-success me-2"></i> Shops
+            </h2>
+            <small class="text-muted">{{ total_shops }} registered shop{{ total_shops|pluralize }}</small>
+        </div>
+    </div>
 
-
-
-<div class="container mt-4">
-    14141414
     <!-- Search -->
     <form method="GET" class="mb-4">
-        <input type="text" name="q" value="{{ request.GET.q }}" class="form-control" placeholder="Search members...">
+        <div class="input-group" style="max-width: 400px;">
+            <input type="text" name="search" class="form-control" placeholder="Search by username, email, name…"
+                value="{{ search }}">
+            <button class="btn btn-success" type="submit">
+                <i class="fa fa-search"></i>
+            </button>
+            {% if search %}
+            <a href="{% url 'list_shops' %}" class="btn btn-outline-secondary">
+                <i class="fa fa-times"></i>
+            </a>
+            {% endif %}
+        </div>
     </form>
+    <!-- / Search -->
 
-    <!-- Title -->
-    <h5 class="mb-4">Members</h5>
-
-    <!-- Grid -->
     <div class="row">
 
-        {% for member in members %}
-
-
+        {% for shop in shops %}
         <div class="col-md-3 col-6 mb-4">
 
             <div class="card text-center border-0 shadow-sm p-3 member-card">
 
                 <!-- Avatar -->
-                {% if member.profile.image %}
-                <img src="{{ member.profile.imageURL }}" class="rounded-circle mx-auto"
+                {% if shop.profile.image %}
+                <img src="{{ shop.profile.image.url }}" class="rounded-circle mx-auto"
                     style="width:80px; height:80px; object-fit:cover;">
                 {% else %}
-                <img src="{% static 'img/default.png' %}" class="rounded-circle mx-auto"
+                <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" class="rounded-circle mx-auto"
                     style="width:80px; height:80px;">
                 {% endif %}
 
                 <!-- Username -->
                 <h6 class="mt-2 mb-1">
-                    {{ member.username }}
+                    {{ shop.username }}
                 </h6>
 
-                <!-- Rating (fake or real) -->
+                <!-- Rating -->
                 <div class="text-warning small">
                     ★★★★☆
                 </div>
 
                 <!-- Products count -->
                 <div class="text-muted small">
-                    {{ member.product_set.count }} items
+                    {{ shop.product_set.count }} product{{ shop.product_set.count|pluralize }}
                 </div>
 
-                <!-- Profile link -->
-                <a href="{% url 'profile' member.username %}" class="btn btn-light btn-sm mt-2">
-                    View
+                <!-- Shop link -->
+                {% if shop.product_set.count > 0 %}
+                <a href="{% url 'shop' shop.username %}" class="btn btn-light btn-sm mt-2">
+                    View shop
                 </a>
+                {% endif %}
 
             </div>
 
         </div>
+        {% empty %}
+        <p>No shops found.</p>
         {% endfor %}
+
+    </div>
+
+    <!-- Pagination -->
+    <div class="d-flex justify-content-center mt-4">
+
+        {% if shops.has_previous %}
+        <a href="?page={{ shops.previous_page_number }}&search={{ search }}" class="btn btn-light me-2">Prev</a>
+        {% endif %}
+
+        <span class="btn btn-dark">
+            Page {{ shops.number }} / {{ shops.paginator.num_pages }}
+        </span>
+
+        {% if shops.has_next %}
+        <a href="?page={{ shops.next_page_number }}&search={{ search }}" class="btn btn-light ms-2">Next</a>
+        {% endif %}
 
     </div>
 
@@ -76,4 +110,5 @@
     }
 </style>
 
+</div>
 {% endblock %}

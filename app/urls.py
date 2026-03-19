@@ -76,7 +76,7 @@ urlpatterns = [
 
 #--------------------- Members -------------------------
     path('members/', views.list_members, name='list_members'),
-    path('shops/', views.list_shops, name='list_shops'),
+    path("shops/", views.list_shops, name="list_shops")
 #--------------------- / Members -------------------------
     
 ]

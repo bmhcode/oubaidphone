@@ -148,10 +148,18 @@
 
                         <!-- Actions -->
                         <td>
+                            {% if member.product_set.count > 0 %}
                             <a href="{% url 'shop' member.username %}" class="btn btn-sm btn-outline-success"
                                 title="View shop">
                                 <i class="fa fa-store"></i>
+
                             </a>
+                            {% else %}
+                            <span class="badge bg-secondary">Empty shop</span>
+                            <a href="{% url 'add_product' %}" class="btn btn-success">
+                                <i class="fa fa-plus me-2"></i>
+                            </a>
+                            {% endif %}
                         </td>
 
 

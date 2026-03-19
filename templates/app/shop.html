@@ -2,7 +2,7 @@
 {% load static %}
 {% load humanize %}
 
-{% block title %} {{ shop_user.username }} store {% endblock title %}
+{% block title %} {{ shop_user.username }} shop {% endblock title %}
 
 {% block body %}
 
@@ -13,15 +13,27 @@
         <div class="col-lg-9">
 
             <!-- HEADER -->
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h2>Shop of {{ shop_user.username }}</h2>
 
-                {% if request.user == shop_user %}
+
+            <!-- HEADER -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h3 class="fw-bold mb-0">
+                        <i class="fa fa-store text-success me-2"></i> Shop - {{ shop_user.username }} -
+                    </h3>
+                    <small class="text-muted"> {{ shop_user.product_set.count }}
+                        product{{shop_user.product_set.count|pluralize }}</small>
+                </div>
+
+                {% if request.user == shop_user or request.user.is_superuser %}
                 <a href="{% url 'add_product' %}" class="btn btn-success">
                     <i class="fa fa-plus me-2"></i> Add Product
                 </a>
                 {% endif %}
+
+
             </div>
+            <!-- / HEADER -->
 
             <!-- PLAN MESSAGE -->
             {% if not shop_user.profile.phone %}

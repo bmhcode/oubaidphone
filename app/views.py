@@ -1,6 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.core.paginator import Paginator
-from django.db.models import Q
 
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login
@@ -12,7 +11,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import user_passes_test
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from django.http import JsonResponse
+from django.db.models import Q, Count
 
 def index(request): # index page
   
@@ -556,29 +555,33 @@ def list_members(request):
         'total': User.objects.count(),
     }
     return render(request, 'app/list_members.html', context)
+#---------------------  / Members --------------------------------
 
+
+#---------------------  Shops --------------------------------
 
 def list_shops(request):
-    """List all registered shops"""
-    members = User.objects.all().select_related('profile', 'subscription').order_by('-date_joined')
+
+    shops = User.objects.all().order_by('-date_joined')  # مهم
 
     search = request.GET.get('search', '')
     if search:
-        members = members.filter(
+        shops = shops.filter(
             Q(username__icontains=search) |
             Q(email__icontains=search) |
             Q(first_name__icontains=search) |
             Q(last_name__icontains=search)
         )
 
-    paginator = Paginator(members, 20)
+    paginator = Paginator(shops, 5)
     page_number = request.GET.get('page')
-    members_page = paginator.get_page(page_number)
-
+    shops_page = paginator.get_page(page_number)
+    
     context = {
-        'members': members_page,
+        'shops': shops_page,
         'search': search,
-        'total': User.objects.count(),
+        'total_shops': shops.count(),
     }
-    return render(request, 'app/list_shops.html', context)    
-#---------------------  / Members --------------------------------
+
+    return render(request, 'app/list_shops.html', context)  
+#---------------------  / Shops --------------------------------

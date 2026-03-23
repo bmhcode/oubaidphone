@@ -17,3 +17,11 @@ def wishlist_count(request):
         except Wishlist.DoesNotExist:
             count = 0
     return {'nbr_wishlist': count}
+
+def user_has_shop(request):
+    if request.user.is_authenticated:
+        return {
+            "has_shop": request.user.shops.exists(),
+            "first_shop": request.user.shops.first(),
+        }
+    return {}

@@ -4,9 +4,9 @@ from django.core.paginator import Paginator
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
-from .models import Store, Category, Product, ProductImages, Subscription, Brand, Wishlist
+from .models import Store, Shop, Category, Product, ProductImages, Subscription, Brand, Wishlist, Profile
 from django.contrib.auth.models import User
-from .forms import StoreForm, ProductForm, BrandForm, CategoryForm, ProductImageForm,  UserUpdateForm, ProfileUpdateForm
+from .forms import StoreForm, ProductForm, BrandForm, CategoryForm, ProductImageForm,  UserUpdateForm, ProfileUpdateForm, ShopForm
 from django.contrib import messages
 from django.contrib.auth.decorators import user_passes_test
 from django.http import JsonResponse
@@ -100,7 +100,6 @@ def store(request): # store list
    
     return render(request, 'app/store.html', context)
 
-
 @login_required # update store
 @user_passes_test(lambda u: u.is_superuser)
 def update_store(request):
@@ -149,14 +148,14 @@ def signup(request): # signup
 @login_required # update_profile
 def update_profile(request, username):
     user = get_object_or_404(User, username=username)
+    profile, _ = Profile.objects.get_or_create(user=user)
     if request.method == 'POST':
         u_form = UserUpdateForm(request.POST, instance=user)
         p_form = ProfileUpdateForm(
             request.POST,
             request.FILES,
-            instance=user.profile
+            instance=profile
         )
-
         if u_form.is_valid() and p_form.is_valid():
             u_form.save()
             p_form.save()
@@ -164,7 +163,7 @@ def update_profile(request, username):
 
     else:
         u_form = UserUpdateForm(instance=user)
-        p_form = ProfileUpdateForm(instance=user.profile)
+        p_form = ProfileUpdateForm(instance=profile)
 
     context = {
         'user': user,
@@ -206,25 +205,117 @@ def upgrade_plan(request):
     return render(request, "app/upgrade_plan.html", context)
 #--------------------- / Plan --------------------------------
 
+#---------------------  Shop --------------------------------
+def list_shops(request): # list shops
 
-#--------------------- shop --------------------------------
-# @login_required # shop user
-def shop(request, username):
+    shops = Shop.objects.all().order_by('-created_at')  # مهم
+    total_shops = shops.count() 
     
-    shop_user  = get_object_or_404(User, username=username)
-    products   = Product.objects.filter(user=shop_user)
-    plan       = shop_user.subscription.plan
-    max_products = shop_user.subscription.max_products()      
+    search = request.GET.get('search', '')
+    if search:
+        shops = shops.filter(
+            Q(name__icontains=search) |
+            Q(email__icontains=search) |
+            Q(address__icontains=search) |
+            Q(description__icontains=search)
+        )
+
+    paginator = Paginator(shops, 5)
+    page_number = request.GET.get('page')
+    shops_page = paginator.get_page(page_number)
+    
+    context = {
+        'shops': shops_page,
+        'search': search,
+        'total_shops': total_shops,
+    }
+
+    return render(request, 'app/list_shops.html', context)  
+
+def shop(request, slug): # shop
+    shop = get_object_or_404(Shop, slug=slug)
+    products = Product.objects.filter(shop=shop, is_active=True)
+ 
+    # plan = shop.subscription.plan if hasattr(shop, 'subscription') else "FREE"
+    # max_products = shop.subscription.max_products() if hasattr(shop, 'subscription') else 3
+    
+    # pagination
+    paginator = Paginator(products, 6)
+    page_number = request.GET.get('page')
+    product_pages = paginator.get_page(page_number)
+    nums = "a" * product_pages.paginator.num_pages
 
     context = {
-        'shop_user': shop_user,
-        'products': products,
-        'plan': plan,
-        'max_products': max_products
+        'shop': shop,
+        'products': product_pages,
+        'nums': nums,
+        # 'plan': plan,
+        # 'max_products': max_products
     }
     return render(request, 'app/shop.html', context)
 
-#--------------------- / shop ------------------------------
+@login_required # create_shop
+def create_shop(request):
+    # Check if user already has a shop
+
+    # if hasattr(request.user, 'shop'):
+    #     return redirect('update_shop', slug=request.user.shop.slug)
+    
+    if request.method == 'POST':
+        form = ShopForm(request.POST, request.FILES)
+        if form.is_valid():
+            shop = form.save(commit=False)
+            shop.user = request.user
+            shop.save()
+            messages.success(request, 'Shop created successfully!')
+            # return redirect('shop', username=request.user.username)
+            return redirect('list_shops')
+    else:
+        form = ShopForm()
+        
+    context = {'form': form, 'title': 'Create Shop'}
+    return render(request, 'app/shop_form.html', context)
+
+@login_required # update_shop
+def update_shop(request, slug):
+    shop_instance = get_object_or_404(Shop, slug=slug)
+    
+    # Check permission
+    if shop_instance.user != request.user and not request.user.is_superuser:
+        messages.error(request, 'You are not authorized to edit this shop.')
+        return redirect('shop', username=shop_instance.user.username)
+        
+    if request.method == 'POST':
+        form = ShopForm(request.POST, request.FILES, instance=shop_instance)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Shop updated successfully!')
+            # return redirect('shop', username=shop_instance.user.username)
+            return redirect('list_shops')
+    else:
+        form = ShopForm(instance=shop_instance)
+        
+    context = {'form': form, 'title': 'Update Shop'}
+    return render(request, 'app/shop_form.html', context)
+
+@login_required # delete_shop
+def delete_shop(request, slug):
+    shop_instance = get_object_or_404(Shop, slug=slug)
+    
+    # Check permission
+    if shop_instance.user != request.user and not request.user.is_superuser:
+        messages.error(request, 'You are not authorized to delete this shop.')
+        return redirect('shop', username=shop_instance.user.username)
+        
+    if request.method == 'POST':
+        shop_instance.delete()
+        messages.success(request, 'Shop deleted successfully!')
+        # return redirect('index')
+        return redirect('list_shops')
+        
+    context = {'shop': shop_instance}
+    return render(request, 'app/shop_confirm_delete.html', context)
+#--------------------- / Shop --------------------------------
 
 #--------------------- Category --------------------------------
 @login_required # add_category
@@ -276,29 +367,42 @@ def delete_category(request, slug):
     return render(request, 'app/category_confirm_delete.html', context)
 #--------------------- / Category ------------------------------
 
+
+
 #--------------------- Product --------------------------------
+
+
 @login_required # add_product
-def add_product(request):
+def add_product(request, shop_slug):
     """
     Add new product
     """
+    shop = get_object_or_404(Shop, slug=shop_slug)
+
     if request.method == "POST":
         form = ProductForm(request.POST, request.FILES)
         if form.is_valid():
             product = form.save(commit=False)
-            product.user = request.user
+            product.shop = shop
             product.save()
 
             # Save uploaded images
             images = request.FILES.getlist("images")
             for img in images:
                 ProductImages.objects.create(product=product, image=img)
-
-            return redirect(product.get_absolute_url())
+            return redirect('shop', shop.slug)
+            # return redirect(product.get_absolute_url())
     else:
         form = ProductForm()
 
-    return render(request, "app/product_form.html", {"form": form})
+    return render(request, "app/product_form.html", {"form": form, "shop": shop})
+
+
+
+
+
+
+
 
 import json
 @login_required # update_product
@@ -462,7 +566,7 @@ def remove_from_wishlist(request, product_id):
 @login_required
 @user_passes_test(lambda u: u.is_superuser) # brand list
 def brand_list(request): 
-    """List all registered users - superuser only."""
+    """List all registered brands - superuser only."""
     brand_list = Brand.objects.all().order_by('-start_date')
 
     search = request.GET.get('search', '')
@@ -556,32 +660,3 @@ def list_members(request):
     }
     return render(request, 'app/list_members.html', context)
 #---------------------  / Members --------------------------------
-
-
-#---------------------  Shops --------------------------------
-
-def list_shops(request):
-
-    shops = User.objects.all().order_by('-date_joined')  # مهم
-
-    search = request.GET.get('search', '')
-    if search:
-        shops = shops.filter(
-            Q(username__icontains=search) |
-            Q(email__icontains=search) |
-            Q(first_name__icontains=search) |
-            Q(last_name__icontains=search)
-        )
-
-    paginator = Paginator(shops, 5)
-    page_number = request.GET.get('page')
-    shops_page = paginator.get_page(page_number)
-    
-    context = {
-        'shops': shops_page,
-        'search': search,
-        'total_shops': shops.count(),
-    }
-
-    return render(request, 'app/list_shops.html', context)  
-#---------------------  / Shops --------------------------------

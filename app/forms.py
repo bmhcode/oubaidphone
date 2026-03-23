@@ -1,9 +1,28 @@
 from django import forms
-from .models import Store, Profile, Product, Brand, Category, ProductImages 
+from .models import Store, Profile, Product, Brand, Category, ProductImages, Shop
 from django_ckeditor_5.widgets import CKEditor5Widget
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import AuthenticationForm
 
+
+class ShopForm(forms.ModelForm):
+    class Meta:
+        model = Shop
+        fields = ['user', 'name', 'phone', 'email', 'address', 'description', 'logo', 'cover', 'is_active']
+        labels = {
+            'user': 'Owner',
+        }
+        widgets = {
+            'user':        forms.Select(attrs={'class': 'form-control'}),
+            'name':        forms.TextInput(attrs={'class': 'form-control'}),
+            'phone':       forms.TextInput(attrs={'class': 'form-control'}),
+            'email':       forms.EmailInput(attrs={'class': 'form-control'}),
+            'address':     forms.TextInput(attrs={'class': 'form-control'}),
+            'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 4}),
+            'logo':        forms.ClearableFileInput(attrs={'class': 'form-control'}),
+            'cover':       forms.ClearableFileInput(attrs={'class': 'form-control'}),
+            'is_active':   forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+        }
 
 class StoreForm(forms.ModelForm):
     class Meta:

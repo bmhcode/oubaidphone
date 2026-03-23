@@ -2,45 +2,69 @@
 {% load static %}
 {% load humanize %}
 
-{% block title %} {{ shop_user.username }} shop {% endblock title %}
+{% block title %} {{ shop.name }} {% endblock title %}
 
 {% block body %}
 
 <div class="container py-5">
     <div class="row">
-
         <!-- ================= LEFT: PRODUCTS ================= -->
         <div class="col-lg-9">
-
-            <!-- HEADER -->
-
-
             <!-- HEADER -->
             <div class="d-flex justify-content-between align-items-center mb-4">
-                <div>
-                    <h3 class="fw-bold mb-0">
-                        <i class="fa fa-store text-success me-2"></i> Shop - {{ shop_user.username }} -
-                    </h3>
-                    <small class="text-muted"> {{ shop_user.product_set.count }}
-                        product{{shop_user.product_set.count|pluralize }}</small>
+
+                <div class="row">
+                    <div class="col-md-4">
+                        <div>
+                            {% if shop.logoURL %}
+                            <img src="{{ shop.logoURL }}" class="rounded-circle mb-3" width="120" height="120"
+                                style="object-fit:cover;">
+                            {% else %}
+                            <i class="fa fa-store text-success me-2"></i>
+                            {% endif %}
+                        </div>
+                        <small class="text-muted">
+                            {{ shop.products.count }} product{{ shop.products.count|pluralize }}
+                        </small>
+
+
+                    </div>
+                    <div class="col-md-8">
+                        <h3 class="fw-bold mb-0">
+                            Shop - {{ shop.name }}
+
+                            {% if request.user.is_superuser or request.user == shop.user %}
+                            <a href="{% url 'update_shop' shop.slug %}">
+                                <i class="fa fa-edit me-2"></i></a>
+                            <a href="{% url 'delete_shop' shop.slug %}">
+                                <i class="fa fa-trash me-2"></i></a>
+                            {% endif %}
+                        </h3>
+                        <small class="text-muted"> {{ shop.address }} </small>
+
+                        <h5>{{ shop.phone }}</h5>
+
+                    </div>
+
+
+
                 </div>
 
-                {% if request.user == shop_user or request.user.is_superuser %}
-                <a href="{% url 'add_product' %}" class="btn btn-success">
+                {% if request.user == shop.user or request.user.is_superuser %}
+                <a href="{% url 'add_product' shop.slug %}" class="btn btn-success">
                     <i class="fa fa-plus me-2"></i> Add Product
                 </a>
                 {% endif %}
-
-
             </div>
+
             <!-- / HEADER -->
 
             <!-- PLAN MESSAGE -->
-            {% if not shop_user.profile.phone %}
+            {% if not shop.user.profile.phone %}
             <div class="alert alert-warning text-center">
                 You must add your phone number
                 <br>
-                <a href="{% url 'update_profile' shop_user.username %}" class="btn btn-sm btn-dark mt-2">
+                <a href="{% url 'update_profile' shop.user.username %}" class="btn btn-sm btn-dark mt-2">
                     Update Profile
                 </a>
             </div>
@@ -74,9 +98,7 @@
                             </a>
 
                             <!-- TIME -->
-                            <small class="text-muted mb-2">
-                                {{ product.created|naturaltime }}
-                            </small>
+                            <small>{{ product.created_at|naturaltime }}</small>
 
                             <!-- PRICE -->
                             <div class="mt-auto d-flex justify-content-between align-items-center">
@@ -86,20 +108,17 @@
                             </div>
 
                             <!-- ACTIONS -->
-                            {% if request.user.is_superuser or request.user == shop_user %}
+                            {% if request.user == product.shop.user or request.user.is_superuser %}
                             <div class="mt-2 text-center border-top pt-2">
-                                <a href="{% url 'update_product' product.slug %}" class="btn btn-sm btn-warning">
-                                    <i class="fas fa-edit"></i>
-                                </a>
-                                <a href="{% url 'delete_product' product.slug %}" class="btn btn-sm btn-danger">
-                                    <i class="fas fa-trash"></i>
-                                </a>
-                                <a href="{% url 'manage_product_images' product.slug %}" class="btn btn-sm btn-primary">
-                                    <i class="fas fa-images"></i>
-                                </a>
+                                <a href="{% url 'update_product' product.slug %}"
+                                    class="btn btn-sm btn-warning py-0 px-1"><i class="fas fa-edit"></i></a>
+                                <a href="{% url 'delete_product' product.slug %}"
+                                    class="btn btn-sm btn-danger py-0 px-1"><i class="fas fa-trash"></i></a>
+                                <a href="{% url 'manage_product_images' product.slug %}"
+                                    class="btn btn-sm btn-primary py-0 px-1"><i class="fas fa-images"></i></a>
                             </div>
                             {% endif %}
-
+                            <!-- / ACTIONS -->
                         </div>
                     </div>
                 </div>
@@ -154,18 +173,14 @@
 
                 </ul>
             </nav>
-
         </div>
-
-
         <!-- ================= RIGHT: USER INFO ================= -->
         <div class="col-lg-3">
-
             <div class="card shadow-sm border-0 p-3 text-center sticky-top" style="top:20px;">
 
                 <!-- IMAGE -->
-                {% if shop_user.profile.image %}
-                <img src="{{ shop_user.profile.image.url }}" class="rounded-circle mb-3" width="120" height="120"
+                {% if shop.user.profile.imageURL %}
+                <img src="{{ shop.user.profile.imageURL }}" class="rounded-circle mb-3" width="120" height="120"
                     style="object-fit:cover;">
                 {% else %}
                 <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" class="rounded-circle mb-3" width="120"
@@ -173,12 +188,12 @@
                 {% endif %}
 
                 <!-- NAME -->
-                <h5 class="fw-bold">{{ shop_user.username }}</h5>
+                <h5 class="fw-bold">{{ shop.user}}</h5>
 
                 <!-- PHONE -->
-                {% if shop_user.profile.phone %}
-                <a href="tel:{{ shop_user.profile.phone }}" class="btn btn-success btn-sm my-2">
-                    📞 {{ shop_user.profile.phone }}
+                {% if shop.user.profile.phone %}
+                <a href="tel:{{ shop.user.profile.phone }}" class="btn btn-success btn-sm my-2">
+                    📞 {{ shop.user.profile.phone }}
                 </a>
                 {% else %}
                 <p class="text-muted small">No phone number</p>
@@ -187,27 +202,26 @@
                 <hr>
 
                 <!-- PLAN -->
-                <p><strong>Plan:</strong> {{ plan }}</p>
+                <!-- <p><strong>Plan:</strong> {{ plan }}</p>
 
                 {% if plan != "BUSINESS" %}
                 <small class="text-muted">
                     {{ products.count }}/{{ max_products }} products
                 </small>
-                {% endif %}
+                {% endif %} -->
 
                 <hr>
 
-                <!-- EDIT PROFILE -->
-                {% if request.user == shop_user %}
-                <a href="{% url 'update_profile' shop_user.username %}" class="btn btn-outline-primary w-100">
-                    <i class="fa fa-user me-2"></i> Edit Profile
-                </a>
+                <!-- ACTIONS -->
+                {% if request.user.is_superuser or request.user == shop.user %}
+                <a href="{% url 'update_profile' shop.user %}" class="btn btn-outline-primary w-100 mb-2">
+                    <i class="fa fa-user me-2"></i> Edit Profile</a>
+
+
                 {% endif %}
 
             </div>
-
         </div>
-
     </div>
 </div>
 

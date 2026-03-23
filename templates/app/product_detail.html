@@ -59,14 +59,14 @@ OubaidPhone | {{ product.name }}
 
                 <!-- SELLER INFO -->
                 <div class="mb-3">
-                    <strong class="d-block mb-2">{{ product.user.username }}</strong>
+                    <strong class="d-block mb-2">{{ product.shop.user.username }}</strong>
                     <div class="d-flex justify-content-center gap-2 flex-wrap">
 
-                        <a href="tel:{{ product.user.profile.phone }}" class="btn btn-success flex-grow-1">
-                            📞 {{ product.user.profile.phone }}
+                        <a href="tel:{{ product.shop.user.profile.phone }}" class="btn btn-success flex-grow-1">
+                            📞 {{ product.shop.user.profile.phone }}
                         </a>
 
-                        <a class="btn btn-outline-primary flex-grow-1" href="{% url 'shop' product.user.username %}">
+                        <a class="btn btn-outline-primary flex-grow-1" href="{% url 'shop' product.shop.slug %}">
                             <i class="fas fa-store me-2"></i>
                             Visit my shop
                         </a>

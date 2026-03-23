@@ -143,10 +143,15 @@
                     </a>
 
 
-                    <a class="nav-link" href="{% url 'shop' user.username %}">
-                        <i class="fas fa-store me-2"></i> visit your shop
+                    {% if user.shops.exists %}
+                    <a class="nav-link" href="{% url 'shop' user.shops.first.slug %}">
+                        <i class="fas fa-store me-2"></i> My shop
                     </a>
-
+                    {% else %}
+                    <a class="nav-link" href="{% url 'create_shop' %}">
+                        <i class="fas fa-store me-2"></i> Create shop
+                    </a>
+                    {% endif %}
                     <li class="nav-item dropdown list-unstyled">
                         <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#">
                             {{user.username}}
@@ -199,9 +204,6 @@
 
                     {% else %}
 
-                    <a class="nav-link" href="{% url 'login' %}">
-                        <i class="fas fa-store me-2"></i> create your shop
-                    </a>
                     <a class="nav-link me-3" href="{% url 'login' %}">
                         <i class="fa fa-user"></i> Login
                     </a>

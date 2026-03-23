@@ -2,7 +2,7 @@
 {% load static %}
 {% load humanize %}
 
-{% block title %} BMH / Store {% endblock title %}
+{% block title %} {{store.name}} {% endblock title %}
 
 {% block body %}
 
@@ -125,7 +125,7 @@
                             </a>
                             <!-- <p class="card-text"> {{ product.description|truncatechars:30 }} </p> -->
                             <!-- <small>{{ product.time_since_created }} </small> -->
-                            <small>{{ product.created|naturaltime }}</small>
+                            <small>{{ product.created_at|naturaltime }}</small>
                             <div class="d-flex justify-content-between">
                                 <!-- زر الاتصال -->
                                 <button type="button"
@@ -144,7 +144,7 @@
                                             <!-- Header -->
                                             <div class="modal-header">
                                                 <h5 class="modal-title" id="phoneModalLabel{{ product.id }}">
-                                                    {{ product.user.username }}
+                                                    {{ product.shop.user.username }}
                                                 </h5>
                                                 <button type="button" class="btn-close"
                                                     data-bs-dismiss="modal"></button>
@@ -152,10 +152,10 @@
 
                                             <!-- Seller Image -->
                                             <div class="text-center mt-3">
-                                                {% if product.user.profile.imageURL %}
-                                                <img src="{{ product.user.profile.imageURL }}"
+                                                {% if product.shop.user.profile.imageURL %}
+                                                <img src="{{ product.shop.user.profile.imageURL }}"
                                                     class="rounded-circle shadow" width="120" height="120"
-                                                    alt="{{ product.user.username }}" loading="lazy">
+                                                    alt="{{ product.shop.user.username }}" loading="lazy">
                                                 {% else %}
                                                 <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png"
                                                     class="rounded-circle shadow" width="120" height="120">
@@ -166,25 +166,29 @@
                                             <div class="modal-body text-center">
 
                                                 <h4 class="text-primary">
-                                                    {{ product.user_phone }}
+                                                    {{ product.shop.user.profile.phone }}
                                                 </h4>
 
                                             </div>
 
                                             <!-- Footer -->
-                                            <div class="modal-footer justify-content-center">
+                                            <div class="modal-footer justify-content-between">
 
                                                 <button class="btn btn-secondary" data-bs-dismiss="modal">
                                                     Fermer
                                                 </button>
 
+                                                {% if product.shop.slug %}
                                                 <a class="btn btn-outline-primary"
-                                                    href="{% url 'shop' product.user.username %}">
+                                                    href="{% url 'shop' product.shop.slug %}">
                                                     <i class="fas fa-store me-2"></i>
-                                                    Visit my shop
+                                                    Visit {{ product.shop }}
                                                 </a>
+                                                {% endif %}
 
-                                                <small>{{ product.user.product_set.count }} products</small>
+                                                <small>
+                                                    {{ product.shop.products.count }}
+                                                    product{{product.shop.products.count|pluralize }}</small>
                                             </div>
                                         </div>
                                     </div>
@@ -195,7 +199,7 @@
                                 <!-- / Modal display product owner -->
 
                             </div>
-                            {% if request.user == product.user or request.user.is_superuser %}
+                            {% if request.user == product.shop.user or request.user.is_superuser %}
                             <div class="mt-2 text-center border-top pt-2">
                                 <a href="{% url 'update_product' product.slug %}"
                                     class="btn btn-sm btn-warning py-0 px-1"><i class="fas fa-edit"></i></a>

@@ -10,10 +10,15 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
             <h2 class="fw-bold mb-0">
-                <i class="fa fa-users text-success me-2"></i> Shops
+                <i class="fas fa-store me-2"></i> Shops
             </h2>
             <small class="text-muted">{{ total_shops }} registered shop{{ total_shops|pluralize }}</small>
         </div>
+        {% if request.user.is_superuser %}
+        <a href="{% url 'create_shop' %}" class="btn btn-success">
+            <i class="fa fa-plus me-2"></i> create shop
+        </a>
+        {% endif %}
     </div>
 
     <!-- Search -->
@@ -33,25 +38,25 @@
     </form>
     <!-- / Search -->
 
+    <!-- List shops -->
     <div class="row">
 
         {% for shop in shops %}
         <div class="col-md-3 col-6 mb-4">
-
             <div class="card text-center border-0 shadow-sm p-3 member-card">
 
                 <!-- Avatar -->
-                {% if shop.profile.image %}
-                <img src="{{ shop.profile.image.url }}" class="rounded-circle mx-auto"
+                {% if shop.logo %}
+                <img src="{{ shop.logoURL }}" class="rounded-circle mx-auto"
                     style="width:80px; height:80px; object-fit:cover;">
                 {% else %}
                 <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" class="rounded-circle mx-auto"
                     style="width:80px; height:80px;">
                 {% endif %}
 
-                <!-- Username -->
+                <!-- Shop name -->
                 <h6 class="mt-2 mb-1">
-                    {{ shop.username }}
+                    <a href="{% url 'shop' shop.slug %}">{{ shop.name }}</a>
                 </h6>
 
                 <!-- Rating -->
@@ -61,24 +66,37 @@
 
                 <!-- Products count -->
                 <div class="text-muted small">
-                    {{ shop.product_set.count }} product{{ shop.product_set.count|pluralize }}
+                    {{ shop.products.count }} product{{ shop.products.count|pluralize }}
                 </div>
 
                 <!-- Shop link -->
                 {% if shop.product_set.count > 0 %}
-                <a href="{% url 'shop' shop.username %}" class="btn btn-light btn-sm mt-2">
+                <a href="{% url 'shop' shop.slug %}" class="btn btn-light btn-sm mt-2">
                     View shop
                 </a>
                 {% endif %}
 
-            </div>
+                <!-- ACTIONS -->
+                {% if request.user.is_superuser or request.user == shop.user %}
+                <div class="mt-2 text-center border-top pt-2">
+                    <a href="{% url 'update_shop' shop.slug %}" class="btn btn-sm btn-warning">
+                        <i class="fas fa-edit"></i>
+                    </a>
+                    <a href="{% url 'delete_shop' shop.slug %}" class="btn btn-sm btn-danger">
+                        <i class="fas fa-trash"></i>
+                    </a>
+                </div>
+                {% endif %}
+                <!-- / ACTIONS -->
 
+            </div>
         </div>
         {% empty %}
         <p>No shops found.</p>
         {% endfor %}
 
     </div>
+    <!-- / List shops -->
 
     <!-- Pagination -->
     <div class="d-flex justify-content-center mt-4">
@@ -96,6 +114,7 @@
         {% endif %}
 
     </div>
+    <!-- / Pagination -->
 
 </div>
 

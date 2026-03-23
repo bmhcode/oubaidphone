@@ -1,0 +1,166 @@
+{% extends 'app/base.html' %}
+{% load static %}
+
+{% block title %} {{ title }} {% endblock title %}
+
+{% block body %}
+
+<div class="container py-5" style="max-width:1000px;">
+
+    <div class="card shadow">
+
+        <div class="card-header bg-success text-white text-center">
+            <h4>{{ title }}</h4>
+        </div>
+
+        <div class="card-body">
+
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                {% if form.errors %}
+                <div class="alert alert-danger">
+                    Please correct the errors below.
+                </div>
+                {% endif %}
+
+                <div class="row">
+
+                    <!-- LEFT : TEXT FIELDS -->
+                    <div class="col-md-7">
+
+                        {% for field in form %}
+
+                        {% if field.name != 'logo' and field.name != 'cover' %}
+
+                        <div class="mb-3">
+                            <label for="{{ field.id_for_label }}" class="form-label fw-bold">
+                                {{ field.label }}
+                            </label>
+
+                            {{ field }}
+
+                            {% if field.help_text %}
+                            <small class="text-muted">{{ field.help_text }}</small>
+                            {% endif %}
+
+                            {% if field.errors %}
+                            <div class="text-danger small">
+                                {{ field.errors }}
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        {% endif %}
+
+                        {% endfor %}
+
+                    </div>
+
+
+                    <!-- RIGHT : IMAGES -->
+                    <div class="col-md-5 text-center">
+                        
+                        <!-- Logo -->
+                        <div class="mb-4">
+                            <label for="id_logo" style="cursor:pointer; display: block;">
+                                <h6 class="fw-bold">Logo</h6>
+                                {% if form.instance.pk and form.instance.logo %}
+                                <img id="logo_preview" src="{{ form.instance.logoURL }}" class="img-thumbnail mb-2"
+                                    style="width:150px; height:150px; object-fit:cover; border-radius: 50%;">
+                                {% else %}
+                                <img id="logo_preview" src="https://cdn-icons-png.flaticon.com/512/1046/1046784.png"
+                                    class="img-thumbnail mb-2" style="width:150px; height:150px; object-fit:cover; border-radius: 50%;">
+                                {% endif %}
+                            </label>
+                            <p class="text-muted small">Click to change logo</p>
+                            <div class="d-none">
+                                {{ form.logo }}
+                            </div>
+                            {% if form.logo.errors %}
+                            <div class="text-danger small">{{ form.logo.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <hr>
+
+                        <!-- Cover -->
+                        <div class="mt-4">
+                            <label for="id_cover" style="cursor:pointer; display: block;">
+                                <h6 class="fw-bold">Cover Image</h6>
+                                {% if form.instance.pk and form.instance.cover %}
+                                <img id="cover_preview" src="{{ form.instance.coverURL }}" class="img-thumbnail mb-2"
+                                    style="width:100%; max-height:200px; object-fit:cover;">
+                                {% else %}
+                                <img id="cover_preview" src="https://cdn-icons-png.flaticon.com/512/1046/1046784.png"
+                                    class="img-thumbnail mb-2" style="width:100%; max-height:200px; object-fit:cover;">
+                                {% endif %}
+                            </label>
+                            <p class="text-muted small">Click to change cover image</p>
+                            <div class="d-none">
+                                {{ form.cover }}
+                            </div>
+                            {% if form.cover.errors %}
+                            <div class="text-danger small">{{ form.cover.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="d-flex flex-column flex-md-row mt-4 gap-2">
+
+                    <button type="submit" class="btn btn-success w-100">
+                        <i class="fas fa-save me-2"></i> Save Shop
+                    </button>
+
+                    {% if form.instance.pk %}
+                    <a href="{% url 'shop' form.instance.user.username %}" class="btn btn-secondary w-100 text-center">
+                        Cancel
+                    </a>
+                    {% else %}
+                    <a href="{% url 'index' %}" class="btn btn-secondary w-100 text-center">
+                        Cancel
+                    </a>
+                    {% endif %}
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+    // Logo preview
+    const logoInput = document.getElementById("id_logo");
+    const logoPreview = document.getElementById("logo_preview");
+
+    if (logoInput) {
+        logoInput.addEventListener("change", function () {
+            const file = this.files[0];
+            if (file) {
+                logoPreview.src = URL.createObjectURL(file);
+            }
+        });
+    }
+
+    // Cover preview
+    const coverInput = document.getElementById("id_cover");
+    const coverPreview = document.getElementById("cover_preview");
+
+    if (coverInput) {
+        coverInput.addEventListener("change", function () {
+            const file = this.files[0];
+            if (file) {
+                coverPreview.src = URL.createObjectURL(file);
+            }
+        });
+    }
+</script>
+
+{% endblock body %}

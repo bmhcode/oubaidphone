@@ -95,7 +95,7 @@
         <div class="container d-flex justify-content-between align-items-center">
 
             <a class="navbar-brand text-success logo h2" href="{% url 'index' %}">
-                {{store.name}}
+                {{ store }} <small> {{ shop }} </small>
             </a>
 
             <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#main_nav">
@@ -112,7 +112,7 @@
                     </li>
 
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'store' %}">Store</a>
+                        <a class="nav-link" href="{% url 'list_products' %}">Products</a>
                     </li>
 
                     <li class="nav-item">
@@ -129,29 +129,46 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'list_shops' %}">Shops</a>
                     </li>
-
-
                 </ul>
 
                 <div class="d-flex align-items-center">
                     {% if user.is_authenticated %}
-                    <a class="nav-icon position-relative me-3" href="{% url 'wishlist' %}">
-                        <i class="fa fa-heart text-dark"></i>
+                    <a class="nav-icon position-relative me-3" href="{% url 'cart_detail' %}">
+                        <i class="fa fa-shopping-cart text-dark"></i>
                         <span class="badge bg-light text-dark position-absolute top-0 start-100 translate-middle">
-                            {{nbr_wishlist}}
+                            {% if cart %}{{ cart|length }}{% else %}0{% endif %}
                         </span>
                     </a>
 
+                    {% if nbr_wishlist > 0 %}
+                    <a class="nav-icon position-relative me-3" href="{% url 'wishlist' %}">
+                        <i class="fa fa-heart text-dark"></i>
+                        <span class="badge bg-light text-dark position-absolute top-0 start-100 translate-middle">
+                            {{ nbr_wishlist }}
+                        </span>
+                    </a>
+                    {% else %}
+                    <a class="nav-icon position-relative me-3" href="#" data-bs-toggle="modal"
+                        data-bs-target="#emptyWishlistModal">
+                        <i class="fa fa-heart text-dark"></i>
+                        <span class="badge bg-light text-dark position-absolute top-0 start-100 translate-middle">
+                            0
+                        </span>
+                    </a>
+                    {% endif %}
 
                     {% if user.shops.exists %}
+
                     <a class="nav-link" href="{% url 'shop' user.shops.first.slug %}">
                         <i class="fas fa-store me-2"></i> My shop
                     </a>
+
                     {% else %}
                     <a class="nav-link" href="{% url 'create_shop' %}">
-                        <i class="fas fa-store me-2"></i> Create shop
+                        <i class="fas fa-store me-2"></i> Create your shop
                     </a>
                     {% endif %}
+
                     <li class="nav-item dropdown list-unstyled">
                         <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#">
                             {{user.username}}
@@ -175,7 +192,7 @@
                                 </a>
                             </li>
                             <li>
-                                <a class="dropdown-item" href="">
+                                <a class="dropdown-item" href="{% url 'list_categories' %}">
                                     <i class="fa fa-list me-2"></i> Categories
                                 </a>
                             </li>
@@ -185,13 +202,32 @@
                                 </a>
                             </li>
 
-                            {% endif %}
                             <li>
-                                <hr class="dropdown-divider">
+                                <a class="dropdown-item" href="{% url 'orders_list' %}">
+                                    <i class="fa fa-shopping-cart me-2"></i> All Orders
+                                </a>
                             </li>
 
                             <li>
+                                <a class="dropdown-item" href="{% url 'orders_items_list' %}">
+                                    <i class="fa fa-shopping-cart me-2"></i> All Items Orders
+                                </a>
+                            </li>
+                            {% endif %}
 
+                            {% if user.is_authenticated %}
+
+                            <li>
+                                <a class="dropdown-item" href="{% url 'orders_list_user' user.id %}">
+                                    <i class="fa fa-shopping-cart me-2"></i> My Orders {{user}}
+                                </a>
+                            </li>
+                            {% endif %}
+
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li>
                                 <form id="logout-form" action="{% url 'logout' %}" method="post">
                                     {% csrf_token %}
                                     <button class="dropdown-item">
@@ -203,15 +239,12 @@
                     </li>
 
                     {% else %}
-
                     <a class="nav-link me-3" href="{% url 'login' %}">
                         <i class="fa fa-user"></i> Login
                     </a>
-
                     <a class="nav-link" href="{% url 'signup' %}">
                         <i class="fa fa-user-plus"></i> Sign Up
                     </a>
-
                     {% endif %}
 
                 </div>
@@ -223,6 +256,30 @@
     </nav>
 
     <!-- ================= BODY ================= -->
+    <!-- Modal Empty Wishlist = 0 products-->
+    <div class="modal fade" id="emptyWishlistModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content text-center">
+
+                <div class="modal-header">
+                    <h5 class="modal-title">قائمة المفضلة</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body">
+                    <i class="fa fa-heart text-danger fa-3x mb-3"></i>
+                    <p class="mb-0">قائمة المفضلة الخاصة بك فارغة.</p>
+                    <small class="text-muted">قم بإضافة منتجات لتظهر هنا ❤️</small>
+                </div>
+
+                <div class="modal-footer justify-content-center">
+                    <button class="btn btn-primary" data-bs-dismiss="modal">حسنًا</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <!-- End Modal Empty Wishlist -->
 
     {% block body %}
     {% endblock %}
@@ -266,7 +323,7 @@
                         {% for category in categories|slice:":5" %}
                         <li>
                             <a class="text-light text-decoration-none"
-                                href="{% url 'store' %}?cat_filter={{category.name}}">
+                                href="{% url 'list_products' %}?cat_filter={{category.name}}">
                                 {{category.name}}
                             </a>
                         </li>
@@ -277,7 +334,8 @@
                     <h5>Pages</h5>
                     <ul class="list-unstyled">
                         <li><a class="text-light text-decoration-none" href="{% url 'index' %}">Home</a></li>
-                        <li><a class="text-light text-decoration-none" href="{% url 'store' %}">Store</a></li>
+                        <li><a class="text-light text-decoration-none" href="{% url 'list_products' %}">Products</a>
+                        </li>
                         <li><a class="text-light text-decoration-none" href="{% url 'about' %}">About</a></li>
                         <li><a class="text-light text-decoration-none" href="{% url 'contact' %}">Contact</a></li>
                     </ul>
@@ -300,7 +358,7 @@
     <script src="{% static 'app/js/jquery-migrate-1.2.1.min.js' %}" defer></script>
     <script src="{% static 'app/js/bootstrap.bundle.min.js' %}" defer></script>
     <script src="{% static 'app/js/templatemo.js' %}" defer></script>
-    <script src="{% static 'app/js/custom.js' %}" defer></script>*
+    <script src="{% static 'app/js/custom.js' %}" defer></script>
     <!-- ترتيب الصور بالسحب (Drag & Drop) -->
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
 

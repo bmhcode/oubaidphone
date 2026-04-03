@@ -1,0 +1,73 @@
+<!-- PLAN MESSAGE -->
+{% if not shop.user.profile.phone %}
+<div class="alert alert-warning text-center">
+    You must add your phone number
+    <br>
+    <a href="{% url 'update_profile' shop.user.username %}" class="btn btn-sm btn-dark mt-2">
+        Update Profile
+    </a>
+</div>
+{% endif %}
+<!-- / PLAN MESSAGE -->
+
+
+<ul class="list-unstyled d-flex justify-content-between">
+    <!-- <li>
+                                    <i class="text-warning fa fa-star"></i>
+                                    <i class="text-warning fa fa-star"></i>
+                                    <i class="text-warning fa fa-star"></i>
+                                    <i class="text-muted fa fa-star"></i>
+                                    <i class="text-muted fa fa-star"></i>
+                                </li>  -->
+
+</ul>
+
+
+
+<!-- ================= RIGHT: USER INFO - Shop.html ================= -->
+<div class="col-lg-3">
+    <div class="card shadow-sm border-0 p-3 text-center sticky-top" style="top:20px;">
+
+        <!-- IMAGE -->
+        {% if shop.user.profile.imageURL %}
+        <img src="{{ shop.user.profile.imageURL }}" class="rounded-circle mb-3" width="120" height="120"
+            style="object-fit:cover;">
+        {% else %}
+        <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" class="rounded-circle mb-3" width="120"
+            height="120">
+        {% endif %}
+
+        <!-- NAME -->
+        <h5 class="fw-bold">{{ shop.user}}</h5>
+
+        <!-- PHONE -->
+        {% if shop.user.profile.phone %}
+        <a href="tel:{{ shop.user.profile.phone }}" class="btn btn-success btn-sm my-2">
+            📞 {{ shop.user.profile.phone }}
+        </a>
+        {% else %}
+        <p class="text-muted small">No phone number</p>
+        {% endif %}
+
+        <hr>
+
+        <!-- PLAN -->
+        <!-- <p><strong>Plan:</strong> {{ plan }}</p>
+
+                {% if plan != "BUSINESS" %}
+                <small class="text-muted">
+                    {{ products.count }}/{{ max_products }} products
+                </small>
+                {% endif %} -->
+
+        <hr>
+
+        <!-- ACTIONS -->
+        {% if request.user.is_superuser or request.user == shop.user %}
+        <a href="{% url 'update_profile' shop.user %}" class="btn btn-outline-primary w-100 mb-2">
+            <i class="fa fa-user me-2"></i> Edit Profile</a>
+        {% endif %}
+
+    </div>
+</div>
+<!-- ================= RIGHT: USER INFO ================= -->

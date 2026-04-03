@@ -1,5 +1,9 @@
 from .views import _get_store
 from .models import Category, Wishlist
+from .cart import Cart
+
+def cart(request):
+    return {'cart': Cart(request)}
 
 def global_data(request):
     return {

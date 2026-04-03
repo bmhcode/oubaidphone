@@ -1,166 +1,327 @@
-{% extends 'app/base.html' %}
-{% load static %}
+{% extends 'app/base.html' %} 
+{% load static %} 
 
-{% block title %} {{ title }} {% endblock title %}
+{% block title %} {{ title }} {% endblock title %} 
 
-{% block body %}
+{% block body %} 
 
-<div class="container py-5" style="max-width:1000px;">
-
-    <div class="card shadow">
-
-        <div class="card-header bg-success text-white text-center">
-            <h4>{{ title }}</h4>
+<div class="container py-5" style="max-width:1100px;">
+    <div class="card shadow-lg border-0 rounded-4">
+        <div class="card-header bg-success text-white py-3">
+            <h4 class="mb-0 text-center"><i class="fas fa-store me-2"></i> {{ title }}</h4>
         </div>
+        <div class="card-body p-4 text-dark">
+            <form method="post" enctype="multipart/form-data"> {% csrf_token %} {% if has_errors %} <div
+                    class="alert alert-danger"> Please correct the errors </div> {% endif %} <!-- Tabs Navigation -->
+                <ul class="nav nav-pills nav-justified mb-4 bg-light p-2 rounded-3" id="shopTab" role="tablist">
+                    <li class="nav-item">
+                        <button class="nav-link active fw-bold" id="basic-tab" data-bs-toggle="tab"
+                            data-bs-target="#basic" type="button">
+                            <i class="fas fa-info-circle me-1"></i> Basic Info </button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link fw-bold" id="location-tab" data-bs-toggle="tab"
+                            data-bs-target="#location" type="button">
+                            <i class="fas fa-map-marker-alt me-1"></i> Location </button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link fw-bold" id="hours-tab" data-bs-toggle="tab" data-bs-target="#hours"
+                            type="button">
+                            <i class="fas fa-clock me-1"></i> Hours </button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link fw-bold" id="holidays-tab" data-bs-toggle="tab"
+                            data-bs-target="#holidays" type="button">
+                            <i class="fas fa-calendar-alt me-1"></i> Holidays </button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link fw-bold" id="social-tab" data-bs-toggle="tab" data-bs-target="#social"
+                            type="button">
+                            <i class="fas fa-share-alt me-1"></i> Social </button>
+                    </li> {% if validation_form %} <li class="nav-item">
+                        <button class="nav-link fw-bold text-danger" id="validation-tab" data-bs-toggle="tab"
+                            data-bs-target="#validation" type="button">
+                            <i class="fas fa-user-shield me-1"></i> Admin </button>
+                    </li> {% endif %}
+                </ul>
+                <!-- Tabs Content -->
+                <div class="tab-content border p-4 rounded-3 bg-white" id="shopTabContent">
 
-        <div class="card-body">
+                    <!-- Basic Info Tab -->
+                    <div class="tab-pane fade show active" id="basic" role="tabpanel">
+                        <div class="row text-dark">
 
-            <form method="post" enctype="multipart/form-data">
-                {% csrf_token %}
-
-                {% if form.errors %}
-                <div class="alert alert-danger">
-                    Please correct the errors below.
-                </div>
-                {% endif %}
-
-                <div class="row">
-
-                    <!-- LEFT : TEXT FIELDS -->
-                    <div class="col-md-7">
-
-                        {% for field in form %}
-
-                        {% if field.name != 'logo' and field.name != 'cover' %}
-
-                        <div class="mb-3">
-                            <label for="{{ field.id_for_label }}" class="form-label fw-bold">
-                                {{ field.label }}
-                            </label>
-
-                            {{ field }}
-
-                            {% if field.help_text %}
-                            <small class="text-muted">{{ field.help_text }}</small>
-                            {% endif %}
-
-                            {% if field.errors %}
-                            <div class="text-danger small">
-                                {{ field.errors }}
+                            <div class="col-md-7"> 
+                                {% for field in form %} 
+                                {% if field.name not in 'logo cover address city postal_code country latitude longitude is_closed is_active' %} 
+                                <div class="mb-3"> 
+                                    <label class="form-label fw-bold">{{ field.label }}</label> 
+                                    {{ field }} 
+                                    {% if field.errors %}
+                                    <div class="text-danger small">{{ field.errors }}</div> 
+                                    {% endif %} 
+                                </div> 
+                                {% endif %} 
+                                {% endfor %} 
+                                <div class="mb-3 form-check form-switch mt-4"> 
+                                    {{ form.is_active }} 
+                                    <label class="form-check-label fw-bold" for="{{ form.is_active.id_for_label }}">
+                                        Shop is Active
+                                    </label> 
+                                </div> 
+                                <div class="mb-3 form-check form-switch text-danger"> 
+                                    {{ form.is_closed }} 
+                                    <label class="form-check-label fw-bold" for="{{ form.is_closed.id_for_label }}">
+                                        Temporarily Closed
+                                    </label> 
+                                </div> 
                             </div>
-                            {% endif %}
+
+                            <div class="col-md-5 text-center border-start">
+                                <div class="mb-4">
+                                    <label for="id_logo" style="cursor:pointer; display: block;">
+                                        <h6 class="fw-bold">Logo</h6>
+                                        <img id="logo_preview"
+                                            src="{% if form.instance.logo %}{{ form.instance.logoURL }}{% else %}https://cdn-icons-png.flaticon.com/512/1046/1046784.png{% endif %}"
+                                            class="img-thumbnail rounded-circle mb-2 shadow-sm"
+                                            style="width:150px; height:150px; object-fit:cover;">
+                                    </label>
+                                    <div class="d-none">{{ form.logo }}</div>
+                                </div>
+                                <hr>
+                                <div class="mt-4">
+                                    <label for="id_cover" style="cursor:pointer; display: block;">
+                                        <h6 class="fw-bold">Cover Image</h6>
+                                        <img id="cover_preview"
+                                            src="{% if form.instance.cover %}{{ form.instance.coverURL }}{% else %}https://cdn-icons-png.flaticon.com/512/1046/1046784.png{% endif %}"
+                                            class="img-thumbnail rounded-3 mb-2 shadow-sm"
+                                            style="width:100%; max-height:200px; object-fit:cover;">
+                                    </label>
+                                    <div class="d-none">{{ form.cover }}</div>
+                                </div>
+                            </div>
                         </div>
-
-                        {% endif %}
-
-                        {% endfor %}
-
                     </div>
 
-
-                    <!-- RIGHT : IMAGES -->
-                    <div class="col-md-5 text-center">
-                        
-                        <!-- Logo -->
-                        <div class="mb-4">
-                            <label for="id_logo" style="cursor:pointer; display: block;">
-                                <h6 class="fw-bold">Logo</h6>
-                                {% if form.instance.pk and form.instance.logo %}
-                                <img id="logo_preview" src="{{ form.instance.logoURL }}" class="img-thumbnail mb-2"
-                                    style="width:150px; height:150px; object-fit:cover; border-radius: 50%;">
-                                {% else %}
-                                <img id="logo_preview" src="https://cdn-icons-png.flaticon.com/512/1046/1046784.png"
-                                    class="img-thumbnail mb-2" style="width:150px; height:150px; object-fit:cover; border-radius: 50%;">
-                                {% endif %}
-                            </label>
-                            <p class="text-muted small">Click to change logo</p>
-                            <div class="d-none">
-                                {{ form.logo }}
+                    <!-- Location Tab -->
+                    <div class="tab-pane fade" id="location" role="tabpanel">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">Address</label> {{ form.address }}
                             </div>
-                            {% if form.logo.errors %}
-                            <div class="text-danger small">{{ form.logo.errors }}</div>
-                            {% endif %}
-                        </div>
-
-                        <hr>
-
-                        <!-- Cover -->
-                        <div class="mt-4">
-                            <label for="id_cover" style="cursor:pointer; display: block;">
-                                <h6 class="fw-bold">Cover Image</h6>
-                                {% if form.instance.pk and form.instance.cover %}
-                                <img id="cover_preview" src="{{ form.instance.coverURL }}" class="img-thumbnail mb-2"
-                                    style="width:100%; max-height:200px; object-fit:cover;">
-                                {% else %}
-                                <img id="cover_preview" src="https://cdn-icons-png.flaticon.com/512/1046/1046784.png"
-                                    class="img-thumbnail mb-2" style="width:100%; max-height:200px; object-fit:cover;">
-                                {% endif %}
-                            </label>
-                            <p class="text-muted small">Click to change cover image</p>
-                            <div class="d-none">
-                                {{ form.cover }}
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">City</label> {{ form.city }}
                             </div>
-                            {% if form.cover.errors %}
-                            <div class="text-danger small">{{ form.cover.errors }}</div>
-                            {% endif %}
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label fw-bold">Postal Code</label> {{ form.postal_code }}
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label fw-bold">Country</label> {{ form.country }}
+                            </div>
                         </div>
-
+                        <div class="alert alert-light border mt-3">
+                            <h6 class="fw-bold mb-3"><i class="fas fa-map-marker-alt me-1"></i> Coordinates (Optional)
+                            </h6>
+                            <div class="row">
+                                <div class="col-md-6 mb-2">
+                                    <label class="small text-muted">Latitude</label> {{ form.latitude }}
+                                </div>
+                                <div class="col-md-6 mb-2">
+                                    <label class="small text-muted">Longitude</label> {{ form.longitude }}
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
-                </div>
+                    <!-- Hours Tab -->
+                    <div class="tab-pane fade" id="hours" role="tabpanel"> 
+                        {{ hours_formset.management_form }} 
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle">
+                                <thead class="bg-light">
+                                    <tr>
+                                        <th>Day</th>
+                                        <th>Open Time</th>
+                                        <th>Close Time</th>
+                                        <th class="text-center">Closed?</th>
+                                    </tr>
+                                </thead>
 
-                <div class="d-flex flex-column flex-md-row mt-4 gap-2">
+                                <tbody> 
+                                    {% for h_form in hours_formset %} 
+                                    <tr>
+                                        <td class="fw-bold"> {{ h_form.id }} {{ h_form.day }} 
+                                            {% if h_form.initial.day == 0 %} 
+                                            Monday 
+                                            {% elif h_form.initial.day == 1 %} 
+                                            Tuesday 
+                                            {% elif h_form.initial.day == 2 %} 
+                                            Wednesday 
+                                            {% elif h_form.initial.day == 3 %}
+                                            Thursday 
+                                            {% elif h_form.initial.day == 4 %} 
+                                            Friday 
+                                            {% elif h_form.initial.day == 5 %} 
+                                            Saturday 
+                                            {% elif h_form.initial.day == 6 %}
+                                            Sunday 
+                                            {% elif h_form.instance.day == 0 %} 
+                                            Monday 
+                                            {% elif h_form.instance.day == 1 %} 
+                                            Tuesday 
+                                            {% elif h_form.instance.day == 2 %}
+                                            Wednesday 
+                                            {% elif h_form.instance.day == 3 %} 
+                                            Thursday 
+                                            {% elif h_form.instance.day == 4 %} 
+                                            Friday 
+                                            {% elif h_form.instance.day == 5 %}
+                                            Saturday 
+                                            {% elif h_form.instance.day == 6 %} 
+                                            Sunday 
+                                            {% endif %} 
+                                        </td>
+                                        <td>{{ h_form.open_time }}</td>
+                                        <td>{{ h_form.close_time }}</td>
+                                        <td class="text-center">{{ h_form.is_closed }}</td>
+                                        
+                                    </tr> 
+                                    {% endfor %} 
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
 
-                    <button type="submit" class="btn btn-success w-100">
-                        <i class="fas fa-save me-2"></i> Save Shop
-                    </button>
+                    <!-- Holidays Tab -->
+                    <div class="tab-pane fade" id="holidays" role="tabpanel"> {{ holiday_formset.management_form }} <div
+                            id="holiday-forms"> {% for hol_form in holiday_formset %} <div
+                                class="card mb-3 border-0 bg-light p-3">
+                                <div class="row g-3"> {{ hol_form.id }} <div class="col-md-4">
+                                        <label class="small fw-bold">Holiday Name</label> {{ hol_form.name }}
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="small fw-bold">Start Date</label> {{ hol_form.date_begin }}
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="small fw-bold">End Date</label> {{ hol_form.date_end }}
+                                    </div>
+                                    <div class="col-12 text-end"> {% if holiday_formset.can_delete %} <div
+                                            class="form-check d-inline-block"> {{ hol_form.DELETE }} <label
+                                                class="text-danger small">Remove</label>
+                                        </div> {% endif %} </div>
+                                </div>
+                            </div> {% endfor %} </div>
+                    </div>
 
-                    {% if form.instance.pk %}
-                    <a href="{% url 'shop' form.instance.user.username %}" class="btn btn-secondary w-100 text-center">
-                        Cancel
-                    </a>
-                    {% else %}
-                    <a href="{% url 'index' %}" class="btn btn-secondary w-100 text-center">
-                        Cancel
-                    </a>
+                    <!-- Social Tab -->
+                    <div class="tab-pane fade" id="social" role="tabpanel">
+                        <div class="row g-3"> {% for field in social_form %} <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">{{ field.label }}</label> {{ field }}
+                            </div> {% endfor %} </div>
+                    </div>
+
+                    <!-- Admin/Validation Tab --> 
+                    {% if validation_form %} 
+                    <div class="tab-pane fade" id="validation" role="tabpanel">
+                        <div class="bg-white bg-opacity-10 p-4 rounded-3 border border-warning border-opacity-25">
+                            <h5 class="text-success mb-4 fw-bold"><i class="fas fa-user-shield me-2"></i> 
+                                Shop Verification Controls</h5>
+                            <div class="row">
+                                <div class="col-md-6 mb-4">
+                                    <div class="form-check form-switch mb-3"> 
+                                        {{ validation_form.is_validated }} 
+                                        <label class="form-check-label fw-bold text-success">
+                                            Approve / Validate Shop
+                                        </label>
+                                    </div>
+                                    <div class="form-check form-switch mb-3"> 
+                                        {{ validation_form.is_rejected }} 
+                                        <label class="form-check-label fw-bold text-danger">
+                                            Reject Shop
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-4">
+                                    <label class="form-label fw-bold">Validation Period</label> 
+                                    {{ validation_form.period }} 
+                                    <label class="form-label fw-bold mt-3">Start Date</label>
+                                    {{ validation_form.start_date }} 
+                                    {% if validation_form.start_date.errors %} 
+                                    <div
+                                        class="text-danger small mt-1">{{ validation_form.start_date.errors }}
+                                    </div> 
+                                    {% endif %}
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label fw-bold">Admin Observations / Notes</label> 
+                                    {{ validation_form.observation }}
+                                </div>
+                            </div>
+                        </div>
+                    </div> 
                     {% endif %}
 
+
+
                 </div>
-
+                <!-- Action Buttons -->
+                <div class="mt-5 d-flex gap-2">
+                    <button type="submit" class="btn btn-success btn-lg flex-grow-1 fw-bold rounded-pill shadow-sm">
+                        <i class="fas fa-save me-2"></i> Save Shop Information </button>
+                    <a href="{% if shop %}{% url 'shop' shop.slug %}{% else %}{% url 'list_shops' %}{% endif %}"
+                        class="btn btn-outline-secondary btn-lg px-5 rounded-pill shadow-sm"> Cancel </a>
+                </div>
             </form>
-
         </div>
-
     </div>
-
 </div>
-
 <script>
-    // Logo preview
-    const logoInput = document.getElementById("id_logo");
-    const logoPreview = document.getElementById("logo_preview");
+    // Preview logic
+    document.getElementById("id_logo")?.addEventListener("change", function () {
+        if (this.files && this.files[0]) document.getElementById("logo_preview").src = URL.createObjectURL(this.files[0]);
+    });
+    document.getElementById("id_cover")?.addEventListener("change", function () {
+        if (this.files && this.files[0]) document.getElementById("cover_preview").src = URL.createObjectURL(this.files[0]);
+    });
 
-    if (logoInput) {
-        logoInput.addEventListener("change", function () {
-            const file = this.files[0];
-            if (file) {
-                logoPreview.src = URL.createObjectURL(file);
-            }
-        });
+    // Handle tab persistence on page refresh or validation error
+    const activeTab = localStorage.getItem('shopActiveTab');
+    if (activeTab) {
+        const tabEl = document.querySelector(`#${activeTab}`);
+        if (tabEl) {
+            const tab = new bootstrap.Tab(tabEl);
+            tab.show();
+        }
     }
-
-    // Cover preview
-    const coverInput = document.getElementById("id_cover");
-    const coverPreview = document.getElementById("cover_preview");
-
-    if (coverInput) {
-        coverInput.addEventListener("change", function () {
-            const file = this.files[0];
-            if (file) {
-                coverPreview.src = URL.createObjectURL(file);
-            }
-        });
-    }
+    document.querySelectorAll('button[data-bs-toggle="tab"]').forEach(tab => {
+        tab.addEventListener('shown.bs.tab', e => localStorage.setItem('shopActiveTab', e.target.id));
+    });
 </script>
+<style>
+    .nav-pills .nav-link {
+        color: #6c757d;
+        border: 1px solid transparent;
+    }
+
+    .nav-pills .nav-link.active {
+        background-color: #198754 !important;
+        color: white !important;
+    }
+
+    .nav-pills .nav-link:hover:not(.active) {
+        background-color: #e9ecef;
+    }
+
+    .form-control:focus,
+    .form-select:focus {
+        border-color: #198754;
+        box-shadow: 0 0 0 0.25rem rgba(25, 135, 84, 0.25);
+    }
+
+    .tab-content {
+        transition: all 0.3s ease-in-out;
+    }
+</style>
+
 
 {% endblock body %}

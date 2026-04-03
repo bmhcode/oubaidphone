@@ -1,0 +1,145 @@
+{% extends 'app/base.html' %}
+{% load static %}
+
+{% block title %}Categories — {{ store.name }}{% endblock %}
+
+{% block body %}
+<div class="container py-5">
+
+    <!-- Header + Add Category Button -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-0">
+                <i class="fa fa-list text-success me-2"></i> Categories
+            </h2>
+            <small class="text-muted">{{ total }} categories</small>
+        </div>
+
+        {% if request.user.is_superuser %}
+        <a href="{% url 'add_category' %}" class="btn btn-primary">
+            <i class="fa fa-plus me-1"></i> Add Category
+        </a>
+        {% endif %}
+    </div>
+
+    <!-- Search -->
+    <form method="GET" class="mb-4">
+        <div class="input-group" style="max-width: 400px;">
+            <input type="text" name="search" class="form-control" placeholder="Search category…" value="{{ search }}">
+            <button class="btn btn-success" type="submit">
+                <i class="fa fa-search"></i>
+            </button>
+            {% if search %}
+            <a href="{% url 'list_categories' %}" class="btn btn-outline-secondary">
+                <i class="fa fa-times"></i>
+            </a>
+            {% endif %}
+        </div>
+    </form>
+
+    <!-- Table -->
+    <div class="card shadow-sm">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-dark">
+                    <tr>
+                        <th>#</th>
+                        <th>Image</th>
+                        <th>Name</th>
+                        <th>Total Products</th>
+                        <th>Created</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for category in categories %}
+                    <tr>
+                        <td class="text-muted small">{{ forloop.counter }}</td>
+                        <!-- Avatar -->
+                        <td>
+                            {% if category.imageURL %}
+                            <img src="{{ category.imageURL }}" alt="{{ category.name }}" class="rounded-circle"
+                                width="40" height="40" style="object-fit:cover;">
+                            {% else %}
+                            <div class="rounded-circle bg-success d-flex align-items-center justify-content-center text-white fw-bold"
+                                style="width:40px;height:40px;font-size:1rem;">
+                                {{ category.name|first|upper }}
+                            </div>
+                            {% endif %}
+                        </td>
+                        <td>{{ category.name }}</td>
+
+                        <td class="text-center">
+                            <span class="badge bg-success-subtle text-success border border-success">
+                                {{ category.total_products|default:0 }}
+                            </span>
+                        </td>
+                        <td class="text-muted small">{{ category.created_at|date:"d M Y" }}</td>
+                        <td>
+                            {% if request.user.is_superuser %}
+                            <a href="{% url 'update_category' category.slug %}" class="btn btn-sm btn-warning">
+                                <i class="fa fa-edit"></i>
+                            </a>
+                            <a href="{% url 'delete_category' category.slug %}" class="btn btn-sm btn-outline-danger"
+                                title="Delete category">
+                                <i class="fa fa-trash"></i>
+                            </a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-center text-muted py-5">
+                            <i class="fa fa-tags fa-2x mb-2 d-block"></i>
+                            No categories found{% if search %} for "<strong>{{ search }}</strong>"{% endif %}.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Pagination -->
+    {% if categories.has_other_pages %}
+    <nav class="mt-4 d-flex justify-content-center">
+        <ul class="pagination">
+            {% if categories.has_previous %}
+            <li class="page-item">
+                <a class="page-link"
+                    href="?page={{ categories.previous_page_number }}{% if search %}&search={{ search }}{% endif %}">&laquo;</a>
+            </li>
+            {% endif %}
+
+            {% for i in categories.paginator.page_range %}
+            <li class="page-item {% if categories.number == i %}active{% endif %}">
+                <a class="page-link" href="?page={{ i }}{% if search %}&search={{ search }}{% endif %}">{{ i }}</a>
+            </li>
+            {% endfor %}
+
+            {% if categories.has_next %}
+            <li class="page-item">
+                <a class="page-link"
+                    href="?page={{ categories.next_page_number }}{% if search %}&search={{ search }}{% endif %}">&raquo;</a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+
+</div>
+
+<!-- JS: Confirm delete -->
+<script>
+    document.querySelectorAll('.delete-category-btn').forEach(btn => {
+        btn.addEventListener('click', function (e) {
+            e.preventDefault();
+            const url = this.dataset.url;
+            if (confirm("Are you sure you want to delete this category? This will remove all associated products.")) {
+                window.location.href = url;
+            }
+        });
+    });
+</script>
+
+{% endblock %}

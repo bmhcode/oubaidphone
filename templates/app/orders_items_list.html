@@ -1,0 +1,297 @@
+{% extends "app/base.html" %}
+{% load humanize %}
+
+{% block title %} {{ store }} / Ordered Items {% endblock %}
+
+{% block body %}
+<div class="container py-5">
+
+    <!-- Header + Create Order -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-0">
+                <i class="fa fa-shopping-cart text-success me-2"></i> Ordered Products
+
+            </h2>
+            <small class="text-muted">
+                {{ items.paginator.count }} items{{ orders.paginator.count|pluralize }}
+            </small>
+        </div>
+
+        <!-- <a href="{% url 'order_create' %}" class="btn btn-primary">
+            <i class="fa fa-plus me-1"></i> New Order
+        </a> -->
+    </div>
+
+    <!-- Search -->
+    <form method="GET" class="mb-4">
+        <div class="input-group" style="max-width: 400px;">
+            <input type="text" name="search" class="form-control" placeholder="Search by order ID , user or status…"
+                value="{{ search }}">
+            <button class="btn btn-success" type="submit">
+                <i class="fa fa-search"></i>
+            </button>
+
+            {% if search %}
+            <a href="{% url 'order_list_all' %}" class="btn btn-outline-secondary">
+                <i class="fa fa-times"></i>
+            </a>
+            {% endif %}
+        </div>
+    </form>
+    <!-- / Search -->
+
+    <!-- Orders items Table -->
+    {% if items %}
+    <div class="card shadow-sm border-0">
+        <div class="card-body">
+
+            <div class="table-responsive">
+                <table class="table table-striped align-middle">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>#</th>
+                            <th>Order</th>
+                            <th>Customer</th>
+                            <th>Shop</th>
+                            <th scope="col" class="border-0 ps-4">Product</th>
+                            <th class="text-center">Price</th>
+                            <th class="text-center">Quantity</th>
+                            <th class="text-center">Total</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                            <th>Note</th>
+
+                        </tr>
+                    </thead>
+                    {{ item.order.user.profile.imageURL }}
+                    <tbody>
+                        {% for item in items %}
+                        {% with product=item.product %}
+                        <tr>
+                            <td class="text-muted small">{{forloop.counter }}</td>
+                            <td> #{{ item.order.id }} </td>
+                            <td class="ps-4">
+                                <div class="d-flex align-items-center gap-3">
+
+                                    <!-- Avatar -->
+                                    {% if item.order.user.profile.imageURL %}
+                                    <img src="{{ item.order.user.profile.imageURL }}"
+                                        alt="{{ item.order.user.username }}" class="rounded-circle border" width="40"
+                                        height="40" style="object-fit: cover;">
+                                    {% else %}
+                                    <div class="rounded-circle bg-success d-flex align-items-center justify-content-center
+                        text-white fw-bold" style="width:40px; height:40px; font-size:1rem;">
+                                        {{ item.order.user.username|first|upper }}
+                                    </div>
+                                    {% endif %}
+
+                                    <!-- User info -->
+                                    <div class="d-flex flex-column">
+                                        <span class="fw-semibold">
+                                            {{ item.order.user.username }}
+                                        </span>
+
+                                        {% if item.order.user.profile.phone %}
+                                        <small class="text-muted">
+                                            <i class="fa fa-phone me-1"></i>
+                                            {{ item.order.user.profile.phone }}
+                                        </small>
+                                        {% endif %}
+                                    </div>
+
+                                </div>
+                            </td>
+
+                            <!-- Shop -->
+                            <td class="ps-4">
+                                <div class="d-flex align-items-center gap-3">
+
+                                    <!-- Shop Logo -->
+                                    {% if product.shop.logo %}
+                                    <img src="{{ product.shop.logo.url }}" alt="{{ product.shop.name }}"
+                                        class="rounded-circle border" width="40" height="40" style="object-fit: cover;">
+                                    {% else %}
+                                    <div class="rounded-circle bg-primary d-flex align-items-center justify-content-center
+                        text-white fw-bold" style="width:40px; height:40px; font-size:1rem;">
+                                        {{ product.shop.name|first|upper }}
+                                    </div>
+                                    {% endif %}
+                                    <div class="d-flex flex-column">
+                                        <a href="" class="fw-semibold text-decoration-none text-dark">
+                                            {{ product.shop.name }}
+                                        </a>
+                                        {% if product.shop.phone %}
+                                        <small class="text-muted">
+                                            <i class="fa fa-phone me-1"></i>
+                                            {{ product.shop.phone }}
+                                        </small>
+                                        {% endif %}
+                                    </div>
+
+                                </div>
+                            </td>
+                            <!-- / Shop -->
+
+                            <!-- Product -->
+                            <td class="ps-4">
+                                <div class="d-flex align-items-center">
+                                    {% if product.main_image %}
+                                    <img src="{{ product.main_image }}" alt="{{ product.name }}"
+                                        class="img-fluid rounded shadow-sm me-3"
+                                        style="width: 60px; height: 60px; object-fit: cover;">
+                                    {% elif product.imageURL %}
+                                    <img src="{{ product.imageURL }}" alt="{{ product.name }}"
+                                        class="img-fluid rounded shadow-sm me-3"
+                                        style="width: 60px; height: 60px; object-fit: cover;">
+                                    {% else %}
+                                    <div class="bg-secondary text-white rounded d-flex align-items-center justify-content-center me-3"
+                                        style="width: 60px; height: 60px;">
+                                        <i class="fas fa-box fa-lg"></i>
+                                    </div>
+                                    {% endif %}
+                                    <div>
+                                        <a href="{{ product.get_absolute_url }}"
+                                            class="text-dark text-decoration-none fw-bold mb-0">
+                                            {{product.name}}</a>
+                                    </div>
+                                </div>
+                            </td>
+                            <!-- / Product -->
+
+                            <td class="text-center"> {{ item.price|intcomma }} </td>
+                            <td class="text-center"> {{ item.quantity }} </td>
+                            <td class="text-center"> {{ item.get_total|intcomma }} </td>
+                            <td> {{ item.order.created_at }} </td>
+
+
+                            <!-- Status -->
+
+                            <td>
+                                <div class="d-flex flex-column gap-1">
+                                    <!-- Status Badge -->
+                                    <span class="badge 
+                                        {% if item.status   == 'processing' %}bg-info
+                                        {% elif item.status == 'available' %}bg-primary
+                                        {% elif item.status == 'received' %}bg-success
+                                        {% elif item.status == 'cancelled' %}bg-danger
+                                        {% endif %}
+                                        ">
+                                        {{ item.get_status_display }}
+                                    </span>
+
+                                    <!-- Dropdown -->
+                                    <div class="dropdown mt-1">
+                                        <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button"
+                                            data-bs-toggle="dropdown">
+                                            Change Status
+                                        </button>
+
+                                        <ul class="dropdown-menu">
+                                            {% for status_key, status_label in status_choices %}
+                                            {% if status_key != item.status %}
+                                            <li>
+                                                <a class="dropdown-item"
+                                                    href="{% url 'order_item_status' item.id status_key %}">
+                                                    {{ status_label }}
+                                                </a>
+                                            </li>
+                                            {% endif %}
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+
+                                    <!-- / Buttons -->
+
+                                </div>
+                            </td>
+                            <td>
+                                <details>
+                                    <summary class="text-primary">History</summary>
+
+                                    <ul class="small text-muted mt-2">
+                                        {% for h in item.history.all %}
+                                        <li>
+                                            {{ h.changed_at|date:"Y-m-d H:i" }} :
+                                            {{ h.old_status }} → {{ h.new_status }}
+                                            {% if h.changed_by %}
+                                            ({{ h.changed_by }})
+                                            {% endif %}
+                                        </li>
+                                        {% empty %}
+                                        <li>No history</li>
+                                        {% endfor %}
+                                    </ul>
+                                </details>
+                            </td>
+
+                            <!-- / Status -->
+
+                            <td> {{ item.notes }} </td>
+
+                        </tr>
+                        {% endwith %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="alert alert-info">
+        No ordered products yet.
+    </div>
+    {% endif %}
+    <!-- / Orders items Table -->
+
+    <!-- Pagination -->
+    <nav class="mt-4">
+        <ul class="pagination justify-content-center">
+
+            {% if products.has_previous %}
+            <li class="page-item">
+                <a class="page-link"
+                    href="?page={{ items.previous_page_number }}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}">
+                    Previous
+                </a>
+            </li>
+            {% endif %}
+
+
+            {% for i in items.paginator.page_range %}
+
+            {% if items.number == i %}
+
+            <li class="page-item active">
+                <span class="page-link">{{ i }}</span>
+            </li>
+
+            {% else %}
+
+            <li class="page-item">
+                <a class="page-link"
+                    href="?page={{ i }}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}">
+                    {{ i }}
+                </a>
+            </li>
+
+            {% endif %}
+
+            {% endfor %}
+
+
+            {% if items.has_next %}
+            <li class="page-item">
+                <a class="page-link"
+                    href="?page={{ items.next_page_number }}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}">
+                    Next
+                </a>
+            </li>
+            {% endif %}
+
+        </ul>
+    </nav>
+    <!-- / Pagination -->
+
+</div>
+{% endblock %}

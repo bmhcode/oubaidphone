@@ -1,0 +1,148 @@
+{% extends 'app/base.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block title %}Order #{{ order.id }}{% endblock %}
+
+{% block body %}
+
+<div class="container py-5">
+
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-0">
+                <i class="fa fa-receipt text-success me-2"></i>
+                Order #{{ order.id }}
+            </h2>
+            <small class="text-muted">
+                Created on {{ order.created_at|date:"d M Y H:i" }}
+            </small>
+        </div>
+
+        <div>
+            <a href="{% url 'order_update' order.id %}" class="btn btn-outline-primary me-2">
+                <i class="fa fa-edit me-1"></i> Edit
+            </a>
+            <a href="{% url 'order_delete' order.id %}" class="btn btn-outline-danger">
+                <i class="fa fa-trash me-1"></i> Delete
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+
+        <!-- Order Info -->
+        <div class="col-lg-4">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-dark text-white">
+                    <i class="fa fa-info-circle me-1"></i> Order Info
+                </div>
+                <div class="card-body">
+
+                    <p class="mb-2">
+                        <strong>Status:</strong><br>
+                        {% if order.status == 'pending' %}
+                        <span class="badge bg-warning text-dark">Pending</span>
+                        {% elif order.status == 'processing' %}
+                        <span class="badge bg-info text-dark">Processing</span>
+                        {% elif order.status == 'shipped' %}
+                        <span class="badge bg-primary text-dark">Shipped</span>
+                        {% elif order.status == 'delivered' %}
+                        <span class="badge bg-success">Delivered</span>
+                        {% elif order.status == 'cancelled' %}
+                        <span class="badge bg-danger text-dark">Cancelled</span>
+                        {% else %}
+                        <span class="badge bg-secondary">{{ order.status }}</span>
+                        {% endif %}
+                    </p>
+
+                    <p class="mb-2">
+                        <strong>Total Price:</strong><br>
+                        <span class="fs-5 fw-bold text-success">
+                            {{ order.total_price|intcomma }} Da
+                        </span>
+                    </p>
+
+                    <p class="mb-0">
+                        <strong>Items:</strong><br>
+                        {{ order.items.count }} product{{ order.items.count|pluralize }}
+                    </p>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Items Table -->
+        <div class="col-lg-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-dark text-white">
+                    <i class="fa fa-box me-1"></i> Order Items
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0 align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th>#</th>
+                                <th>Product</th>
+                                <th>Price</th>
+                                <th>Quantity</th>
+                                <th>Total</th>
+                                <th>shop</th>
+                                <th>Status</th>
+                                <th>Notes</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in order.items.all %}
+                            <tr>
+                                <td class="text-muted small">{{ forloop.counter }}</td>
+                                <td> {{ item.product.name }} </td>
+                                <td> {{ item.price|intcomma }} Da </td>
+                                <td> {{ item.quantity }} </td>
+                                <td class="fw-semibold"> {{ item.get_total|intcomma }} Da </td>
+                                <td> {{ item.product.shop }} </td>
+
+                                <!-- Status -->
+                                <td>
+                                    {% if item.status == 'processing' %}
+                                    <span class="badge bg-info text-dark">Processing</span>
+                                    {% elif item.status == 'available' %}
+                                    <span class="badge bg-primary text-dark">available</span>
+                                    {% elif item.status == 'received' %}
+                                    <span class="badge bg-success text-dark">received</span>
+                                    {% elif item.status == 'cancelled' %}
+                                    <span class="badge bg-danger text-dark">Cancelled</span>
+                                    {% endif %}
+                                </td>
+
+                                <!-- / Status -->
+                                <td> {{ item.notes }} </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="5" class="text-center text-muted py-4">
+                                    <i class="fa fa-box-open fa-2x mb-2 d-block"></i>
+                                    No items in this order.
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Back button -->
+    <div class="mt-4">
+        <a href="{% url 'order_list_all' %}" class="btn btn-secondary">
+            <i class="fa fa-arrow-left me-1"></i> Back to orders
+        </a>
+    </div>
+
+</div>
+{% endblock %}

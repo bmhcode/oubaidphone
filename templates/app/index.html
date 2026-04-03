@@ -117,14 +117,14 @@ https://templatemo.com/tm-559-zay-shop
     <div class="row">
         {% for category in categories %}
         <div class="col-12 col-md-3 p-3 mt-1 text-center">
-            <a href="{% url 'store' %}?cat_filter={{category.name}}"">
+            <a href="{% url 'list_products' %}?cat_filter={{category.name}}"">
                 <img src=" {{ category.image.url }}" alt="Img" class="rounded-circle img-fluid border"
                 style="min-height: 150px; max-height: 150px;" loading="lazy">
             </a>
-            <a class="text-decoration-none" href="{% url 'store' %}?category={{category.name}}">
+            <a class="text-decoration-none" href="{% url 'list_products' %}?category={{category.name}}">
                 <h5 class="mt-3 mb-3">{{ category.name }} <SMAll> ({{category.products.count}})</SMAll></h5>
             </a>
-            <!-- <p class="text-center"><a href="{% url 'store' %}?category={{category.name}}"
+            <!-- <p class="text-center"><a href="{% url 'list_products' %}?category={{category.name}}"
                     class="btn btn-success">Go Shop</a></p> -->
         </div>
         {% endfor %}
@@ -132,10 +132,10 @@ https://templatemo.com/tm-559-zay-shop
 </section>
 <!-- End Categories -->
 
-<!-- Start Product -->
+<!-- ================= products ================= -->
 <section class="py-5"> <!-- <section class="bg-light"></section> -->
     <div class="row text-center py-2 bg-light ">
-        <div class="col-lg-9 m-auto">
+        <div class="col-lg-12 m-auto">
             <h2>Products المنتجات</h2>
             <p> Our products that will impress you with their quality </p>
             <p> منتجاتنا التي ستبهرك بجودتها </p>
@@ -144,177 +144,226 @@ https://templatemo.com/tm-559-zay-shop
     <div class="container py-4">
         <br>
         <div class="row">
-            {% for product in products %}
-            <div class="col-12 col-md-3 mb-4">
-                <div class="product-wap card rounded-0 m-2">
-                    <div class="card rounded-0">
-                        {% if product.is_new %}
-                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                            New</span>
-                        {% endif %}
 
-                        <a href="{{product.get_absolute_url}}">
-                            <img src="{{ product.main_image }}" class="card-img-top p-2"
-                                style="min-height: 300px; max-height: 300px;" alt="..." loading="lazy">
-                            <div
-                                class="card-img-overlay rounded-0 product-overlay d-flex align-items-center justify-content-center">
-                                <ul class="list-unstyled">
-                                    <li><a class="btn btn-success text-white"
-                                            href="{% url 'add_to_wishlist' product.id %}"><i
-                                                class="far fa-heart"></i></a></li>
-                                    <li><a class="btn btn-success text-white mt-2"
-                                            href="{{product.get_absolute_url}}"><i class="far fa-eye"></i></a></li>
-                                    <!-- <li><a class="btn btn-success text-white mt-2" 
-                                                    href="product_detail.html"><i
-                                                    class="fas fa-cart-plus"></i></a></li> -->
-                                </ul>
-                            </div>
-                        </a>
-                    </div>
-                    <div class="card-body">
-                        <ul class="list-unstyled d-flex justify-content-between">
-                            <!-- <li>
-                                    <i class="text-warning fa fa-star"></i>
-                                    <i class="text-warning fa fa-star"></i>
-                                    <i class="text-warning fa fa-star"></i>
-                                    <i class="text-muted fa fa-star"></i>
-                                    <i class="text-muted fa fa-star"></i>
-                                </li>  -->
+            <div class="col-lg-12">
+                <!-- Search products -->
+                <div class="row mb-3 align-items-center">
+                    <!-- Search -->
+                    <div class="col-md-8">
+                        <form method="GET" class="d-flex">
 
-                        </ul>
-                        <a href="{{ product.get_absolute_url }}" class="h2 text-decoration-none text-dark">
-                            <h5 class="card-title"> {{ product.name }}</h5>
-                        </a>
-                        <!-- <p class="card-text"> {{ product.description|truncatechars:30 }} </p> -->
-                        <small>{{ product.created|naturaltime }}</small>
+                            <input type="text" name="search" placeholder="Search products..."
+                                value="{{ current_search }}" class="form-control me-2" />
 
-                        <div class="d-flex justify-content-between">
-                            <!-- زر الاتصال -->
-                            <!-- {% if product.user.profile.phone %} -->
-                            <button type="button"
-                                class="btn btn-link text-dark p-0 lh-1 align-baseline text-decoration-none"
-                                data-bs-toggle="modal" data-bs-target="#phoneModal{{ product.id }}">
-                                <i class="fa fa-phone"></i> Appeler
+                            <button class="btn btn-primary">
+                                Search
                             </button>
-                            <!-- {% endif %} -->
 
-                            <!-- Modal display product owner -->
-                            <div class="modal fade" id="phoneModal{{ product.id }}" tabindex="-1"
-                                aria-labelledby="phoneModalLabel{{ product.id }}" aria-hidden="true">
-
-                                <div class="modal-dialog modal-dialog-centered">
-                                    <div class="modal-content">
-
-                                        <!-- Header -->
-                                        <div class="modal-header">
-                                            <h5 class="modal-title" id="phoneModalLabel{{ product.id }}">
-                                                {{ product.user.username }} - {{ product.user.product_set.count }}
-                                                products
-                                            </h5>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                        </div>
-
-                                        <!-- Seller Image -->
-                                        <div class="text-center mt-3">
-                                            {% if product.user.profile.imageURL %}
-                                            <img src="{{ product.user.profile.imageURL }}" class="rounded-circle shadow"
-                                                width="120" height="120" alt="{{ product.user.username }}"
-                                                loading="lazy">
-                                            {% else %}
-                                            <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png"
-                                                class="rounded-circle shadow" width="120" height="120">
-                                            {% endif %}
-                                        </div>
-                                        <!--/ Seller Image -->
-                                        <!-- Phone -->
-                                        <div class="modal-body text-center">
-
-                                            <h4 class="text-primary">
-                                                {{ product.shop.user.profile.phone }}
-                                            </h4>
-
-                                        </div>
-
-                                        <!-- Footer -->
-                                        <div class="modal-footer justify-content-center">
-
-                                            <button class="btn btn-secondary" data-bs-dismiss="modal">
-                                                Fermer
-                                            </button>
-
-                                            {% if product.shop.slug %}
-                                            <a class="btn btn-outline-primary"
-                                                href="{% url 'shop' product.shop.slug %}">
-                                                <i class="fas fa-store me-2"></i>
-                                                Visit {{ product.shop.user.username }} Store
-                                            </a>
-                                            {% endif %}
-
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <span class="fw-bold text-success ms-auto">
-                                {{ product.price|intcomma }} Da
-                            </span>
-                            <!-- / Modal display product owner -->
-                        </div>
-                        {% if request.user.is_superuser or request.user == product.user %}
-                        <div class="mt-2 text-center border-top pt-2">
-                            <a href="{% url 'update_product' product.slug %}"
-                                class="btn btn-sm btn-warning py-0 px-1"><i class="fas fa-edit"></i></a>
-                            <a href="{% url 'delete_product' product.slug %}" class="btn btn-sm btn-danger py-0 px-1"><i
-                                    class="fas fa-trash"></i></a>
-                            <a href="{% url 'manage_product_images' product.slug %}"
-                                class="btn btn-sm btn-primary py-0 px-1"><i class="fas fa-images"></i></a>
-                        </div>
-                        {% endif %}
-
+                        </form>
+                    </div>
+                    <!-- Sort -->
+                    <div class="col-md-4">
+                        <select onchange="location=this.value" class="form-select">
+                            <option value="?">Default price</option>
+                            <option value="?sort=price_low">
+                                Price Low to High
+                            </option>
+                            <option value="?sort=price_high">
+                                Price High to Low
+                            </option>
+                        </select>
                     </div>
                 </div>
-            </div>
-            {% endfor %}
-            <!-- Pagination -->
-            <nav aria-label="Page navigation">
-                <ul class="pagination justify-content-center">
+                <!-- / Search products -->
 
-                    {% if product_pages.has_previous %}
-                    <li class="page-item">
-                        <a class="page-link" href="?page=1&sort={{ current_sort }}&cat_filter={{ current_category }}">
-                            «
-                        </a>
-                    </li>
+                <!-- Products list -->
+                <div class="row">
+                    {% if products %}
+                    {% for product in products %}
+                    <div class="col-md-3 mb-4">
+                        <div class="product-wap card rounded-0 m-2">
+                            <div class="card rounded-0">
+                                {% if product.is_new %}
+                                <span
+                                    class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                    New
+                                </span>
+                                {% endif %}
+                                <a href="{{product.get_absolute_url}}">
+                                    <img src="{{ product.main_image }}" class="card-img-top p-2"
+                                        style="min-height: 300px; max-height: 300px;" alt="..." loading="lazy">
+                                    <div
+                                        class="card-img-overlay rounded-0 product-overlay d-flex align-items-center justify-content-center">
+                                        <ul class="list-unstyled">
+                                            <li><a class="btn btn-success text-white"
+                                                    href="{% url 'add_to_wishlist' product.id %}"><i
+                                                        class="far fa-heart"></i></a>
+                                            </li>
+                                            <li><a class="btn btn-success text-white mt-2"
+                                                    href="{{product.get_absolute_url}}"><i class="far fa-eye"></i></a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="card-body">
 
-                    <a class="page-link"
-                        href="?page={{ product_pages.previous_page_number }}{% if current_sort %}&sort={{ current_sort }}{% endif %}{% if current_category %}&cat_filter={{ current_category }}{% endif %}">
-                        Previous
-                    </a>
-                    {% endif %}
+                                <a href="{{ product.get_absolute_url }}" class="h2 text-decoration-none text-dark">
+                                    <h5 class="card-title"> {{ product.name }}</h5>
+                                </a>
+                                <!-- <p class="card-text"> {{ product.description|truncatechars:30 }} </p> -->
+                                <!-- <small>{{ product.time_since_created }} </small> -->
+                                <small>{{ product.created_at|naturaltime }}</small>
+                                <div class="d-flex justify-content-between">
+                                    <!-- زر الاتصال -->
+                                    <button type="button"
+                                        class="btn btn-link text-dark p-0 lh-1 align-baseline text-decoration-none"
+                                        data-bs-toggle="modal" data-bs-target="#phoneModal{{ product.id }}">
+                                        <i class="fa fa-phone"></i> Call me
+                                    </button>
 
-                    {% for i in nums %}
-                    <li class="page-item">
-                        <a class="page-link"
-                            href="?page={{ forloop.counter }}{% if current_sort %}&sort={{ current_sort }}{% endif %}{% if current_category %}&cat_filter={{ current_category }}{% endif %}">
-                            {{ forloop.counter }}
-                        </a>
-                    </li>
+                                    <!-- Modal display product owner -->
+                                    <div class="modal fade" id="phoneModal{{ product.id }}" tabindex="-1"
+                                        aria-labelledby="phoneModalLabel{{ product.id }}" aria-hidden="true">
+
+                                        <div class="modal-dialog modal-dialog-centered">
+                                            <div class="modal-content">
+
+                                                <!-- Header -->
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="phoneModalLabel{{ product.id }}">
+                                                        {{ product.shop.user.username }}
+                                                    </h5>
+                                                    <button type="button" class="btn-close"
+                                                        data-bs-dismiss="modal"></button>
+                                                </div>
+
+                                                <!-- Seller Image -->
+                                                <div class="text-center mt-3">
+                                                    {% if product.shop.user.profile.imageURL %}
+                                                    <img src="{{ product.shop.user.profile.imageURL }}"
+                                                        class="rounded-circle shadow" width="120" height="120"
+                                                        alt="{{ product.shop.user.username }}" loading="lazy">
+                                                    {% else %}
+                                                    <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png"
+                                                        class="rounded-circle shadow" width="120" height="120">
+                                                    {% endif %}
+                                                </div>
+                                                <!--/ Seller Image -->
+                                                <!-- Phone -->
+                                                <div class="modal-body text-center">
+
+                                                    <h4 class="text-primary">
+                                                        {{ product.user_phone }}
+                                                    </h4>
+
+                                                </div>
+
+                                                <!-- Footer -->
+                                                <div class="modal-footer justify-content-between">
+
+                                                    <button class="btn btn-secondary" data-bs-dismiss="modal">
+                                                        Fermer
+                                                    </button>
+
+                                                    {% if product.shop.slug %}
+                                                    <a class="btn btn-outline-primary"
+                                                        href="{% url 'shop' product.shop.slug %}">
+                                                        <i class="fas fa-store me-2"></i>
+                                                        Visit {{ product.shop }}
+                                                    </a>
+                                                    {% endif %}
+
+                                                    <small>
+                                                        {{ product.shop.products.count }}
+                                                        product{{product.shop.products.count|pluralize }}</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <span class="fw-bold text-success ms-auto">
+                                        {{ product.price|intcomma }} Da
+                                    </span>
+                                    <!-- / Modal display product owner -->
+
+                                </div>
+                                {% if request.user == product.shop.user or request.user.is_superuser %}
+                                <div class="mt-2 text-center border-top pt-2">
+                                    <a href="{% url 'update_product' product.slug %}"
+                                        class="btn btn-sm btn-warning py-0 px-1"><i class="fas fa-edit"></i></a>
+                                    <a href="{% url 'delete_product' product.slug %}"
+                                        class="btn btn-sm btn-danger py-0 px-1"><i class="fas fa-trash"></i></a>
+                                    <a href="{% url 'manage_product_images' product.slug %}"
+                                        class="btn btn-sm btn-primary py-0 px-1"><i class="fas fa-images"></i></a>
+                                </div>
+                                {% endif %}
+
+                            </div>
+                        </div>
+                    </div>
                     {% endfor %}
-
-                    {% if product_pages.has_next %}
-                    <a class="page-link"
-                        href="?page={{ product_pages.next_page_number }}{% if current_sort %}&sort={{ current_sort }}{% endif %}{% if current_category %}&cat_filter={{ current_category }}{% endif %}">
-                        Next
-                    </a>
+                    {% else %}
+                    <div class="col-12 text-center">
+                        <p class="lead">Your store list is empty.</p>
+                        <a href="{% url 'add_product' %}" class="btn btn-success btn-lg">Add a new product</a>
+                    </div>
                     {% endif %}
+                </div>
+                <!-- / Products list -->
 
-                </ul>
-            </nav>
-            <!-- / Pagination -->
+                <!-- Pagination -->
+                <nav class="mt-4">
+                    <ul class="pagination justify-content-center">
 
+                        {% if products.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link"
+                                href="?page={{ products.previous_page_number }}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}">
+                                Previous
+                            </a>
+                        </li>
+                        {% endif %}
+
+
+                        {% for i in products.paginator.page_range %}
+
+                        {% if products.number == i %}
+
+                        <li class="page-item active">
+                            <span class="page-link">{{ i }}</span>
+                        </li>
+
+                        {% else %}
+
+                        <li class="page-item">
+                            <a class="page-link"
+                                href="?page={{ i }}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}">
+                                {{ i }}
+                            </a>
+                        </li>
+
+                        {% endif %}
+
+                        {% endfor %}
+
+
+                        {% if products.has_next %}
+                        <li class="page-item">
+                            <a class="page-link"
+                                href="?page={{ products.next_page_number }}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}">
+                                Next
+                            </a>
+                        </li>
+                        {% endif %}
+
+                    </ul>
+                </nav>
+                <!-- / Pagination -->
+            </div>
         </div>
     </div>
 </section>
-<!-- End Product -->
+<!-- ================= / products ================= -->
 
 <!-- Start Brands -->
 <section class="py-5">

@@ -34,7 +34,7 @@
                                 class="card-img-overlay rounded-0 product-overlay d-flex align-items-center justify-content-center">
                                 <ul class="list-unstyled">
                                     <li><a class="btn btn-success text-white"
-                                            href="{% url 'add_to_wishlist' product.id %}"><i
+                                            href="{% url 'remove_from_wishlist' product.id %}"><i
                                                 class="far fa-heart"></i></a></li>
                                     <li><a class="btn btn-success text-white mt-2"
                                             href="{{product.get_absolute_url}}"><i class="far fa-eye"></i></a></li>
@@ -68,17 +68,18 @@
                                         <!-- Header -->
                                         <div class="modal-header">
                                             <h5 class="modal-title" id="phoneModalLabel{{ product.id }}">
-                                                {{ product.user.username }}
+                                                {{ product.shop.user.username }}
+                                                -
                                             </h5>
                                             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                         </div>
 
                                         <!-- Seller Image -->
                                         <div class="text-center mt-3">
-                                            {% if product.user.profile.imageURL %}
-                                            <img src="{{ product.user.profile.imageURL }}" class="rounded-circle shadow"
-                                                width="120" height="120" alt="{{ product.user.username }}"
-                                                loading="lazy">
+                                            {% if product.shop.user.profile.imageURL %}
+                                            <img src="{{ product.shop.user.profile.imageURL }}"
+                                                class="rounded-circle shadow" width="120" height="120"
+                                                alt="{{ product.user.username }}" loading="lazy">
                                             {% else %}
                                             <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png"
                                                 class="rounded-circle shadow" width="120" height="120">
@@ -86,6 +87,7 @@
                                         </div>
                                         <!--/ Seller Image -->
                                         <!-- Phone -->
+
                                         <div class="modal-body text-center">
 
                                             <h4 class="text-primary">
@@ -102,12 +104,12 @@
                                             </button>
 
                                             <a class="btn btn-outline-primary"
-                                                href="{% url 'shop' product.user.username %}">
+                                                href="{% url 'shop' product.shop.slug %}">
                                                 <i class="fas fa-store me-2"></i>
                                                 Visit my shop
                                             </a>
 
-                                            <small>{{ product.user.product_set.count }} products</small>
+                                            <small>{{ product.shop.products.count }} products</small>
                                         </div>
                                     </div>
                                 </div>
@@ -135,8 +137,7 @@
             {% endfor %}
             {% else %}
             <div class="col-12 text-center">
-                <p class="lead">Your store list is empty.</p>
-                <a href="{% url 'add_product' %}" class="btn btn-success btn-lg">Add a new product</a>
+                <p class="lead">Your wishlist list is empty.</p>
             </div>
             {% endif %}
         </div>

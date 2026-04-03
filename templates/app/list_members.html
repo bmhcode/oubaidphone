@@ -6,14 +6,20 @@
 {% block body %}
 <div class="container py-5">
 
-    <!-- Header -->
+    <!-- Header + Add Category Button -->
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
             <h2 class="fw-bold mb-0">
-                <i class="fa fa-users text-success me-2"></i> Members / Shops
+                <i class="fa fa-users text-success me-2"></i> Members...
             </h2>
-            <small class="text-muted">{{ total }} registered user{{ total|pluralize }}</small>
+            <small class="text-muted">{{ total }} registered member{{ total|pluralize }}</small>
         </div>
+
+        {% if request.user.is_superuser %}
+        <a href="{% url 'add_user' %}" class="btn btn-primary">
+            <i class="fa fa-plus me-1"></i> Add member
+        </a>
+        {% endif %}
     </div>
 
     <!-- Search -->
@@ -44,12 +50,11 @@
                         <th>Email</th>
                         <th>Phone</th>
                         <th>Plan</th>
+                        <th>Shops</th>
                         <th>Products</th>
-                        <th>Vendor</th>
                         <th>Staff</th>
                         <th>Joined</th>
                         <th>Shop</th>
-
                     </tr>
                 </thead>
                 <tbody>
@@ -94,42 +99,32 @@
                         </td>
 
                         <!-- Plan -->
-
                         <td>
                             {% if member.subscription %}
-
                             {% if member.subscription.plan == "BUSINESS" %}
                             <span class="badge bg-warning text-dark">Business</span>
-
                             {% elif member.subscription.plan == "PRO" %}
                             <span class="badge bg-primary">Pro</span>
-
                             {% else %}
                             <span class="badge bg-secondary">Free</span>
-
                             {% endif %}
-
                             {% else %}
                             <span class="badge bg-secondary">Free</span>
                             {% endif %}
                         </td>
 
-
+                        <!-- Shops count -->
+                        <td class="text-center">
+                            <span class="badge bg-success-subtle text-success border border-success">
+                                {{ member.shops.all.count }}
+                            </span>
+                        </td>
 
                         <!-- Products count -->
                         <td class="text-center">
                             <span class="badge bg-success-subtle text-success border border-success">
-                                {{ member.product_set.count }}
+                                {{ member.total_products|default:0 }}
                             </span>
-                        </td>
-
-                        <!-- Vendor -->
-                        <td class="text-center">
-                            {% if member.profile.is_vendor %}
-                            <i class="fa fa-check-circle text-success"></i>
-                            {% else %}
-                            <i class="fa fa-times-circle text-muted"></i>
-                            {% endif %}
                         </td>
 
                         <!-- Staff -->
@@ -148,20 +143,18 @@
 
                         <!-- Actions -->
                         <td>
-                            {% if member.product_set.count > 0 %}
-                            <a href="{% url 'shop' member.username %}" class="btn btn-sm btn-outline-success"
+
+                            {% if member.total_products|default:0 > 0 %}
+                            <a href="{% url 'shop' member.shops.first.slug %}" class="btn btn-sm btn-outline-success"
                                 title="View shop">
                                 <i class="fa fa-store"></i>
-
                             </a>
                             {% else %}
-                            <span class="badge bg-secondary">Empty shop</span>
-                            <a href="{% url 'add_product' %}" class="btn btn-success">
-                                <i class="fa fa-plus me-2"></i>
+                            <a href="{% url 'create_shop' %}" class="btn btn-success">
+                                <i class="fa fa-plus me-2"></i> create shop
                             </a>
                             {% endif %}
                         </td>
-
 
                     </tr>
                     {% empty %}

@@ -55,10 +55,23 @@ OubaidPhone | {{ product.name }}
                 <p class="text-muted mb-3">
                     {{ product.description }}
                 </p>
-                <hr>
+
 
                 <!-- SELLER INFO -->
                 <div class="mb-3">
+
+                    {% if product.shop.user.profile.image %}
+                    <img src="{{ product.shop.user.profile.imageURL }}" class="rounded-circle mx-auto"
+                        style="width:80px; height:80px; object-fit:cover;">
+                    {% else %}
+                    <img id="preview" src="https://cdn-icons-png.flaticon.com/512/149/149071.png"
+                        class="rounded-circle shadow" width="80" height="80">
+                    {% endif %}
+
+
+
+
+
                     <strong class="d-block mb-2">{{ product.shop.user.username }}</strong>
                     <div class="d-flex justify-content-center gap-2 flex-wrap">
 
@@ -76,6 +89,17 @@ OubaidPhone | {{ product.name }}
 
                 <!-- ACTION BUTTONS -->
                 <div class="d-grid gap-2">
+                    <form action="{% url 'cart_add' product.id %}" method="post" class="d-grid mb-2">
+                        {% csrf_token %}
+                        <div class="input-group mb-2">
+                            <span class="input-group-text bg-light fw-bold border-success">Qty</span>
+                            <input type="number" name="quantity" value="1" min="1" class="form-control border-success text-center">
+                        </div>
+                        <button type="submit" class="btn btn-success text-white fw-bold btn-lg">
+                            <i class="fas fa-cart-plus me-2"></i> Add to Cart
+                        </button>
+                    </form>
+
                     <a href="{% url 'add_to_wishlist' product.id %}" class="btn btn-outline-danger">
                         ❤ Add to Wishlist
                     </a>

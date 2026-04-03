@@ -2,227 +2,378 @@
 {% load static %}
 {% load humanize %}
 
-{% block title %} {{ shop.name }} {% endblock title %}
+{% block title %}{{ shop.name }}{% endblock title %}
 
 {% block body %}
-
 <div class="container py-5">
-    <div class="row">
-        <!-- ================= LEFT: PRODUCTS ================= -->
-        <div class="col-lg-9">
-            <!-- HEADER -->
-            <div class="d-flex justify-content-between align-items-center mb-4">
+    <!-- ================= SHOP HEADER ================= -->
+    <div class="card shadow-sm border-0 mb-4 position-relative text-white overflow-hidden"
+        style="min-height: 280px; border-radius: 15px;
+            background: linear-gradient(rgba(0,0,0,0.0), rgba(0,0,0,0.0)), url('{{ shop.coverURL }}') center/cover no-repeat;">
 
-                <div class="row">
-                    <div class="col-md-4">
-                        <div>
-                            {% if shop.logoURL %}
-                            <img src="{{ shop.logoURL }}" class="rounded-circle mb-3" width="120" height="120"
-                                style="object-fit:cover;">
-                            {% else %}
-                            <i class="fa fa-store text-success me-2"></i>
-                            {% endif %}
-                        </div>
-                        <small class="text-muted">
-                            {{ shop.products.count }} product{{ shop.products.count|pluralize }}
-                        </small>
+        <div class="card-body position-relative h-100 d-flex flex-column justify-content-center">
 
+            <div class="row align-items-center">
 
+                <!-- LOGO -->
+                <div class="col-md-2 text-center mb-3 mb-md-0">
+                    {% if shop.logoURL %}
+                    <img src="{{ shop.logoURL }}" class="rounded-circle shadow-lg border border-white" width="130"
+                        height="130" style="object-fit: cover;">
+                    {% else %}
+                    <div class="rounded-circle bg-success text-white d-flex align-items-center justify-content-center shadow-lg border border-white"
+                        style="width:130px;height:130px;font-size:2.5rem;">
+                        <i class="fa fa-store"></i>
                     </div>
-                    <div class="col-md-8">
-                        <h3 class="fw-bold mb-0">
-                            Shop - {{ shop.name }}
-
-                            {% if request.user.is_superuser or request.user == shop.user %}
-                            <a href="{% url 'update_shop' shop.slug %}">
-                                <i class="fa fa-edit me-2"></i></a>
-                            <a href="{% url 'delete_shop' shop.slug %}">
-                                <i class="fa fa-trash me-2"></i></a>
-                            {% endif %}
-                        </h3>
-                        <small class="text-muted"> {{ shop.address }} </small>
-
-                        <h5>{{ shop.phone }}</h5>
-
-                    </div>
-
-
-
+                    {% endif %}
                 </div>
 
-                {% if request.user == shop.user or request.user.is_superuser %}
-                <a href="{% url 'add_product' shop.slug %}" class="btn btn-success">
-                    <i class="fa fa-plus me-2"></i> Add Product
-                </a>
-                {% endif %}
-            </div>
-
-            <!-- / HEADER -->
-
-            <!-- PLAN MESSAGE -->
-            {% if not shop.user.profile.phone %}
-            <div class="alert alert-warning text-center">
-                You must add your phone number
-                <br>
-                <a href="{% url 'update_profile' shop.user.username %}" class="btn btn-sm btn-dark mt-2">
-                    Update Profile
-                </a>
-            </div>
-            {% endif %}
-
-            <!-- PRODUCTS -->
-            <div class="row">
-                {% if products %}
-                {% for product in products %}
-                <div class="col-12 col-md-4 col-lg-4 mb-4">
-                    <div class="card h-100 shadow-sm border-0">
-
-                        <!-- IMAGE -->
-                        <a href="{{ product.get_absolute_url }}">
-                            <img src="{{ product.main_image }}" class="card-img-top p-2"
-                                style="height:250px; object-fit:cover;" loading="lazy">
+                <!-- SHOP INFO -->
+                <div class="col-md-6 text-center text-md-start">
+                    <h2 class="fw-bold mb-1 text-shadow">
+                        {{ shop.name }}
+                        {% if request.user == shop.user or request.user.is_superuser %}
+                        <a href="{% url 'update_shop' shop.slug %}" class="text-warning ms-2">
+                            <i class="fa fa-edit"></i>
                         </a>
+                        <a href="{% url 'delete_shop' shop.slug %}" class="text-danger ms-2">
+                            <i class="fa fa-trash"></i>
+                        </a>
+                        {% endif %}
+                    </h2>
 
-                        <!-- BODY -->
-                        <div class="card-body d-flex flex-column">
+                    <p class="text-white-50 mb-1 text-shadow">
+                        <i class="fas fa-map-marker-alt me-1"></i> {{ shop.address }}, {{ shop.city }}, {{ shop.country }}
+                    </p>
+                    <p class="fw-semibold text-success mb-2 text-shadow">{{ shop.phone }}</p>
 
-                            <!-- NAME -->
-                            <a href="{{ product.get_absolute_url }}" class="text-dark text-decoration-none">
-                                <h6 class="fw-bold">
-                                    {{ product.name }}
+                    <div class="d-flex align-items-center gap-3">
+                        {% if shop.is_open_now %}
+                        <span class="badge bg-success shadow-sm rounded-pill px-3"><i class="fas fa-door-open me-1"></i> Open Now</span>
+                        {% else %}
+                        <span class="badge bg-danger shadow-sm rounded-pill px-3"><i class="fas fa-door-closed me-1"></i> Closed</span>
+                        {% endif %}
 
-                                    {% if product.is_featured %}
-                                    <span class="badge bg-success ms-1">Featured</span>
-                                    {% endif %}
-                                </h6>
+                        {% if shop.is_closed %}
+                        <span class="badge bg-warning text-dark shadow-sm rounded-pill px-3">Temporarily Closed</span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- OWNER INFO + ACTION -->
+                <div class="col-md-4 text-center text-md-end mt-3 mt-md-0">
+                    <div class="d-flex align-items-center justify-content-center justify-content-md-end">
+                        {% if shop.user.profile.imageURL %}
+                        <img src="{{ shop.user.profile.imageURL }}" class="rounded-circle me-2 border border-white"
+                            width="50" height="50" style="object-fit: cover;">
+                        {% else %}
+                        <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png"
+                            class="rounded-circle me-2 border border-white" width="50" height="50">
+                        {% endif %}
+
+                        <div class="text-start">
+                            <div class="fw-bold small text-shadow">OWNER: {{ shop.user.username }}</div>
+                            {% if shop.user.profile.phone %}
+                            <a href="tel:{{ shop.user.profile.phone }}"
+                                class="text-success small text-decoration-none text-shadow">
+                                📞 {{ shop.user.profile.phone }}
                             </a>
-
-                            <!-- TIME -->
-                            <small>{{ product.created_at|naturaltime }}</small>
-
-                            <!-- PRICE -->
-                            <div class="mt-auto d-flex justify-content-between align-items-center">
-                                <span class="fw-bold text-success">
-                                    {{ product.price|intcomma }} DA
-                                </span>
-                            </div>
-
-                            <!-- ACTIONS -->
-                            {% if request.user == product.shop.user or request.user.is_superuser %}
-                            <div class="mt-2 text-center border-top pt-2">
-                                <a href="{% url 'update_product' product.slug %}"
-                                    class="btn btn-sm btn-warning py-0 px-1"><i class="fas fa-edit"></i></a>
-                                <a href="{% url 'delete_product' product.slug %}"
-                                    class="btn btn-sm btn-danger py-0 px-1"><i class="fas fa-trash"></i></a>
-                                <a href="{% url 'manage_product_images' product.slug %}"
-                                    class="btn btn-sm btn-primary py-0 px-1"><i class="fas fa-images"></i></a>
-                            </div>
+                            {% else %}
+                            <div class="text-white-50 small text-shadow">No phone number</div>
                             {% endif %}
-                            <!-- / ACTIONS -->
                         </div>
                     </div>
-                </div>
-                {% endfor %}
-                {% else %}
-                <div class="col-12 text-center">
-                    <p class="lead">No products yet.</p>
-                    {% if request.user == shop_user %}
-                    <a href="{% url 'add_product' %}" class="btn btn-success">
-                        Start adding products
-                    </a>
+
+                    <!-- SOCIAL LINKS -->
+                    {% if shop.social %}
+                    <div class="mt-3 d-flex justify-content-center justify-content-md-end gap-2">
+                        {% if shop.social.facebook %}<a href="{{ shop.social.facebook }}" class="text-white fs-5" target="_blank"><i class="fab fa-facebook"></i></a>{% endif %}
+                        {% if shop.social.instagram %}<a href="{{ shop.social.instagram }}" class="text-white fs-5" target="_blank"><i class="fab fa-instagram"></i></a>{% endif %}
+                        {% if shop.social.twitter %}<a href="{{ shop.social.twitter }}" class="text-white fs-5" target="_blank"><i class="fab fa-twitter"></i></a>{% endif %}
+                        {% if shop.social.tiktok %}<a href="{{ shop.social.tiktok }}" class="text-white fs-5" target="_blank"><i class="fab fa-tiktok"></i></a>{% endif %}
+                        {% if shop.social.whatsapp %}<a href="{{ shop.social.whatsapp }}" class="text-white fs-5" target="_blank"><i class="fab fa-whatsapp"></i></a>{% endif %}
+                        {% if shop.social.telegram %}<a href="{{ shop.social.telegram }}" class="text-white fs-5" target="_blank"><i class="fab fa-telegram"></i></a>{% endif %}
+                        {% if shop.social.youtube %}<a href="{{ shop.social.youtube }}" class="text-white fs-5" target="_blank"><i class="fab fa-youtube"></i></a>{% endif %}
+                    </div>
                     {% endif %}
                 </div>
-                {% endif %}
-            </div>
-
-            <!-- PAGINATION -->
-            <nav>
-                <ul class="pagination justify-content-center mt-4">
-
-                    {% if productsPages.has_previous %}
-                    <li class="page-item">
-                        <a class="page-link" href="?page=1">&laquo;</a>
-                    </li>
-                    <li class="page-item">
-                        <a class="page-link" href="?page={{ productsPages.previous_page_number }}">
-                            Previous
-                        </a>
-                    </li>
-                    {% endif %}
-
-                    {% for i in nums %}
-                    <li class="page-item">
-                        <a class="page-link" href="?page={{ forloop.counter }}">
-                            {{ forloop.counter }}
-                        </a>
-                    </li>
-                    {% endfor %}
-
-                    {% if productsPages.has_next %}
-                    <li class="page-item">
-                        <a class="page-link" href="?page={{ productsPages.next_page_number }}">
-                            Next
-                        </a>
-                    </li>
-                    <li class="page-item">
-                        <a class="page-link" href="?page={{ productsPages.paginator.num_pages }}">
-                            &raquo;
-                        </a>
-                    </li>
-                    {% endif %}
-
-                </ul>
-            </nav>
-        </div>
-        <!-- ================= RIGHT: USER INFO ================= -->
-        <div class="col-lg-3">
-            <div class="card shadow-sm border-0 p-3 text-center sticky-top" style="top:20px;">
-
-                <!-- IMAGE -->
-                {% if shop.user.profile.imageURL %}
-                <img src="{{ shop.user.profile.imageURL }}" class="rounded-circle mb-3" width="120" height="120"
-                    style="object-fit:cover;">
-                {% else %}
-                <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" class="rounded-circle mb-3" width="120"
-                    height="120">
-                {% endif %}
-
-                <!-- NAME -->
-                <h5 class="fw-bold">{{ shop.user}}</h5>
-
-                <!-- PHONE -->
-                {% if shop.user.profile.phone %}
-                <a href="tel:{{ shop.user.profile.phone }}" class="btn btn-success btn-sm my-2">
-                    📞 {{ shop.user.profile.phone }}
-                </a>
-                {% else %}
-                <p class="text-muted small">No phone number</p>
-                {% endif %}
-
-                <hr>
-
-                <!-- PLAN -->
-                <!-- <p><strong>Plan:</strong> {{ plan }}</p>
-
-                {% if plan != "BUSINESS" %}
-                <small class="text-muted">
-                    {{ products.count }}/{{ max_products }} products
-                </small>
-                {% endif %} -->
-
-                <hr>
-
-                <!-- ACTIONS -->
-                {% if request.user.is_superuser or request.user == shop.user %}
-                <a href="{% url 'update_profile' shop.user %}" class="btn btn-outline-primary w-100 mb-2">
-                    <i class="fa fa-user me-2"></i> Edit Profile</a>
-
-
-                {% endif %}
 
             </div>
+
         </div>
     </div>
+
+    <!-- Optional CSS for subtle text shadow -->
+    <style>
+        .text-shadow {
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+        }
+    </style>
+
+    <!-- ================= PRODUCTS ================= -->
+    <div class="d-flex align-items-center justify-content-between mt-2 mb-3">
+        <div class="text-muted small">
+            {{ shop.products.count }} product{{ shop.products.count|pluralize }}
+        </div>
+        {% if request.user == shop.user or request.user.is_superuser %}
+        <a href="{% url 'add_product' shop.slug %}" class="btn btn-success" id="addProductBtn"
+            data-phone="{{ shop.user.profile.phone|default:'' }}">
+            <i class="fa fa-plus me-1"></i> Add Product
+        </a>
+
+        <a href="{% url 'orders_items_list_shop' shop.slug %}">
+            <i class="fa fa-shopping-cart me-2"></i> Orders
+        </a>
+        {% endif %}
+    </div>
+
+    <div class="row">
+        {% if products %}
+        {% for product in products %}
+        <div class="col-md-3 mb-4">
+            <div class="product-wap card rounded-0 m-2">
+                <div class="card rounded-0">
+                    {% if product.is_new %}
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                        New
+                    </span>
+                    {% endif %}
+                    <a href="{{product.get_absolute_url}}">
+                        <img src="{{ product.main_image }}" class="card-img-top p-2"
+                            style="min-height: 300px; max-height: 300px;" alt="..." loading="lazy">
+                        <div
+                            class="card-img-overlay rounded-0 product-overlay d-flex align-items-center justify-content-center">
+                            <ul class="list-unstyled">
+                                <li><a class="btn btn-success text-white"
+                                        href="{% url 'add_to_wishlist' product.id %}"><i class="far fa-heart"></i></a>
+                                </li>
+                                <li><a class="btn btn-success text-white mt-2" href="{{product.get_absolute_url}}"><i
+                                            class="far fa-eye"></i></a></li>
+                                <li>
+                                    <form action="{% url 'cart_add' product.id %}" method="post" class="d-inline">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-success text-white mt-2"><i
+                                                class="fas fa-cart-plus"></i></button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </div>
+                    </a>
+                </div>
+                <div class="card-body">
+
+                    <a href="{{ product.get_absolute_url }}" class="h2 text-decoration-none text-dark">
+                        <h5 class="card-title"> {{ product.name }}</h5>
+                    </a>
+                    <!-- <p class="card-text"> {{ product.description|truncatechars:30 }} </p> -->
+                    <!-- <small>{{ product.time_since_created }} </small> -->
+                    <small>{{ product.created_at|naturaltime }}</small>
+                    <div class="d-flex justify-content-between">
+                        <!-- زر الاتصال -->
+                        <button type="button"
+                            class="btn btn-link text-dark p-0 lh-1 align-baseline text-decoration-none"
+                            data-bs-toggle="modal" data-bs-target="#phoneModal{{ product.id }}">
+                            <i class="fa fa-phone"></i> Call me
+                        </button>
+
+                        <!-- Modal display product owner -->
+                        <div class="modal fade" id="phoneModal{{ product.id }}" tabindex="-1"
+                            aria-labelledby="phoneModalLabel{{ product.id }}" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content">
+                                    <!-- Header -->
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="phoneModalLabel{{ product.id }}">
+                                            {{ product.shop.user.username }}
+                                        </h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                    </div>
+                                    <!-- Seller Image -->
+                                    <div class="text-center mt-3">
+                                        {% if product.shop.user.profile.imageURL %}
+                                        <img src="{{ product.shop.user.profile.imageURL }}"
+                                            class="rounded-circle shadow" width="120" height="120"
+                                            alt="{{ product.shop.user.username }}" loading="lazy">
+                                        {% else %}
+                                        <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png"
+                                            class="rounded-circle shadow" width="120" height="120">
+                                        {% endif %}
+                                    </div>
+                                    <!--/ Seller Image -->
+                                    <!-- Phone -->
+                                    <div class="modal-body text-center">
+                                        <h4 class="text-primary">
+                                            {{ product.user_phone }}
+                                        </h4>
+                                    </div>
+                                    <!-- Footer -->
+                                    <div class="modal-footer justify-content-between">
+                                        <button class="btn btn-secondary" data-bs-dismiss="modal">
+                                            Fermer
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <span class="fw-bold text-success ms-auto">
+                            {{ product.price|intcomma }} Da
+                        </span>
+                        <!-- / Modal display product owner -->
+                    </div>
+                    {% if request.user == product.shop.user or request.user.is_superuser %}
+                    <div class="mt-2 text-center border-top pt-2">
+                        <a href="{% url 'update_product' product.slug %}" class="btn btn-sm btn-warning py-0 px-1"><i
+                                class="fas fa-edit"></i></a>
+                        <a href="{% url 'delete_product' product.slug %}" class="btn btn-sm btn-danger py-0 px-1"><i
+                                class="fas fa-trash"></i></a>
+                        <a href="{% url 'manage_product_images' product.slug %}"
+                            class="btn btn-sm btn-primary py-0 px-1"><i class="fas fa-images"></i></a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+        {% else %}
+        <div class="col-12 text-center py-5">
+            <h5 class="text-muted">No products yet</h5>
+            {% if request.user == shop.user %}
+            <a href="{% url 'add_product' shop.slug %}" class="btn btn-success mt-2">
+                Start adding products
+            </a>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+    <!-- ================= / PRODUCTS ================= -->
+
+
+    <!-- ================= PAGINATION ================= -->
+    {% if productsPages.has_other_pages %}
+    <nav class="mt-4">
+        <ul class="pagination justify-content-center">
+
+            {% if productsPages.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ productsPages.previous_page_number }}">
+                    &laquo;
+                </a>
+            </li>
+            {% endif %}
+
+            {% for i in productsPages.paginator.page_range %}
+            <li class="page-item {% if productsPages.number == i %}active{% endif %}">
+                <a class="page-link" href="?page={{ i }}">{{ i }}</a>
+            </li>
+            {% endfor %}
+
+            {% if productsPages.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ productsPages.next_page_number }}">
+                    &raquo;
+                </a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+
+    <!-- ================= / PAGINATION ================= -->
+
+    <!-- ================= REVIEWS SECTION ================= -->
+    <div class="row mt-5">
+        <div class="col-md-8 mx-auto">
+            <h3 class="mb-4 text-center"><i class="fas fa-star text-warning me-2"></i> Shop Reviews</h3>
+
+            <!-- Show review form if authenticated -->
+            {% if request.user.is_authenticated %}
+                <div class="card shadow-sm border-0 mb-5 rounded-4">
+                    <div class="card-body p-4 text-center">
+                        <h5 class="fw-bold mb-3">Leave a Review</h5>
+                        <form method="post">
+                            {% csrf_token %}
+                            <div class="row justify-content-center">
+                                <div class="col-md-4 mb-3">
+                                    {{ review_form.rating }}
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                {{ review_form.comment }}
+                            </div>
+                            <!-- Error handling -->
+                            {% if review_form.errors %}
+                            <div class="text-danger small mb-3">
+                                {{ review_form.errors|striptags }}
+                            </div>
+                            {% endif %}
+                            
+                            <button type="submit" class="btn btn-success fw-bold px-4 rounded-pill">
+                                Submit Review <i class="fas fa-paper-plane ms-1"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            {% else %}
+                <div class="alert alert-info text-center rounded-4 shadow-sm mb-5">
+                    <i class="fas fa-info-circle me-1"></i> Please <a href="{% url 'login' %}" class="fw-bold text-dark">login</a> to leave a review.
+                </div>
+            {% endif %}
+
+            <!-- List Reviews -->
+            <div class="reviews-list">
+                {% for review in reviews %}
+                <div class="card shadow-sm border-0 mb-3 rounded-4">
+                    <div class="card-body p-4">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <div class="d-flex align-items-center">
+                                <div class="bg-success text-white rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px; font-weight: bold;">
+                                    {{ review.user.username|first|upper }}
+                                </div>
+                                <div>
+                                    <h6 class="mb-0 fw-bold">{{ review.user.username }}</h6>
+                                    <small class="text-muted">{{ review.created_at|naturaltime }}</small>
+                                </div>
+                            </div>
+                            <div class="text-warning">
+                                {% for i in "12345" %}
+                                    {% if review.rating >= i|add:"0" %}
+                                        <i class="fas fa-star"></i>
+                                    {% else %}
+                                        <i class="far fa-star text-muted"></i>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% if review.comment %}
+                        <p class="mb-0 mt-3 text-secondary">{{ review.comment }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+                {% empty %}
+                <div class="text-center py-5 text-muted">
+                    <i class="fas fa-comment-slash fa-3x mb-3 opacity-50"></i>
+                    <h5>No reviews yet</h5>
+                    <p>Be the first to review this shop!</p>
+                </div>
+                {% endfor %}
+            </div>
+
+        </div>
+    </div>
+    <!-- ================= / REVIEWS SECTION ================= -->
+
 </div>
+
+<script>
+    document.getElementById('addProductBtn')?.addEventListener('click', function (e) {
+        const phone = this.dataset.phone;
+        if (!phone) {
+            e.preventDefault();
+            if (confirm("You must add a phone number to your profile before adding a product. Update profile now?")) {
+                window.location.href = "{% url 'update_profile' shop.user.username %}";
+            }
+        }
+    });
+</script>
 
 {% endblock body %}

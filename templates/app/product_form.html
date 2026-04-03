@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block title %}
-Product Form
+{{title}}
 {% endblock %}
 
 {% block body %}
@@ -58,7 +58,7 @@ Product Form
 <div class="container mt-5" style="max-width:900px;">
     <div class="card shadow">
         <div class="card-header bg-success text-white text-center">
-            <h4>Publish / Update Product</h4>
+            <h4> {{ title }} </h4>
         </div>
 
         <div class="card-body">
@@ -92,10 +92,15 @@ Product Form
 
                     <!-- Form Fields -->
                     <div class="col-md-7">
+
                         <div class="mb-3">
                             <label class="form-label">Category</label>
-                            {{ form.category }}
+                            <div class="d-flex align-items-center">
+                                {{ form.category }}
+
+                            </div>
                         </div>
+
                         <div class="mb-3">
                             <label class="form-label">Name</label>
                             {{ form.name }}
@@ -207,9 +212,7 @@ Product Form
 
                 fetch("{% url 'delete_product_image' 0 %}".replace("0", oldId), {
                     method: "POST",
-                    headers: {
-                        "X-CSRFToken": "{{ csrf_token }}"
-                    }
+                    headers: { "X-CSRFToken": "{{ csrf_token }}" }
                 }).then(res => {
                     if (res.ok) box.remove();
                 });

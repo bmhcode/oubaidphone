@@ -1,0 +1,99 @@
+{% extends 'app/base.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block title %}Shopping Cart{% endblock title %}
+
+{% block body %}
+<div class="container py-5">
+    <h2 class="mb-4">Your Shopping Cart</h2>
+
+    {% if cart|length > 0 %}
+    <div class="card shadow-sm border-0 rounded-3 mb-4">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="bg-light">
+                        <tr>
+                            <th scope="col" class="border-0 text-center">N°</th>
+                            <th scope="col" class="border-0 ps-4">Product</th>
+                            <th scope="col" class="border-0">Price</th>
+                            <th scope="col" class="border-0">Quantity</th>
+                            <th scope="col" class="border-0">Total</th>
+                            <th scope="col" class="border-0 text-end pe-4">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in cart %}
+                        {% with product=item.product %}
+
+                        <tr>
+                            <td class="text-muted small">{{ forloop.counter }}</td>
+                            <td class="ps-4">
+                                <div class="d-flex align-items-center">
+                                    {% if product.main_image %}
+                                    <img src="{{ product.main_image }}" alt="{{ product.name }}" class="img-fluid rounded shadow-sm me-3" style="width: 60px; height: 60px; object-fit: cover;">
+                                    {% elif product.imageURL %}
+                                    <img src="{{ product.imageURL }}" alt="{{ product.name }}" class="img-fluid rounded shadow-sm me-3" style="width: 60px; height: 60px; object-fit: cover;">
+                                    {% else %}
+                                    <div class="bg-secondary text-white rounded d-flex align-items-center justify-content-center me-3"
+                                        style="width: 60px; height: 60px;">
+                                        <i class="fas fa-box fa-lg"></i>
+                                    </div>
+                                    {% endif %}
+                                    <div>
+                                        <a href="{{ product.get_absolute_url }}" class="text-dark text-decoration-none fw-bold mb-0">{{ product.name }}</a>
+                                    </div>
+                                </div>
+                            </td>
+                            <td> {{ item.price|intcomma }} Da</td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <!-- زر إنقاص -->
+                                    <a href="{% url 'cart_update' product.id 'decrease' %}" class="btn btn-sm btn-outline-secondary">
+                                        <i class="fas fa-minus"></i>
+                                    </a>
+
+                                    <!-- الكمية -->
+                                    <span class="mx-2 fw-bold">
+                                        {{ item.quantity }}
+                                    </span>
+
+                                    <!-- زر زيادة -->
+                                    <a href="{% url 'cart_update' product.id 'increase' %}" class="btn btn-sm btn-outline-secondary">
+                                        <i class="fas fa-plus"></i>
+                                    </a>
+
+                                </div>
+                            </td>
+                            <td class="fw-bold text-right"> {{ item.total_price|intcomma }} Da</td>
+                            <td class="text-end pe-4">
+                                <a href="{% url 'cart_remove' product.id %}" class="btn btn-sm btn-outline-danger">
+                                    <i class="fas fa-trash-alt"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        {% endwith %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="card-footer bg-white border-0 py-4 pe-4 text-end">
+            <h4 class="fw-bold mb-3">Total: <span class="text-success">{{ cart.get_total_price|intcomma }} Da</span>
+            </h4>
+            <a href="{% url 'index' %}" class="btn btn-outline-secondary btn-lg me-2">Continue Shopping</a>
+            <a href="{% url 'order_create' %}" class="btn btn-success btn-lg">Checkout Now</a>
+        </div>
+    </div>
+    {% else %}
+    <div class="text-center py-5">
+        <div class="mb-4">
+            <i class="fas fa-shopping-cart fa-4x text-muted"></i>
+        </div>
+        <h4 class="text-muted mb-3">Your cart is empty</h4>
+        <a href="{% url 'index' %}" class="btn btn-success">Browse Products</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock body %}

@@ -14,7 +14,6 @@ from . import views
 
 urlpatterns = [
 
-    
     path('',views.index, name="index"),
     path('about',views.about, name="about"),
     path('contact',views.contact, name="contact"),
@@ -29,7 +28,7 @@ urlpatterns = [
 #--------------------- Store -------------------------
     path('store/settings/', views.update_store, name='update_store'),
     path('store/delete/', views.delete_store, name='delete_store'),
-    path('store',views.store, name="store"),
+    path('products',views.list_products, name="list_products"),
 #--------------------- / Store -------------------------
 
 
@@ -39,11 +38,13 @@ urlpatterns = [
     path('shop/create/', views.create_shop, name='create_shop'),
     path('shop/update/<slug:slug>/', views.update_shop, name='update_shop'),
     path('shop/delete/<slug:slug>/', views.delete_shop, name='delete_shop'),
-    path('shop/<slug:slug>/', views.shop, name='shop'),
+    path('shop/<slug:shop_slug>/', views.shop, name='shop'),
 #--------------------- / Shop ------------------------------
 
 
 #--------------------- Category -------------------------
+    path('categories/', views.list_categories, name='list_categories'),
+    
     path('category/add/', views.add_category, name='add_category'),
     path('category/update/<slug:slug>/', views.update_category, name='update_category'),
     path('category/delete/<slug:slug>/', views.delete_category, name='delete_category'),
@@ -82,9 +83,38 @@ urlpatterns = [
 #--------------------- / Plan -------------------------
 
 #--------------------- Members -------------------------
+    path('user/add/', views.add_user, name='add_user'),
     path('members/', views.list_members, name='list_members'),
 #--------------------- / Members -------------------------
-    
+
+#--------------------- Cart -------------------------
+    path('cart/', views.cart_detail, name='cart_detail'),
+    path('cart/add/<int:product_id>/', views.cart_add, name='cart_add'),
+    path('cart/remove/<int:product_id>/', views.cart_remove, name='cart_remove'),
+
+
+    path('cart/update/<int:product_id>/<str:action>/', views.cart_update, name='cart_update'),
+#--------------------- / Cart -------------------------
+
+#--------------------- Orders -------------------------
+    path('order/create/', views.order_create, name='order_create'),
+
+    path('order/detail/<int:pk>/', views.order_detail, name='order_detail'),
+    path('order/update/<int:pk>/', views.order_update, name='order_update'),
+    path('order/delete/<int:pk>/', views.order_delete, name='order_delete'),
+
+    path('order-item/<int:pk>/status/<str:status>/', views.order_item_status, name='order_item_status'),
+    path('order/<int:pk>/status/<str:status>/', views.order_status, name='order_status'),
+
+    path('orders/', views.orders_list, name='orders_list'),
+    path('orders/<int:userid>', views.orders_list, name='orders_list_user'),
+
+    path('orders/items/', views.orders_items_list, name='orders_items_list'),
+    path('orders/items/<slug:shop_slug>/', views.orders_items_list, name='orders_items_list_shop'),
+    # path('orders/items/<int:userid>', views.orders_items_list_user, name='orders_items_list_user'),
+
+
+#--------------------- / Orders -------------------------   
 ]
 
 if settings.DEBUG:

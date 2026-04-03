@@ -1,0 +1,55 @@
+{% extends "app/base.html" %}
+{% load static %}
+
+{% block title %}Delete Order{% endblock %}
+
+{% block body %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+
+            <div class="card shadow-sm border-0">
+                <div class="card-body text-center">
+
+                    <h3 class="mb-3 text-danger">
+                        Confirm Order Deletion
+                    </h3>
+
+                    <p class="mb-4">
+                        Are you sure you want to delete order
+                        <strong>#{{ order.id }}</strong> ?
+                    </p>
+
+                    <ul class="list-group mb-4 text-start">
+                        <li class="list-group-item">
+                            <strong>Date:</strong> {{ order.created_at }}
+                        </li>
+                        <li class="list-group-item">
+                            <strong>Status:</strong> {{ order.get_status_display }}
+                        </li>
+                        <li class="list-group-item">
+                            <strong>Payment:</strong> {{ order.get_payment_method_display }}
+                        </li>
+                        <li class="list-group-item">
+                            <strong>Address:</strong> {{ order.address }}
+                        </li>
+                    </ul>
+
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="d-flex justify-content-center gap-3">
+                            <a href="{% url 'order_list_all' %}" class="btn btn-secondary">
+                                Cancel
+                            </a>
+
+                            <button type="submit" class="btn btn-danger">Yes, Delete</button>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}

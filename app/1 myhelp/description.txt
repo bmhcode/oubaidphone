@@ -1,0 +1,27 @@
+Models >
+      Shop > horaires_Working + is_close, 
+              + is_holiday + date_begin, date_end (for holiday)
+              + FaceBook, Instagram, Twiter, Tiktok
+              + is_validated + is_rejected + observation (ex: cause of closing)
+              + date start validation + period (1 month, 3 months, 6 months, 1 year) 
+              + address + city + postal_code + country + latitude + longitude 
+
+
+      user > + is_validated + is_rejected + observation (ex: cause of closing)
+
+
+Shop > + Search , Categories , paginations
+
+Menu > 
+      my shop + Orders, Items Orders ( is orders = 0 ==> errors)
+      User + my Shops
+
+Order_list > 
+           + Customer_phone
+             modif status 
+
+Order_items_list.html > price * Quantity 
+
+Order > 
+        update ( there is no products)
+        save orders for make it another time

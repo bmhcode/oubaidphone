@@ -1,7 +1,7 @@
 {% extends 'app/base.html' %}
 {% load static %}
 
-{% block title %} Delete Product - {{ store.name }} {% endblock title %}
+{% block title %} Shop - {{ shop.name }} / Delete product {% endblock title %}
 
 {% block body %}
 <div class="container py-5">
@@ -17,7 +17,7 @@
                         {% csrf_token %}
                         <div class="d-grid gap-2 d-md-block">
                             <button type="submit" class="btn btn-danger btn-lg px-4">Delete</button>
-                            <a href="{% url 'shop' %}" class="btn btn-secondary btn-lg px-4">Cancel</a>
+                            <a href="{% url 'delete_product' product.slug %}" class="btn btn-secondary btn-lg px-4">Cancel</a>
                         </div>
                     </form>
                 </div>

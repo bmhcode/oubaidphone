@@ -56,11 +56,9 @@
                         <label for="id_image" style="cursor:pointer">
 
                             {% if category and category.image %}
-                            <img id="preview" src="{{ category.imageURL }}" class="img-thumbnail mb-2"
-                                style="width:100%; max-height:250px; object-fit:cover;">
+                            <img id="preview" src="{{ category.imageURL }}" class="img-thumbnail mb-2" style="width:100%; max-height:250px; object-fit:cover;">
                             {% else %}
-                            <img id="preview" src="https://cdn-icons-png.flaticon.com/512/1046/1046784.png"
-                                class="img-thumbnail mb-2" style="width:100%; max-height:250px; object-fit:cover;">
+                            <img id="preview" src="https://cdn-icons-png.flaticon.com/512/1046/1046784.png" class="img-thumbnail mb-2" style="width:100%; max-height:250px; object-fit:cover;">
                             {% endif %}
 
                         </label>
@@ -77,7 +75,7 @@
                     <button type="submit" class="btn btn-success btn-lg">
                         Save Category
                     </button>
-                    <a href="{% url 'store' %}" class="btn btn-secondary">
+                    <a href="{% url 'index' %}" class="btn btn-secondary">
                         Cancel
                     </a>
                 </div>

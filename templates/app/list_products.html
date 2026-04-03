@@ -19,35 +19,48 @@
             </div>
             {% endif %}
             <ul class="list-group">
+                <!-- Tous -->
+                <li class="list-group-item d-flex justify-content-between align-items-center
+                    {% if not request.GET.category %}active{% endif %}">
 
-                <li class="list-group-item">
-                    <a class="nav-link" href="{% url 'store' %}">
+                    <a class="text-decoration-none category-link
+                        {% if not request.GET.category %}text-white{% endif %}" href="{% url 'list_products' %}">
                         Tous
-                        <span class="badge bg-secondary ms-2">
-                            {{products_total}}
-                        </span>
                     </a>
+
+                    <span class="badge bg-secondary
+                        {% if not request.GET.category %}bg-light text-dark{% endif %}">
+                        {{ products_total }}
+                    </span>
                 </li>
 
+                <!-- Categories -->
                 {% for category in categories %}
-                <li class="list-group-item d-flex justify-content-between align-items-center">
+                <li class="list-group-item d-flex justify-content-between align-items-center
+                    {% if request.GET.category == category.slug %}active{% endif %}">
 
-                    <a class="text-decoration-none category-link" href="{% url 'store' %}?category={{ category.slug }}">
-
+                    <a class="text-decoration-none category-link
+                        {% if request.GET.category == category.slug %}text-white{% endif %}"
+                        href="{% url 'list_products' %}?category={{ category.slug }}">
                         {{ category.name|capfirst }}
-                        <span class="badge bg-secondary ms-2">
-                            {{ category.products.count }}
-                        </span>
                     </a>
 
-                    {% if request.user.is_superuser %}
-                    <span>
-                        <a href="{% url 'update_category' category.slug %}" class="btn btn-sm btn-warning py-0 px-1"
-                            title="Edit"><i class="fas fa-edit"></i></a>
-                        <a href="{% url 'delete_category' category.slug %}" class="btn btn-sm btn-danger py-0 px-1"
-                            title="Delete"><i class="fas fa-trash"></i></a>
-                    </span>
-                    {% endif %}
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="badge bg-secondary
+                        {% if request.GET.category == category.slug %}bg-light text-dark{% endif %}">
+                            {{ category.products.count }}
+                        </span>
+
+                        {% if request.user.is_superuser %}
+                        <a href="{% url 'update_category' category.slug %}" class="btn btn-sm btn-outline-primary">
+                            <i class="fa fa-edit"></i>
+                        </a>
+                        <a href="{% url 'delete_category' category.slug %}" class="btn btn-sm btn-outline-danger">
+                            <i class="fa fa-trash"></i>
+                        </a>
+                        {% endif %}
+                    </div>
+
                 </li>
                 {% endfor %}
             </ul>
@@ -166,7 +179,7 @@
                                             <div class="modal-body text-center">
 
                                                 <h4 class="text-primary">
-                                                    {{ product.shop.user.profile.phone }}
+                                                    {{ product.user_phone }}
                                                 </h4>
 
                                             </div>
@@ -217,10 +230,11 @@
                 {% else %}
                 <div class="col-12 text-center">
                     <p class="lead">Your store list is empty.</p>
-                    <a href="{% url 'add_product' %}" class="btn btn-success btn-lg">Add a new product</a>
+                    <a href="{% url 'create_shop' %}" class="btn btn-success btn-lg">Create a new shop</a>
                 </div>
                 {% endif %}
             </div>
+            <!-- / Products list -->
 
             <!-- Pagination -->
             <nav class="mt-4">
@@ -270,30 +284,66 @@
                 </ul>
             </nav>
             <!-- / Pagination -->
+
         </div>
         <!-- ================= / products ================= -->
-
-        <!-- ================= Brands ================= -->
-        <div class="row">
-            <section class="py-5"> <!--  <section class="bg-light py-5"></section> -->
-
-                <div class="col-12">
-                    <div class="d-flex justify-content-center align-items-center flex-wrap gap-4">
-                        {% for brand in brands %}
-                        <div class="text-center px-3">
-                            <a href="#"><img class="img-fluid brand-img" src="{{ brand.imageURL }}"
-                                    style="max-height: 80px;" loading="lazy"></a>
-                        </div>
-                        {% endfor %}
-                    </div>
-                </div>
-
-            </section>
-
-        </div>
-        <!-- ================= / Brands ================= -->
     </div>
 </div>
+<!-- ================= Brands ================= -->
+
+<section class="bg-light py-5">
+    <div class="container my-4">
+        <div class="row text-center py-3">
+            <div class="col-lg-6 m-auto">
+                <h1 class="h1">Our Brands</h1>
+                <p>Browse products by your favorite brands.</p>
+            </div>
+
+            <div class="col-lg-9 m-auto">
+                <div id="brandCarousel" class="carousel slide" data-bs-ride="carousel">
+                    <div class="carousel-inner">
+
+                        <div class="carousel-inner">
+
+                            {% for brand in brands %}
+                            {% if forloop.counter0|divisibleby:4 %}
+                            <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                                <div class="row">
+                                    {% endif %}
+
+                                    <div class="col-3 p-md-5">
+                                        <a href="{% url 'list_products' %}?brand={{ brand.slug }}">
+                                            <img class="img-fluid brand-img" src="{{ brand.imageURL }}"
+                                                alt="{{ brand.name }}">
+                                        </a>
+                                    </div>
+
+                                    {% if forloop.counter|divisibleby:4 or forloop.last %}
+                                </div>
+                            </div>
+                            {% endif %}
+                            {% endfor %}
+
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-between mt-2">
+                        <button class="btn btn-primary" type="button" data-bs-target="#brandCarousel"
+                            data-bs-slide="prev">
+                            Prev
+                        </button>
+                        <button class="btn btn-primary" type="button" data-bs-target="#brandCarousel"
+                            data-bs-slide="next">
+                            Next
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- ================= / Brands ================= -->
 
 <!-- End Content -->
 

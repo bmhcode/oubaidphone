@@ -286,7 +286,7 @@ def list_shops(request): # list shops
             Q(description__icontains=search)
         )
 
-    paginator = Paginator(shops, 5)
+    paginator = Paginator(shops, 4)
     page_number = request.GET.get('page')
     shops_page = paginator.get_page(page_number)
     
@@ -337,15 +337,87 @@ def shop(request, shop_slug): # shop
     }
     return render(request, 'app/shop.html', context)
 
-@login_required # create shop
+@login_required
 def create_shop(request):
 
+    # ✅ تعريف دائم
+    validation_form = None
+
     if request.method == 'POST':
-        form = ShopForm(request.POST, request.FILES)
+
+        form = ShopForm(
+            request.POST,
+            request.FILES,
+            user=request.user
+        )
         social_form = ShopSocialForm(request.POST)
         hours_formset = WorkingHoursFormSet(request.POST)
         holiday_formset = ShopHolidayFormSet(request.POST)
-        
+
+        # ✅ للأدمن فقط
+        if request.user.is_superuser:
+            validation_form = ShopValidationForm(request.POST)
+
+        # ✅ التحقق
+        if (
+            form.is_valid() and
+            social_form.is_valid() and
+            hours_formset.is_valid() and
+            holiday_formset.is_valid() and
+            (validation_form.is_valid() if validation_form else True)
+        ):
+
+            # ===== Save Shop =====
+            shop = form.save(commit=False)
+
+            if request.user.is_superuser:
+                shop.user = form.cleaned_data.get('user')
+            else:
+                shop.user = request.user
+
+            shop.save()
+
+            # ===== Save Social =====
+            social = social_form.save(commit=False)
+            social.shop = shop
+            social.save()
+
+            # ===== Save Hours =====
+            hours_formset.instance = shop
+            hours_formset.save()
+
+            # ===== Save Holidays =====
+            holiday_formset.instance = shop
+            holiday_formset.save()
+
+            # ===== Save Validation =====
+            if request.user.is_superuser and validation_form:
+                validation = validation_form.save(commit=False)
+                validation.shop = shop
+                validation.save()
+            else:
+                ShopValidation.objects.create(shop=shop)
+
+            messages.success(request, 'Shop created successfully!')
+            return redirect('list_shops')
+
+    else:
+        # ===== GET =====
+        form = ShopForm(user=request.user)
+        social_form = ShopSocialForm()
+
+        initial_hours = [
+            {'day': i, 'open_time': '09:00', 'close_time': '18:00'}
+            for i in range(7)
+        ]
+
+        hours_formset = WorkingHoursFormSet(initial=initial_hours)
+        holiday_formset = ShopHolidayFormSet()
+
+        if request.user.is_superuser:
+            validation_form = ShopValidationForm()
+
+    # ===== Errors =====
     has_errors = (
         form.errors or
         social_form.errors or
@@ -354,56 +426,18 @@ def create_shop(request):
         (validation_form.errors if validation_form else False)
     )
 
-    if form.is_valid() and social_form.is_valid() and hours_formset.is_valid() and holiday_formset.is_valid():
-        shop = form.save(commit=False)
-        if not request.user.is_superuser:
-            shop.user = request.user
-        shop.save()
-            
-        # Save Social
-        social = social_form.save(commit=False)
-        social.shop = shop
-        social.save()
-            
-        # Save Working Hours
-        hours_formset.instance = shop
-        hours_formset.save()
-            
-        # Save Holidays
-        holiday_formset.instance = shop
-        holiday_formset.save()
-            
-        # Initialize Validation (for superuser to review)
-        ShopValidation.objects.create(shop=shop)
-            
-        messages.success(request, 'Shop created successfully!')
-        return redirect('list_shops')
-    else:
-        form = ShopForm()
-        social_form = ShopSocialForm()
-        # Initialize working hours with all 7 days
-        initial_hours = [{'day': i, 'open_time': '09:00', 'close_time': '18:00'} for i in range(7)]
-        hours_formset = WorkingHoursFormSet(initial=initial_hours)
-        holiday_formset = ShopHolidayFormSet()
-
-         
-    # exclude_fields = [
-    #         'logo', 'cover', 'address', 'city',
-    #         'postal_code', 'country', 'latitude',
-    #         'longitude', 'is_closed', 'is_active'
-    #     ]  
-
-
-
+    # ===== Context =====
     context = {
-        'form': form, 
+        'form': form,
         'social_form': social_form,
         'hours_formset': hours_formset,
         'holiday_formset': holiday_formset,
+        'validation_form': validation_form,
         'has_errors': has_errors,
+        'is_superuser': request.user.is_superuser,
         'title': 'Create Shop',
-        # 'exclude_fields': exclude_fields,   
     }
+
     return render(request, 'app/shop_form.html', context)
 
 @login_required # update_shop
@@ -941,7 +975,7 @@ def order_create(request):
         form = OrderForm()
     
     return render(request, 'app/order_form.html', {'form': form, 'cart': cart})
-def orders_list(request, userid = None):  # orders list (All / User)
+def order_list(request, userid = None):  # orders list (All / User)
     # orders = Order.objects.all().order_by('-created_at')
     if userid:
         orders = Order.objects.filter(user_id=userid).select_related('user') \
@@ -998,23 +1032,17 @@ def orders_items_list(request, shop_slug = None):
   'status_choices': OrderItem.STATUS_CHOICES,  # ← الحل هنا
         })
 
-
-
-
-
-
-
 @login_required # order detail 
 def order_detail(request, pk):
     order = get_object_or_404(Order, pk=pk) #, user=request.user)
     return render(request, 'app/order_detail.html', {'order': order})
 
-@login_required # order update 
+@login_required # order update0 
 def order_update0(request, pk):
     order = get_object_or_404(Order, pk=pk)
     if order.user != request.user and not request.user.is_superuser:
         messages.error(request, "You cannot edit this order")
-        return redirect('order_list_all')
+        return redirect('order_list')
 
     if request.method == 'POST':
         old_status = order.status
@@ -1069,7 +1097,6 @@ def order_update(request, pk):
 
             messages.success(request, "Order updated successfully")
             return redirect('order_detail', pk=order.pk)
-
     else:
         form = OrderUpdateForm(instance=order)
         formset = OrderItemFormSet(instance=order)
@@ -1085,19 +1112,13 @@ def order_delete(request, pk):
     order = get_object_or_404(Order, pk=pk) #, user=request.user)
     if order.user != request.user and not request.user.is_superuser:
         messages.error(request, "You cannot delete this order")
-        return redirect('order_list_all')
+        return redirect('order_list')
 
     if request.method == 'POST':
         order.delete()
         messages.success(request, "Order deleted")
-        return redirect('order_list_all')
+        return redirect('order_list')
     return render(request, 'app/order_confirm_delete.html', {'order': order})
-
-
-
-
-
-
 
 
 @login_required # order item status
@@ -1146,7 +1167,7 @@ def order_status(request, pk, status):
         
         order.propagate_status_to_items(user=request.user if request.user.is_authenticated else None)
 
-    return redirect('order_list_all')
+    return redirect('order_list')
 
 
 # ============================ / Orders ==============================

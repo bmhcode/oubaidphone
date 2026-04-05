@@ -106,8 +106,8 @@ urlpatterns = [
     path('order-item/<int:pk>/status/<str:status>/', views.order_item_status, name='order_item_status'),
     path('order/<int:pk>/status/<str:status>/', views.order_status, name='order_status'),
 
-    path('orders/', views.orders_list, name='orders_list'),
-    path('orders/<int:userid>', views.orders_list, name='orders_list_user'),
+    path('orders/', views.order_list, name='order_list'),
+    path('orders/<int:userid>', views.order_list, name='order_list_user'),
 
     path('orders/items/', views.orders_items_list, name='orders_items_list'),
     path('orders/items/<slug:shop_slug>/', views.orders_items_list, name='orders_items_list_shop'),

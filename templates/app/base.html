@@ -180,6 +180,11 @@
                                     <i class="fa fa-user me-2"></i> my Profile
                                 </a>
                             </li>
+                            <li>
+                                <a class="dropdown-item" href="{% url 'password_change' %}">
+                                    <i class="fa fa-key me-2"></i> Change Password
+                                </a>
+                            </li>
                             {% if user.is_superuser %}
                             <li>
                                 <a class="dropdown-item" href="{% url 'update_store' %}">
@@ -203,7 +208,7 @@
                             </li>
 
                             <li>
-                                <a class="dropdown-item" href="{% url 'orders_list' %}">
+                                <a class="dropdown-item" href="{% url 'order_list' %}">
                                     <i class="fa fa-shopping-cart me-2"></i> All Orders
                                 </a>
                             </li>
@@ -218,7 +223,7 @@
                             {% if user.is_authenticated %}
 
                             <li>
-                                <a class="dropdown-item" href="{% url 'orders_list_user' user.id %}">
+                                <a class="dropdown-item" href="{% url 'order_list_user' user.id %}">
                                     <i class="fa fa-shopping-cart me-2"></i> My Orders {{user}}
                                 </a>
                             </li>

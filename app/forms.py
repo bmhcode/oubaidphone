@@ -6,12 +6,12 @@ from django.contrib.auth.forms import AuthenticationForm,UserCreationForm
 
 from django.forms import inlineformset_factory
 
-
 class ShopForm(forms.ModelForm):
     class Meta:
         model = Shop
+        # fields = '__all__'
         fields = [
-            'user', 'name', 'phone', 'email', 'description', 'logo', 'cover', 
+            'user', 'name', 'phone', 'email', 'website', 'description', 'logo', 'cover', 
             'address', 'city', 'postal_code', 'country', 'latitude', 'longitude',
             'is_closed'
         ]
@@ -21,9 +21,10 @@ class ShopForm(forms.ModelForm):
         widgets = {
             'user':        forms.Select(attrs={'class': 'form-control'}),
             'name':        forms.TextInput(attrs={'class': 'form-control'}),
+            'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 4}),
             'phone':       forms.TextInput(attrs={'class': 'form-control'}),
             'email':       forms.EmailInput(attrs={'class': 'form-control'}),
-            'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 4}),
+            'website':     forms.URLInput(attrs={'class': 'form-control'}), 
             'logo':        forms.ClearableFileInput(attrs={'class': 'form-control'}),
             'cover':       forms.ClearableFileInput(attrs={'class': 'form-control'}),
             
@@ -36,18 +37,14 @@ class ShopForm(forms.ModelForm):
             
             'is_closed':   forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user', None)  # ✅ استقبل user
+        super().__init__(*args, **kwargs)
 
-    # def __init__(self, *args, **kwargs):
-    #     user = kwargs.pop('user', None)
-    #     super().__init__(*args, **kwargs)
-
-        # if user and not user.is_superuser:
-        #     self.fields.pop('user')  # حذف الحقل نهائياً
-
-
-
-
-
+        # ✅ إخفاء owner إذا ليس superuser
+        if not user or not user.is_superuser:
+            self.fields.pop('user', None)
+    
 class StoreForm(forms.ModelForm):
     class Meta:
         model = Store

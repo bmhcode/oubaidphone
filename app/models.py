@@ -295,16 +295,15 @@ class Category(models.Model):
 # ============ Start Shop =================
 
 class Shop(models.Model):
-
-    name = models.CharField(max_length=150)
+    # 📍 base info
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="shops")
+    name = models.CharField(max_length=150)
     slug = models.SlugField(unique=True, blank=True)
-
     description = CKEditor5Field("Text", config_name="extends", blank=True)
-    
-    # address = models.CharField(max_length=255, blank=True) # Duplicate removed
     phone = models.CharField(max_length=20, null=True, blank=True)
     email = models.EmailField(blank=True, null=True)
+    website = models.URLField(blank=True, null=True)
+    
 
     logo = models.ImageField(upload_to="shops/logos/", blank=True, null=True)
     cover = models.ImageField(upload_to="shops/covers/", blank=True, null=True)
@@ -380,7 +379,6 @@ class Shop(models.Model):
         # 3. Check Working Hours
         day = today.weekday()
         working = self.working_hours.filter(day=day, is_closed=False).first()
-
 
         if working:
             return working.open_time <= time_now <= working.close_time

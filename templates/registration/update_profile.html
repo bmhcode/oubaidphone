@@ -48,9 +48,12 @@ Update Profile {{ user.username }}
                     {{ p_form.phone.label_tag }}
                     {{ p_form.phone }}
                 </div>
-                <button class="btn btn-primary w-100">
+                <button class="btn btn-primary w-100 mb-2">
                     Update Profile
                 </button>
+                <a href="{% url 'password_change' %}" class="btn btn-outline-secondary w-100">
+                    Change Password
+                </a>
             </form>
         </div>
     </div>

@@ -50,25 +50,75 @@
                     <!-- Basic Info Tab -->
                     <div class="tab-pane fade show active" id="basic" role="tabpanel">
                         <div class="row text-dark">
-
                             <div class="col-md-7"> 
-                                {% for field in form %} 
-                                {% if field.name not in 'logo cover address city postal_code country latitude longitude is_closed is_active' %} 
-                                <div class="mb-3"> 
-                                    <label class="form-label fw-bold">{{ field.label }}</label> 
-                                    {{ field }} 
-                                    {% if field.errors %}
-                                    <div class="text-danger small">{{ field.errors }}</div> 
-                                    {% endif %} 
-                                </div> 
-                                {% endif %} 
-                                {% endfor %} 
-                                <div class="mb-3 form-check form-switch mt-4"> 
-                                    {{ form.is_active }} 
-                                    <label class="form-check-label fw-bold" for="{{ form.is_active.id_for_label }}">
-                                        Shop is Active
-                                    </label> 
-                                </div> 
+                                <div class="tab-pane fade show active" id="basic" role="tabpanel">
+    <div class="row text-dark">
+
+        <div class="col-md-7">
+
+             <!-- Owner (فقط للأدمن) -->
+            {% if request.user.is_superuser and form.user %}
+            <div class="mb-3">
+                <label class="form-label fw-bold">{{ form.user.label }}</label>
+                {{ form.user }}
+                {% if form.user.errors %}
+                    <div class="text-danger small">{{ form.user.errors }}</div>
+                {% endif %}
+            </div>
+            {% endif %}
+            <!-- Name -->
+            <div class="mb-3">
+                <label class="form-label fw-bold">{{ form.name.label }}</label>
+                {{ form.name }}
+                {% if form.name.errors %}
+                    <div class="text-danger small">{{ form.name.errors }}</div>
+                {% endif %}
+            </div>
+
+            <!-- Description -->
+            <div class="mb-3">
+                <label class="form-label fw-bold">{{ form.description.label }}</label>
+                {{ form.description }}
+                {% if form.description.errors %}
+                    <div class="text-danger small">{{ form.description.errors }}</div>
+                {% endif %}
+            </div>
+
+            <!-- Phone -->
+            <div class="mb-3">
+                <label class="form-label fw-bold">{{ form.phone.label }}</label>
+                {{ form.phone }}
+                {% if form.phone.errors %}
+                    <div class="text-danger small">{{ form.phone.errors }}</div>
+                {% endif %}
+            </div>
+
+            <!-- Email -->
+            <div class="mb-3">
+                <label class="form-label fw-bold">{{ form.email.label }}</label>
+                {{ form.email }}
+                {% if form.email.errors %}
+                    <div class="text-danger small">{{ form.email.errors }}</div>
+                {% endif %}
+            </div>
+
+            <!-- Website -->
+            <div class="mb-3">
+                <label class="form-label fw-bold">{{ form.website.label }}</label>
+                {{ form.website }}
+                {% if form.website.errors %}
+                    <div class="text-danger small">{{ form.website.errors }}</div>
+                {% endif %}
+            </div>   
+
+        </div>
+
+    </div>
+</div>
+
+
+
+
                                 <div class="mb-3 form-check form-switch text-danger"> 
                                     {{ form.is_closed }} 
                                     <label class="form-check-label fw-bold" for="{{ form.is_closed.id_for_label }}">
@@ -212,13 +262,13 @@
                                 </div>
                             </div> {% endfor %} </div>
                     </div>
-
                     <!-- Social Tab -->
                     <div class="tab-pane fade" id="social" role="tabpanel">
                         <div class="row g-3"> {% for field in social_form %} <div class="col-md-6 mb-3">
                                 <label class="form-label fw-bold">{{ field.label }}</label> {{ field }}
                             </div> {% endfor %} </div>
                     </div>
+
 
                     <!-- Admin/Validation Tab --> 
                     {% if validation_form %} 
@@ -234,12 +284,7 @@
                                             Approve / Validate Shop
                                         </label>
                                     </div>
-                                    <div class="form-check form-switch mb-3"> 
-                                        {{ validation_form.is_rejected }} 
-                                        <label class="form-check-label fw-bold text-danger">
-                                            Reject Shop
-                                        </label>
-                                    </div>
+                             
                                 </div>
                                 <div class="col-md-6 mb-4">
                                     <label class="form-label fw-bold">Validation Period</label> 
@@ -263,7 +308,10 @@
 
 
 
+
+
                 </div>
+
                 <!-- Action Buttons -->
                 <div class="mt-5 d-flex gap-2">
                     <button type="submit" class="btn btn-success btn-lg flex-grow-1 fw-bold rounded-pill shadow-sm">
@@ -322,6 +370,5 @@
         transition: all 0.3s ease-in-out;
     }
 </style>
-
 
 {% endblock body %}
